@@ -13,11 +13,11 @@ import static edu.colorodo.clear.wsd.feature.util.FeatureUtils.KEY_DELIM;
  *
  * @author jamesgung
  */
-public class AggregateFeatureExtractor<T extends NlpInstance> extends NlpFeatureExtractor<T> {
+public class ConcatenatingFeatureExtractor<T extends NlpInstance> extends NlpFeatureExtractor<T, String> {
 
-    private List<FeatureExtractor<T>> extractors;
+    private List<FeatureExtractor<T, String>> extractors;
 
-    public AggregateFeatureExtractor(List<FeatureExtractor<T>> extractors) {
+    public ConcatenatingFeatureExtractor(List<FeatureExtractor<T, String>> extractors) {
         this.extractors = extractors;
         id = extractors.stream().map(FeatureExtractor::id).collect(Collectors.joining(KEY_DELIM));
     }

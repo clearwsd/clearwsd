@@ -9,7 +9,7 @@ package edu.colorodo.clear.wsd.classifier;
 public interface SparseVector {
 
     /**
-     * Indices corresponding to each value in the vector.
+     * Indices corresponding to each value in the vector, in ascending order and with no duplicates.
      */
     int[] indices();
 

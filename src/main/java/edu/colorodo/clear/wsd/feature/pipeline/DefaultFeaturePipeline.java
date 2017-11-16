@@ -9,10 +9,11 @@ import java.util.function.Function;
 import edu.colorodo.clear.wsd.classifier.DefaultStringInstance;
 import edu.colorodo.clear.wsd.classifier.SparseVectorBuilder;
 import edu.colorodo.clear.wsd.classifier.StringInstance;
-import edu.colorodo.clear.wsd.feature.function.FeatureFunction;
 import edu.colorodo.clear.wsd.feature.StringFeature;
-import edu.colorodo.clear.wsd.feature.util.VocabularyBuilder;
+import edu.colorodo.clear.wsd.feature.annotator.Annotator;
+import edu.colorodo.clear.wsd.feature.function.FeatureFunction;
 import edu.colorodo.clear.wsd.feature.model.FeatureModel;
+import edu.colorodo.clear.wsd.feature.util.VocabularyBuilder;
 import edu.colorodo.clear.wsd.type.FeatureType;
 import edu.colorodo.clear.wsd.type.NlpInstance;
 import lombok.Getter;
@@ -20,22 +21,25 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 
 /**
- * Base feature pipeline.
+ * Default feature pipeline.
  *
  * @author jamesgung
  */
 @Setter
 @Getter
 @Accessors(fluent = true)
-public class BaseFeaturePipeline<I extends NlpInstance> implements FeaturePipeline<I> {
+public class DefaultFeaturePipeline<I extends NlpInstance> implements FeaturePipeline<I> {
 
     private FeatureFunction<I> featureFunction;
+    private List<Annotator<I>> annotators;
     private Function<I, String> labelFunction = (i -> i.feature(FeatureType.Gold));
 
     private FeatureModel model;
 
-    public BaseFeaturePipeline(FeatureFunction<I> featureFunction) {
+    public DefaultFeaturePipeline(FeatureFunction<I> featureFunction,
+                                  List<Annotator<I>> annotators) {
         this.featureFunction = featureFunction;
+        this.annotators = annotators;
     }
 
     @Override
@@ -45,6 +49,9 @@ public class BaseFeaturePipeline<I extends NlpInstance> implements FeaturePipeli
 
     @Override
     public StringInstance process(I instance) {
+        for (Annotator<I> annotator : annotators) {
+            instance = annotator.annotate(instance);
+        }
         List<StringFeature> features = featureFunction.apply(instance);
 
         SparseVectorBuilder builder = new SparseVectorBuilder();
@@ -64,6 +71,9 @@ public class BaseFeaturePipeline<I extends NlpInstance> implements FeaturePipeli
 
         List<StringInstance> results = new ArrayList<>();
         for (I instance : instances) {
+            for (Annotator<I> annotator : annotators) {
+                instance = annotator.annotate(instance);
+            }
             List<StringFeature> features = featureFunction.apply(instance);
 
             SparseVectorBuilder builder = new SparseVectorBuilder();

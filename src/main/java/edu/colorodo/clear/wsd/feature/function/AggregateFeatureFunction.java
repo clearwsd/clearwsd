@@ -16,11 +16,11 @@ import lombok.NoArgsConstructor;
  */
 @NoArgsConstructor
 @AllArgsConstructor
-public class MultiFeatureFunction<InputT extends NlpInstance> implements FeatureFunction<InputT> {
+public class AggregateFeatureFunction<InputT extends NlpInstance> implements FeatureFunction<InputT> {
 
     private List<FeatureFunction<InputT>> functions = new ArrayList<>();
 
-    public MultiFeatureFunction<InputT> add(FeatureFunction<InputT> function) {
+    public AggregateFeatureFunction<InputT> add(FeatureFunction<InputT> function) {
         functions.add(function);
         return this;
     }

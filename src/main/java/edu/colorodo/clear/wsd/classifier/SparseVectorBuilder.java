@@ -1,7 +1,10 @@
 package edu.colorodo.clear.wsd.classifier;
 
-import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * Sparse vector builder.
@@ -10,8 +13,7 @@ import java.util.List;
  */
 public class SparseVectorBuilder {
 
-    private List<Integer> indices = new ArrayList<>();
-    private List<Float> values = new ArrayList<>();
+    private Map<Integer, Float> indexValueMap = new HashMap<>();
 
     /**
      * Add a new value to this sparse vector.
@@ -21,8 +23,7 @@ public class SparseVectorBuilder {
      * @return this {@link SparseVectorBuilder}
      */
     public SparseVectorBuilder addValue(int index, float value) {
-        indices.add(index);
-        values.add(value);
+        indexValueMap.put(index, value);
         return this;
     }
 
@@ -42,11 +43,14 @@ public class SparseVectorBuilder {
      * @return sparse vector
      */
     public SparseVector build() {
-        int[] indexArray = indices.stream().mapToInt(i -> i).toArray();
+        List<Map.Entry<Integer, Float>> entries = indexValueMap.entrySet().stream().sorted(
+                Comparator.comparingInt(Map.Entry::getKey)).collect(Collectors.toList());
+        int[] indexArray = new int[entries.size()];
         float[] valueArray = new float[indexArray.length];
         int index = 0;
-        for (float val : values) {
-            valueArray[index++] = val;
+        for (Map.Entry<Integer, Float> entry : entries) {
+            indexArray[index] = entry.getKey();
+            valueArray[index++] = entry.getValue();
         }
         return new DefaultSparseVector(indexArray, valueArray);
     }

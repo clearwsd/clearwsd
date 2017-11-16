@@ -11,7 +11,7 @@ import lombok.experimental.Accessors;
  */
 @Getter
 @Accessors(fluent = true)
-public abstract class NlpFeatureExtractor<T extends NlpInstance> implements FeatureExtractor<T> {
+public abstract class NlpFeatureExtractor<T extends NlpInstance, S> implements FeatureExtractor<T, S> {
 
     protected String id;
 

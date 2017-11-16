@@ -16,7 +16,7 @@ public class FeatureUtils {
     // separator for concatenated features from multiple contexts
     public static final String CONTEXT_DELIM = "__";
     // separator between feature ID and feature value
-    public static final String FEATURE_ID_SEP = ":";
+    public static final String FEATURE_ID_SEP = "=";
 
     public static String computeId(String contextId, String featureId) {
         return contextId + CONTEXT_FEATURE_SEP + featureId;

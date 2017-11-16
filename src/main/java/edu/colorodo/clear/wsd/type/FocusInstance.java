@@ -1,5 +1,7 @@
 package edu.colorodo.clear.wsd.type;
 
+import java.util.List;
+
 import lombok.Getter;
 import lombok.experimental.Accessors;
 
@@ -10,7 +12,8 @@ import lombok.experimental.Accessors;
  */
 @Getter
 @Accessors(fluent = true)
-public class FocusInstance<T extends NlpInstance, S extends NlpTokenSequence<T>> extends BaseNlpInstance {
+public class FocusInstance<T extends NlpInstance, S extends NlpTokenSequence<T>> extends BaseNlpInstance
+        implements NlpTokenSequence<T> {
 
     private T focus;
     private S sequence;
@@ -24,5 +27,20 @@ public class FocusInstance<T extends NlpInstance, S extends NlpTokenSequence<T>>
     @Override
     public String toString() {
         return focus.toString() + "\n\n" + sequence.toString();
+    }
+
+    @Override
+    public List<T> tokens() {
+        return sequence.tokens();
+    }
+
+    @Override
+    public T get(int index) {
+        return sequence.get(index);
+    }
+
+    @Override
+    public int size() {
+        return sequence.size();
     }
 }

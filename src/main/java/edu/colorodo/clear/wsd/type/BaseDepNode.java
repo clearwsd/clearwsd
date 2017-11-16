@@ -44,28 +44,28 @@ public class BaseDepNode implements DepNode {
     }
 
     @Override
-    public Map<String, String> features() {
+    public Map<String, Object> features() {
         return nlpToken.features();
     }
 
     @Override
-    public String feature(FeatureType featureType) {
+    public <T> T feature(FeatureType featureType) {
         return nlpToken.feature(featureType);
     }
 
 
     @Override
-    public String feature(String feature) {
+    public <T> T feature(String feature) {
         return nlpToken.feature(feature);
     }
 
     @Override
-    public void addFeature(FeatureType featureType, String value) {
+    public <T> void addFeature(FeatureType featureType, T value) {
         nlpToken.addFeature(featureType, value);
     }
 
     @Override
-    public void addFeature(String featureKey, String value) {
+    public <T> void addFeature(String featureKey, T value) {
         nlpToken.addFeature(featureKey, value);
     }
 

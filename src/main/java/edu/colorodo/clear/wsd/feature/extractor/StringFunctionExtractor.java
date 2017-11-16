@@ -1,5 +1,6 @@
 package edu.colorodo.clear.wsd.feature.extractor;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -14,17 +15,21 @@ import static edu.colorodo.clear.wsd.feature.util.FeatureUtils.KEY_DELIM;
  *
  * @author jamesgung
  */
-public class StringFunctionExtractor<T extends NlpInstance> extends NlpFeatureExtractor<T> {
+public class StringFunctionExtractor<T extends NlpInstance> extends NlpFeatureExtractor<T, String> {
 
-    private FeatureExtractor<T> baseExtractor;
+    private FeatureExtractor<T, String> baseExtractor;
     private List<StringFunction> stringFunctions;
 
-    public StringFunctionExtractor(FeatureExtractor<T> baseExtractor, List<StringFunction> stringFunctions) {
+    public StringFunctionExtractor(FeatureExtractor<T, String> baseExtractor, List<StringFunction> stringFunctions) {
         this.baseExtractor = baseExtractor;
         this.stringFunctions = stringFunctions;
         id = baseExtractor.id() + KEY_DELIM + this.stringFunctions.stream()
                 .map(StringFunction::id)
                 .collect(Collectors.joining(KEY_DELIM));
+    }
+
+    public StringFunctionExtractor(FeatureExtractor<T, String> baseExtractor, StringFunction stringFunction) {
+        this(baseExtractor, Collections.singletonList(stringFunction));
     }
 
     @Override

@@ -17,7 +17,7 @@ import lombok.experimental.Accessors;
 public class BaseNlpInstance implements NlpInstance {
 
     private int index;
-    private Map<String, String> features;
+    private Map<String, Object> features;
 
     public BaseNlpInstance(int index) {
         this.index = index;
@@ -25,22 +25,24 @@ public class BaseNlpInstance implements NlpInstance {
     }
 
     @Override
-    public String feature(FeatureType featureType) {
-        return features.get(featureType.name());
+    public <T> T feature(FeatureType featureType) {
+        //noinspection unchecked
+        return (T) features.get(featureType.name());
     }
 
     @Override
-    public String feature(String feature) {
-        return features.get(feature);
+    public <T> T feature(String feature) {
+        //noinspection unchecked
+        return (T) features.get(feature);
     }
 
     @Override
-    public void addFeature(FeatureType featureType, String value) {
+    public <T> void addFeature(FeatureType featureType, T value) {
         features.put(featureType.name(), value);
     }
 
     @Override
-    public void addFeature(String featureKey, String value) {
+    public <T> void addFeature(String featureKey, T value) {
         features.put(featureKey, value);
     }
 

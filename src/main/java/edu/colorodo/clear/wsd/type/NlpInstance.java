@@ -16,40 +16,44 @@ public interface NlpInstance {
     int index();
 
     /**
-     * Map of features.
+     * Map of features associated with this instance.
      */
-    Map<String, String> features();
+    Map<String, Object> features();
 
     /**
      * Return the feature for a corresponding feature type.
      *
      * @param featureType feature type
+     * @param <T>         type of resulting feature
      * @return feature value
      */
-    String feature(FeatureType featureType);
+    <T> T feature(FeatureType featureType);
 
     /**
      * Return the feature for a corresponding feature key.
      *
      * @param feature feature key
+     * @param <T>     type of resulting feature
      * @return feature value
      */
-    String feature(String feature);
+    <T> T feature(String feature);
 
     /**
      * Add a feature to this instance of a given type.
      *
      * @param featureType feature type
      * @param value       feature value
+     * @param <T>         feature value type
      */
-    void addFeature(FeatureType featureType, String value);
+    <T> void addFeature(FeatureType featureType, T value);
 
     /**
      * Add a feature with a given key to this instance.
      *
      * @param featureKey feature key
      * @param value      feature value
+     * @param <T>        value type
      */
-    void addFeature(String featureKey, String value);
+    <T> void addFeature(String featureKey, T value);
 
 }
