@@ -1,5 +1,7 @@
 package edu.colorodo.clear.wsd.feature.annotator;
 
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+
 import edu.colorodo.clear.wsd.type.NlpInstance;
 
 /**
@@ -7,6 +9,7 @@ import edu.colorodo.clear.wsd.type.NlpInstance;
  *
  * @author jamesgung
  */
+@JsonTypeInfo(use=JsonTypeInfo.Id.MINIMAL_CLASS, include=JsonTypeInfo.As.PROPERTY, property="@c")
 public interface Annotator<T extends NlpInstance> {
 
     T annotate(T instance);

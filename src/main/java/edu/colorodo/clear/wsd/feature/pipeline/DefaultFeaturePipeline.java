@@ -2,6 +2,8 @@ package edu.colorodo.clear.wsd.feature.pipeline;
 
 import com.google.common.base.Preconditions;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
@@ -30,14 +32,16 @@ import lombok.experimental.Accessors;
 @Accessors(fluent = true)
 public class DefaultFeaturePipeline<I extends NlpInstance> implements FeaturePipeline<I> {
 
+    @JsonProperty
     private FeatureFunction<I> featureFunction;
+    @JsonProperty
     private List<Annotator<I>> annotators;
     private Function<I, String> labelFunction = (i -> i.feature(FeatureType.Gold));
 
     private FeatureModel model;
 
-    public DefaultFeaturePipeline(FeatureFunction<I> featureFunction,
-                                  List<Annotator<I>> annotators) {
+    public DefaultFeaturePipeline(@JsonProperty("featureFunction") FeatureFunction<I> featureFunction,
+                                  @JsonProperty("annotators") List<Annotator<I>> annotators) {
         this.featureFunction = featureFunction;
         this.annotators = annotators;
     }

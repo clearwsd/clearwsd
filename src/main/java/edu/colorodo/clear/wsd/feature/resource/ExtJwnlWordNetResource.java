@@ -2,6 +2,8 @@ package edu.colorodo.clear.wsd.feature.resource;
 
 import com.google.common.base.Stopwatch;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import net.sf.extjwnl.data.IndexWord;
 import net.sf.extjwnl.data.POS;
 import net.sf.extjwnl.data.PointerUtils;
@@ -20,6 +22,7 @@ import edu.colorodo.clear.wsd.feature.util.PosUtils;
 import edu.colorodo.clear.wsd.type.FeatureType;
 import edu.colorodo.clear.wsd.type.NlpInstance;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 import lombok.extern.slf4j.Slf4j;
 
@@ -30,10 +33,13 @@ import lombok.extern.slf4j.Slf4j;
  */
 @Slf4j
 @Accessors(fluent = true)
+@NoArgsConstructor
 public class ExtJwnlWordNetResource<K extends NlpInstance> implements FeatureResource<K, List<String>> {
 
     @Getter
+    @JsonProperty
     private String key;
+
     private Dictionary dict;
 
     public ExtJwnlWordNetResource(String key) {

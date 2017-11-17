@@ -1,10 +1,14 @@
 package edu.colorodo.clear.wsd.feature.extractor;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 import edu.colorodo.clear.wsd.type.NlpInstance;
+import lombok.Getter;
+import lombok.experimental.Accessors;
 
 import static edu.colorodo.clear.wsd.feature.util.FeatureUtils.KEY_DELIM;
 
@@ -13,11 +17,14 @@ import static edu.colorodo.clear.wsd.feature.util.FeatureUtils.KEY_DELIM;
  *
  * @author jamesgung
  */
+@Getter
+@Accessors(fluent = true)
 public class StringListLookupFeature<T extends NlpInstance> extends NlpFeatureExtractor<T, List<String>> {
 
+    @JsonProperty
     private List<String> keys;
 
-    public StringListLookupFeature(List<String> keys) {
+    public StringListLookupFeature(@JsonProperty("keys") List<String> keys) {
         this.keys = keys;
         id = String.join(KEY_DELIM, keys);
     }

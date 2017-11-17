@@ -5,7 +5,7 @@ import java.util.List;
 
 import edu.colorodo.clear.wsd.type.NlpInstance;
 import lombok.AllArgsConstructor;
-import lombok.Getter;
+import lombok.Data;
 import lombok.experimental.Accessors;
 
 /**
@@ -13,7 +13,7 @@ import lombok.experimental.Accessors;
  *
  * @author jamesgung
  */
-@Getter
+@Data
 @Accessors(fluent = true)
 @AllArgsConstructor
 public class NlpContext<T extends NlpInstance> {

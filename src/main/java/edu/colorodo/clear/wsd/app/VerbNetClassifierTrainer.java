@@ -36,8 +36,8 @@ import edu.colorodo.clear.wsd.feature.function.MultiStringFeatureFunction;
 import edu.colorodo.clear.wsd.feature.function.StringFeatureFunction;
 import edu.colorodo.clear.wsd.feature.pipeline.DefaultFeaturePipeline;
 import edu.colorodo.clear.wsd.feature.pipeline.FeaturePipeline;
+import edu.colorodo.clear.wsd.feature.resource.BrownClusterResourceInitializer;
 import edu.colorodo.clear.wsd.feature.resource.MultimapResource;
-import edu.colorodo.clear.wsd.feature.util.BrownClusterResourceInitializer;
 import edu.colorodo.clear.wsd.type.DepNode;
 import edu.colorodo.clear.wsd.type.DependencyTree;
 import edu.colorodo.clear.wsd.type.FeatureType;
@@ -93,7 +93,7 @@ public class VerbNetClassifierTrainer {
         List<Annotator<FocusInstance<DepNode, DependencyTree>>> annotators = new ArrayList<>();
         for (String cluster : clusters) {
             MultimapResource<String> multimapResource = new MultimapResource<>(cluster);
-            multimapResource.keyFunction(String::toLowerCase);
+            multimapResource.keyFunction(new LowercaseFunction());
             multimapResource.initialize(new FileInputStream("data/learningResources/clusters/" + cluster));
             annotators.add(new ListAnnotator<>(new StringFunctionExtractor<>(
                     new LookupFeatureExtractor<>(FeatureType.Text.name()), new LowercaseFunction()), multimapResource));

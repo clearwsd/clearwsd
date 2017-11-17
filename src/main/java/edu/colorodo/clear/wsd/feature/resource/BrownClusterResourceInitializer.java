@@ -1,17 +1,17 @@
-package edu.colorodo.clear.wsd.feature.util;
+package edu.colorodo.clear.wsd.feature.resource;
 
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ImmutableListMultimap;
 import com.google.common.collect.ListMultimap;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.Arrays;
 import java.util.List;
-import java.util.function.BiConsumer;
 
-import edu.colorodo.clear.wsd.feature.resource.MultimapResource;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -24,9 +24,11 @@ import lombok.experimental.Accessors;
 @Getter
 @Setter
 @Accessors(fluent = true)
-public class BrownClusterResourceInitializer<K> implements BiConsumer<MultimapResource<K>, InputStream> {
+public class BrownClusterResourceInitializer<K> implements ResourceInitializer<MultimapResource<K>> {
 
+    @JsonProperty
     private List<Integer> subSequences = Arrays.asList(4, 6, 10, 20);
+    @JsonProperty
     private int threshold = 1;
 
     @Override

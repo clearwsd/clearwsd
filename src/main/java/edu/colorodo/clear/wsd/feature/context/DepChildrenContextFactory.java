@@ -1,5 +1,7 @@
 package edu.colorodo.clear.wsd.feature.context;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -22,14 +24,10 @@ public class DepChildrenContextFactory extends DepContextFactory {
 
     public static final String KEY = "CHILD";
 
+    @JsonProperty
     private Set<String> exclude;
-
+    @JsonProperty
     private Set<String> include;
-
-    public DepChildrenContextFactory() {
-        this.exclude = new HashSet<>();
-        this.include = new HashSet<>();
-    }
 
     /**
      * Initialize a {@link DepChildrenContextFactory} with child dependency label exclusions and inclusions.
@@ -40,6 +38,10 @@ public class DepChildrenContextFactory extends DepContextFactory {
     public DepChildrenContextFactory(Set<String> exclude, Set<String> include) {
         this.exclude = exclude;
         this.include = include;
+    }
+
+    public DepChildrenContextFactory() {
+        this(new HashSet<>(), new HashSet<>());
     }
 
     @Override

@@ -1,9 +1,13 @@
 package edu.colorodo.clear.wsd.feature.extractor;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.util.List;
 import java.util.stream.Collectors;
 
 import edu.colorodo.clear.wsd.type.NlpInstance;
+import lombok.Getter;
+import lombok.experimental.Accessors;
 
 import static edu.colorodo.clear.wsd.feature.util.FeatureUtils.CONCAT_DELIM;
 import static edu.colorodo.clear.wsd.feature.util.FeatureUtils.KEY_DELIM;
@@ -13,11 +17,14 @@ import static edu.colorodo.clear.wsd.feature.util.FeatureUtils.KEY_DELIM;
  *
  * @author jamesgung
  */
+@Getter
+@Accessors(fluent = true)
 public class ConcatenatingFeatureExtractor<T extends NlpInstance> extends NlpFeatureExtractor<T, String> {
 
+    @JsonProperty
     private List<FeatureExtractor<T, String>> extractors;
 
-    public ConcatenatingFeatureExtractor(List<FeatureExtractor<T, String>> extractors) {
+    public ConcatenatingFeatureExtractor(@JsonProperty("extractors") List<FeatureExtractor<T, String>> extractors) {
         this.extractors = extractors;
         id = extractors.stream().map(FeatureExtractor::id).collect(Collectors.joining(KEY_DELIM));
     }

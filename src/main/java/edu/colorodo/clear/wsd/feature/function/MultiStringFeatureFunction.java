@@ -1,7 +1,8 @@
 package edu.colorodo.clear.wsd.feature.function;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import edu.colorodo.clear.wsd.feature.StringFeature;
@@ -11,6 +12,7 @@ import edu.colorodo.clear.wsd.feature.extractor.FeatureExtractor;
 import edu.colorodo.clear.wsd.feature.util.FeatureUtils;
 import edu.colorodo.clear.wsd.type.NlpInstance;
 import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -20,18 +22,15 @@ import lombok.extern.slf4j.Slf4j;
  * @author jamesgung
  */
 @Slf4j
+@NoArgsConstructor
 @AllArgsConstructor
 public class MultiStringFeatureFunction<InputT extends NlpInstance, OutputT extends NlpInstance>
         implements FeatureFunction<InputT> {
 
+    @JsonProperty
     private NlpContextFactory<InputT, OutputT> contextFactory;
+    @JsonProperty
     private List<FeatureExtractor<OutputT, List<String>>> featureExtractors;
-
-    public MultiStringFeatureFunction(NlpContextFactory<InputT, OutputT> contextFactory,
-                                      FeatureExtractor<OutputT, List<String>> featureExtractor) {
-        this.contextFactory = contextFactory;
-        this.featureExtractors = Collections.singletonList(featureExtractor);
-    }
 
     @Override
     public List<StringFeature> apply(InputT instance) {

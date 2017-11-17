@@ -9,10 +9,10 @@ import lombok.experimental.Accessors;
  *
  * @author jamesgung
  */
-@Getter
-@Accessors(fluent = true)
 public abstract class NlpFeatureExtractor<T extends NlpInstance, S> implements FeatureExtractor<T, S> {
 
+    @Getter
+    @Accessors(fluent = true)
     protected String id;
 
     public NlpFeatureExtractor() {

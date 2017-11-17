@@ -1,5 +1,8 @@
 package edu.colorodo.clear.wsd.feature.extractor;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -17,10 +20,14 @@ import static edu.colorodo.clear.wsd.feature.util.FeatureUtils.KEY_DELIM;
  */
 public class StringFunctionExtractor<T extends NlpInstance> extends NlpFeatureExtractor<T, String> {
 
+    @JsonProperty
     private FeatureExtractor<T, String> baseExtractor;
+    @JsonProperty
     private List<StringFunction> stringFunctions;
 
-    public StringFunctionExtractor(FeatureExtractor<T, String> baseExtractor, List<StringFunction> stringFunctions) {
+    @JsonCreator
+    public StringFunctionExtractor(@JsonProperty("baseExtractor") FeatureExtractor<T, String> baseExtractor,
+                                   @JsonProperty("stringFunctions") List<StringFunction> stringFunctions) {
         this.baseExtractor = baseExtractor;
         this.stringFunctions = stringFunctions;
         id = baseExtractor.id() + KEY_DELIM + this.stringFunctions.stream()

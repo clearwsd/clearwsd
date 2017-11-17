@@ -1,5 +1,7 @@
 package edu.colorodo.clear.wsd.feature.extractor;
 
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+
 /**
  * Feature extractor interface.
  *
@@ -7,6 +9,7 @@ package edu.colorodo.clear.wsd.feature.extractor;
  * @param <S> feature output type
  * @author jamesgung
  */
+@JsonTypeInfo(use=JsonTypeInfo.Id.MINIMAL_CLASS, include=JsonTypeInfo.As.PROPERTY, property="@c")
 public interface FeatureExtractor<T, S> {
 
     /**

@@ -1,5 +1,7 @@
 package edu.colorodo.clear.wsd.feature;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.experimental.Accessors;
@@ -16,7 +18,9 @@ import static edu.colorodo.clear.wsd.feature.util.FeatureUtils.FEATURE_ID_SEP;
 @Accessors(fluent = true)
 public class StringFeature {
 
+    @JsonProperty
     private String id;
+    @JsonProperty
     private String value;
 
     @Override

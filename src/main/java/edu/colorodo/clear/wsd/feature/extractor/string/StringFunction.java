@@ -1,5 +1,7 @@
 package edu.colorodo.clear.wsd.feature.extractor.string;
 
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+
 import java.util.function.Function;
 
 import lombok.Getter;
@@ -10,10 +12,11 @@ import lombok.experimental.Accessors;
  *
  * @author jamesgung
  */
-@Accessors(fluent = true)
+@JsonTypeInfo(use = JsonTypeInfo.Id.MINIMAL_CLASS, include = JsonTypeInfo.As.PROPERTY, property = "@c")
 public abstract class StringFunction implements Function<String, String> {
 
     @Getter
+    @Accessors(fluent = true)
     protected String id;
 
 }

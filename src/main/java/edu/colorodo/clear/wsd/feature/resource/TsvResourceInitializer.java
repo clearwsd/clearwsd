@@ -1,4 +1,4 @@
-package edu.colorodo.clear.wsd.feature.util;
+package edu.colorodo.clear.wsd.feature.resource;
 
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ImmutableListMultimap;
@@ -9,16 +9,13 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.Arrays;
 import java.util.List;
-import java.util.function.BiConsumer;
-
-import edu.colorodo.clear.wsd.feature.resource.MultimapResource;
 
 /**
  * TSV resource initializer used to initialize a {@link MultimapResource} from an {@link InputStream}.
  *
  * @author jamesgung
  */
-public class TsvResourceInitializer<K> implements BiConsumer<MultimapResource<K>, InputStream> {
+public class TsvResourceInitializer<K> implements ResourceInitializer<MultimapResource<K>> {
 
     @Override
     public void accept(MultimapResource<K> resource, InputStream inputStream) {
