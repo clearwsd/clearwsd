@@ -6,6 +6,7 @@ import java.util.List;
 
 import edu.colorodo.clear.wsd.feature.extractor.FeatureExtractor;
 import edu.colorodo.clear.wsd.feature.resource.FeatureResource;
+import edu.colorodo.clear.wsd.feature.resource.FeatureResourceManager;
 import edu.colorodo.clear.wsd.type.NlpInstance;
 import edu.colorodo.clear.wsd.type.NlpTokenSequence;
 import lombok.AllArgsConstructor;
@@ -20,18 +21,30 @@ import lombok.Getter;
 @AllArgsConstructor
 public class ListAnnotator<T extends NlpInstance, S extends NlpTokenSequence<T>> implements Annotator<S> {
 
+    private static final long serialVersionUID = -6170529305032382231L;
     @JsonProperty
     private FeatureExtractor<T, String> baseExtractor;
     @JsonProperty
+    private String resourceKey;
+
     private FeatureResource<String, List<String>> resource;
+
+    public ListAnnotator(FeatureExtractor<T, String> baseExtractor, String resourceKey) {
+        this.baseExtractor = baseExtractor;
+        this.resourceKey = resourceKey;
+    }
 
     @Override
     public S annotate(S instance) {
         for (T token : instance.tokens()) {
             String key = baseExtractor.extract(token);
-            token.addFeature(resource.key(), resource.lookup(key));
+            token.addFeature(key, resource.lookup(key));
         }
         return instance;
     }
 
+    @Override
+    public void initialize(FeatureResourceManager featureResourceManager) {
+        this.resource = featureResourceManager.getResource(resourceKey);
+    }
 }

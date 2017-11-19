@@ -5,7 +5,7 @@ package edu.colorodo.clear.wsd.classifier;
  *
  * @author jamesgung
  */
-public interface StringInstance extends SparseVector {
+public interface SparseInstance extends SparseVector {
 
     /**
      * Unique identifier for this instance.

@@ -20,6 +20,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class AggregateFeatureFunction<InputT extends NlpInstance> implements FeatureFunction<InputT> {
 
+    private static final long serialVersionUID = 7273553475535366584L;
     @JsonProperty
     private List<FeatureFunction<InputT>> functions = new ArrayList<>();
 

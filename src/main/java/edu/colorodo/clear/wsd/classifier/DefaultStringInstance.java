@@ -12,7 +12,7 @@ import lombok.experimental.Accessors;
 @Getter
 @Accessors(fluent = true)
 @AllArgsConstructor
-public class DefaultStringInstance implements StringInstance {
+public class DefaultStringInstance implements SparseInstance {
 
     private int id;
 

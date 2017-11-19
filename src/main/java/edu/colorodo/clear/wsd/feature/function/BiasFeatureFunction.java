@@ -21,6 +21,8 @@ public class BiasFeatureFunction<T extends NlpInstance> implements FeatureFuncti
 
     public static final String BIAS = "<BIAS>";
 
+    private static final long serialVersionUID = -2067474355880710744L;
+
     @JsonProperty
     private List<StringFeature> bias = Collections.singletonList(new StringFeature(BIAS, BIAS));
 

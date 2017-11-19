@@ -10,6 +10,7 @@ import java.util.Random;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import edu.colorodo.clear.wsd.classifier.Classifier;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
@@ -19,24 +20,61 @@ import lombok.extern.slf4j.Slf4j;
  * @author jamesgung
  */
 @Slf4j
-public class CrossValidation<T> {
+public class CrossValidation<U, T extends U> {
 
     private Random random;
 
     private Function<T, String> labelFunction;
 
+    /**
+     * Initialize a new cross validation evaluator with a random seed.
+     *
+     * @param seed          random seed
+     * @param labelFunction function used to extract labels from the input type
+     */
     public CrossValidation(int seed, Function<T, String> labelFunction) {
         random = new Random(seed);
         this.labelFunction = labelFunction;
     }
 
+    /**
+     * Initialize a new cross validation evaluator with a fixed random seed.
+     *
+     * @param labelFunction function used to extract labels from the input type
+     */
     public CrossValidation(Function<T, String> labelFunction) {
         this(0, labelFunction);
     }
 
+    /**
+     * Create cross-validation folds w/ per-class sampling.
+     *
+     * @param instances all input instances used to create folds
+     * @param numFolds  total number of folds
+     * @param ratio     ratio of instances in (0, 1) to be used for sampling.
+     * @return {@code numFolds} folds
+     */
     public List<Fold<T>> createFolds(List<T> instances, int numFolds, double ratio) {
         ListMultimap<String, T> partition = partitionToClasses(instances);
         return sampleFolds(partition, numFolds, ratio);
+    }
+
+    /**
+     * Perform cross validation with a given classifier on a given list of {@link Fold Folds}.
+     *
+     * @param classifier input classifier
+     */
+    public List<Evaluation> crossValidate(Classifier<T, String> classifier, List<CrossValidation.Fold<T>> folds) {
+        List<Evaluation> evaluations = new ArrayList<>();
+        for (CrossValidation.Fold<T> fold : folds) {
+            classifier.train(fold.getTrainInstances(), fold.getTestInstances());
+            Evaluation evaluation = new Evaluation();
+            for (T input : fold.getTestInstances()) {
+                evaluation.add(classifier.classify(input), labelFunction.apply(input));
+            }
+            evaluations.add(evaluation);
+        }
+        return evaluations;
     }
 
     private List<Fold<T>> sampleFolds(ListMultimap<String, T> partition, int numFolds, double ratio) {

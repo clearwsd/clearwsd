@@ -12,11 +12,11 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import edu.colorodo.clear.wsd.classifier.LibLinearClassifier;
-import edu.colorodo.clear.wsd.classifier.SparseClassifier;
-import edu.colorodo.clear.wsd.classifier.StringInstance;
 import edu.colorodo.clear.wsd.corpus.VerbNetReader;
 import edu.colorodo.clear.wsd.eval.CrossValidation;
+import edu.colorodo.clear.wsd.eval.CrossValidation.Fold;
 import edu.colorodo.clear.wsd.eval.Evaluation;
+import edu.colorodo.clear.wsd.feature.annotator.AggregateAnnotator;
 import edu.colorodo.clear.wsd.feature.annotator.Annotator;
 import edu.colorodo.clear.wsd.feature.annotator.ListAnnotator;
 import edu.colorodo.clear.wsd.feature.context.DepChildrenContextFactory;
@@ -36,17 +36,18 @@ import edu.colorodo.clear.wsd.feature.function.MultiStringFeatureFunction;
 import edu.colorodo.clear.wsd.feature.function.StringFeatureFunction;
 import edu.colorodo.clear.wsd.feature.pipeline.DefaultFeaturePipeline;
 import edu.colorodo.clear.wsd.feature.pipeline.FeaturePipeline;
+import edu.colorodo.clear.wsd.feature.pipeline.NlpClassifier;
 import edu.colorodo.clear.wsd.feature.resource.BrownClusterResourceInitializer;
+import edu.colorodo.clear.wsd.feature.resource.DefaultFeatureResourceManager;
+import edu.colorodo.clear.wsd.feature.resource.FeatureResourceManager;
 import edu.colorodo.clear.wsd.feature.resource.MultimapResource;
 import edu.colorodo.clear.wsd.type.DepNode;
 import edu.colorodo.clear.wsd.type.DependencyTree;
 import edu.colorodo.clear.wsd.type.FeatureType;
 import edu.colorodo.clear.wsd.type.FocusInstance;
-import lombok.Setter;
 import lombok.experimental.Accessors;
 import lombok.extern.slf4j.Slf4j;
 
-import static edu.colorodo.clear.wsd.classifier.LibLinearClassifier.LiblinearModel;
 import static edu.colorodo.clear.wsd.type.FeatureType.Gold;
 
 /**
@@ -58,51 +59,33 @@ import static edu.colorodo.clear.wsd.type.FeatureType.Gold;
 @Accessors(fluent = true)
 public class VerbNetClassifierTrainer {
 
-    @Setter
-    private FeaturePipeline<FocusInstance<DepNode, DependencyTree>> features;
-    @Setter
-    private SparseClassifier<LiblinearModel> classifier;
-
-    public void train(List<FocusInstance<DepNode, DependencyTree>> train, List<FocusInstance<DepNode, DependencyTree>> valid) {
-        LiblinearModel model = new LiblinearModel();
-
-        // train features
-        features.initialize(model);
-        List<StringInstance> trainingInstances = features.train(train);
-        List<StringInstance> validationInstances = valid.stream()
-                .map(features::process)
-                .collect(Collectors.toList());
-
-        // train classifier parameters
-        classifier.initialize(model);
-        classifier.train(trainingInstances, validationInstances);
-
-        // evaluate model
-        Evaluation evaluation = new Evaluation();
-        for (StringInstance vector : validationInstances) {
-            evaluation.add(classifier.classify(vector), model.label(vector.target()));
-        }
-        log.info("Validation performance: \n{}", evaluation.toString());
-    }
-
-    private static FeaturePipeline<FocusInstance<DepNode, DependencyTree>> initializeFeatures() throws FileNotFoundException {
-        List<FeatureFunction<FocusInstance<DepNode, DependencyTree>>> features = new ArrayList<>();
-
-        List<FeatureExtractor<DepNode, List<String>>> filteredDepExtractors = new ArrayList<>();
+    private static FeatureResourceManager resourceManager() throws FileNotFoundException {
+        DefaultFeatureResourceManager resourceManager = new DefaultFeatureResourceManager();
         List<String> clusters = Arrays.asList("cluster-100", "cluster-320", "cluster-1000", "cluster-3200", "cluster-10000");
-        List<Annotator<FocusInstance<DepNode, DependencyTree>>> annotators = new ArrayList<>();
         for (String cluster : clusters) {
             MultimapResource<String> multimapResource = new MultimapResource<>(cluster);
             multimapResource.keyFunction(new LowercaseFunction());
             multimapResource.initialize(new FileInputStream("data/learningResources/clusters/" + cluster));
-            annotators.add(new ListAnnotator<>(new StringFunctionExtractor<>(
-                    new LookupFeatureExtractor<>(FeatureType.Text.name()), new LowercaseFunction()), multimapResource));
-            filteredDepExtractors.add(new StringListLookupFeature<>(cluster));
+            resourceManager.addResource(cluster, multimapResource);
         }
         MultimapResource<String> multimapResource = new MultimapResource<>("brown");
         multimapResource.initializer(new BrownClusterResourceInitializer<>());
         multimapResource.initialize(new FileInputStream("data/learningResources/bwc.txt"));
-        annotators.add(new ListAnnotator<>(new LookupFeatureExtractor<>(FeatureType.Text.name()), multimapResource));
+        resourceManager.addResource("brown", multimapResource);
+        return resourceManager;
+    }
+
+    private static FeaturePipeline<FocusInstance<DepNode, DependencyTree>> initializeFeatures() throws FileNotFoundException {
+        List<FeatureFunction<FocusInstance<DepNode, DependencyTree>>> features = new ArrayList<>();
+        List<FeatureExtractor<DepNode, List<String>>> filteredDepExtractors = new ArrayList<>();
+        List<String> clusters = Arrays.asList("cluster-100", "cluster-320", "cluster-1000", "cluster-3200", "cluster-10000");
+        List<Annotator<FocusInstance<DepNode, DependencyTree>>> annotators = new ArrayList<>();
+        for (String cluster : clusters) {
+            annotators.add(new ListAnnotator<>(new StringFunctionExtractor<>(
+                    new LookupFeatureExtractor<>(FeatureType.Text.name()), new LowercaseFunction()), cluster));
+            filteredDepExtractors.add(new StringListLookupFeature<>(cluster));
+        }
+        annotators.add(new ListAnnotator<>(new LookupFeatureExtractor<>(FeatureType.Text.name()), "brown"));
         filteredDepExtractors.add(new StringListLookupFeature<>("brown"));
 
         FeatureExtractor<DepNode, String> text = new StringFunctionExtractor<>(
@@ -135,19 +118,24 @@ public class VerbNetClassifierTrainer {
         features.add(new StringFeatureFunction<>(rootPathContext, depPathExtractors));
         features.add(new BiasFeatureFunction<>());
 
-        return new DefaultFeaturePipeline<>(new AggregateFeatureFunction<>(features), annotators);
+        return new DefaultFeaturePipeline<>(new AggregateFeatureFunction<>(features),
+                new AggregateAnnotator<>(annotators), resourceManager());
     }
 
     public static void main(String[] args) throws FileNotFoundException {
         List<FocusInstance<DepNode, DependencyTree>> instances
                 = new VerbNetReader().readInstances(new FileInputStream(args[1]));
-        List<CrossValidation.Fold<FocusInstance<DepNode, DependencyTree>>> folds
-                = new CrossValidation<>((FocusInstance<DepNode, DependencyTree> i) -> (String) i.feature(Gold))
-                .createFolds(instances, 1, 0.8);
-        VerbNetClassifierTrainer classifier = new VerbNetClassifierTrainer()
-                .classifier(new LibLinearClassifier())
-                .features(initializeFeatures());
-        classifier.train(folds.get(0).getTrainInstances(), folds.get(0).getTestInstances());
+        CrossValidation<FocusInstance<DepNode, DependencyTree>, FocusInstance<DepNode, DependencyTree>> cv
+                = new CrossValidation<>((FocusInstance<DepNode, DependencyTree> i) -> (String) i.feature(Gold));
+        List<Fold<FocusInstance<DepNode, DependencyTree>>> folds = cv.createFolds(instances, 1, 0.8);
+
+        NlpClassifier<FocusInstance<DepNode, DependencyTree>> classifier
+                = new NlpClassifier<>(new LibLinearClassifier(), initializeFeatures());
+
+        List<Evaluation> evaluations = cv.crossValidate(classifier, folds);
+        Evaluation overall = new Evaluation();
+        evaluations.forEach(overall::add);
+        System.out.println(overall.toString());
     }
 
 }

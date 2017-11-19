@@ -2,6 +2,9 @@ package edu.colorodo.clear.wsd.feature.annotator;
 
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
+import java.io.Serializable;
+
+import edu.colorodo.clear.wsd.feature.resource.FeatureResourceManager;
 import edu.colorodo.clear.wsd.type.NlpInstance;
 
 /**
@@ -9,9 +12,18 @@ import edu.colorodo.clear.wsd.type.NlpInstance;
  *
  * @author jamesgung
  */
-@JsonTypeInfo(use=JsonTypeInfo.Id.MINIMAL_CLASS, include=JsonTypeInfo.As.PROPERTY, property="@c")
-public interface Annotator<T extends NlpInstance> {
+@JsonTypeInfo(use = JsonTypeInfo.Id.MINIMAL_CLASS, include = JsonTypeInfo.As.PROPERTY, property = "@c")
+public interface Annotator<T extends NlpInstance> extends Serializable {
 
     T annotate(T instance);
+
+    /**
+     * Dependency injection for feature resources.
+     *
+     * @param featureResourceManager resource manager
+     */
+    default void initialize(FeatureResourceManager featureResourceManager) {
+        // pass by default
+    }
 
 }

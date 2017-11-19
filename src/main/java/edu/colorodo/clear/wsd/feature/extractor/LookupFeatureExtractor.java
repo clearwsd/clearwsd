@@ -23,6 +23,8 @@ public class LookupFeatureExtractor<T extends NlpInstance> extends NlpFeatureExt
 
     public static final String DEFAULT_VALUE = "<NONE>";
 
+    private static final long serialVersionUID = -8167041300890840929L;
+
     @JsonProperty
     private List<String> keys;
     @JsonProperty

@@ -9,6 +9,8 @@ public class LowercaseFunction extends StringFunction {
 
     public static final String ID = "LL";
 
+    private static final long serialVersionUID = 4625756530549395857L;
+
     public LowercaseFunction() {
         id = ID;
     }

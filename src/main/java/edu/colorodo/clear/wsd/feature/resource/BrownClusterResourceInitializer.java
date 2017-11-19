@@ -26,6 +26,7 @@ import lombok.experimental.Accessors;
 @Accessors(fluent = true)
 public class BrownClusterResourceInitializer<K> implements ResourceInitializer<MultimapResource<K>> {
 
+    private static final long serialVersionUID = -1475047308109219325L;
     @JsonProperty
     private List<Integer> subSequences = Arrays.asList(4, 6, 10, 20);
     @JsonProperty

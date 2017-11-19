@@ -34,6 +34,7 @@ import lombok.extern.slf4j.Slf4j;
 @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
 public class MultimapResource<K> implements FeatureResource<K, List<String>> {
 
+    private static final long serialVersionUID = 7402042556816462306L;
     private String key;
     @JsonIgnore
     private ImmutableListMultimap<String, String> multimap;

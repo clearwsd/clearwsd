@@ -20,6 +20,8 @@ import static edu.colorodo.clear.wsd.feature.util.FeatureUtils.KEY_DELIM;
  */
 public class StringFunctionExtractor<T extends NlpInstance> extends NlpFeatureExtractor<T, String> {
 
+    private static final long serialVersionUID = -6703070360030390063L;
+
     @JsonProperty
     private FeatureExtractor<T, String> baseExtractor;
     @JsonProperty

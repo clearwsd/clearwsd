@@ -2,6 +2,8 @@ package edu.colorodo.clear.wsd.feature.extractor;
 
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
+import java.io.Serializable;
+
 /**
  * Feature extractor interface.
  *
@@ -9,8 +11,8 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
  * @param <S> feature output type
  * @author jamesgung
  */
-@JsonTypeInfo(use=JsonTypeInfo.Id.MINIMAL_CLASS, include=JsonTypeInfo.As.PROPERTY, property="@c")
-public interface FeatureExtractor<T, S> {
+@JsonTypeInfo(use = JsonTypeInfo.Id.MINIMAL_CLASS, include = JsonTypeInfo.As.PROPERTY, property = "@c")
+public interface FeatureExtractor<T, S> extends Serializable {
 
     /**
      * Id used to automatically create human-readable (non-unique) identifiers for each resulting extracted features.

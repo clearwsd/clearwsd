@@ -1,5 +1,6 @@
 package edu.colorodo.clear.wsd.feature.model;
 
+import edu.colorodo.clear.wsd.feature.resource.FeatureResourceManager;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -17,6 +18,8 @@ import lombok.experimental.Accessors;
 @AllArgsConstructor
 @NoArgsConstructor
 public class BaseFeatureModel implements FeatureModel {
+
+    private static final long serialVersionUID = 8326546437890576186L;
 
     private Vocabulary labels;
     private Vocabulary features;
@@ -40,5 +43,8 @@ public class BaseFeatureModel implements FeatureModel {
     public Integer featureIndex(String feature) {
         return features.index(feature);
     }
+
+    @Getter
+    private transient FeatureResourceManager resourceManager;
 
 }

@@ -1,8 +1,9 @@
 package edu.colorodo.clear.wsd.feature.pipeline;
 
+import java.io.Serializable;
 import java.util.List;
 
-import edu.colorodo.clear.wsd.classifier.StringInstance;
+import edu.colorodo.clear.wsd.classifier.SparseInstance;
 import edu.colorodo.clear.wsd.feature.model.FeatureModel;
 import edu.colorodo.clear.wsd.type.NlpInstance;
 
@@ -12,7 +13,7 @@ import edu.colorodo.clear.wsd.type.NlpInstance;
  * @param <I> input instance type
  * @author jamesgung
  */
-public interface FeaturePipeline<I extends NlpInstance> {
+public interface FeaturePipeline<I extends NlpInstance> extends Serializable {
 
     /**
      * Return the model associated with this feature pipeline.
@@ -20,19 +21,12 @@ public interface FeaturePipeline<I extends NlpInstance> {
     FeatureModel model();
 
     /**
-     * Initialize the pipeline with a feature model.
-     *
-     * @param featureModel feature model
-     */
-    void initialize(FeatureModel featureModel);
-
-    /**
      * Compute features for a single instance (used at test time).
      *
      * @param inputInstance input instance
      * @return output instance (input to a classification algorithm)
      */
-    StringInstance process(I inputInstance);
+    SparseInstance process(I inputInstance);
 
     /**
      * Extract features and perform any necessary training-specific processing.
@@ -40,6 +34,6 @@ public interface FeaturePipeline<I extends NlpInstance> {
      * @param instances list of input training instances
      * @return list of training instances (input to a classification algorithm)
      */
-    List<StringInstance> train(List<I> instances);
+    List<SparseInstance> train(List<I> instances);
 
 }

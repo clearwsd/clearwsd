@@ -17,6 +17,8 @@ import java.util.List;
  */
 public class TsvResourceInitializer<K> implements ResourceInitializer<MultimapResource<K>> {
 
+    private static final long serialVersionUID = -1044802169525334439L;
+
     @Override
     public void accept(MultimapResource<K> resource, InputStream inputStream) {
         ListMultimap<String, String> multimap = ArrayListMultimap.create();

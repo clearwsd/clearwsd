@@ -1,6 +1,5 @@
 package edu.colorodo.clear.wsd.classifier;
 
-import com.google.common.base.Preconditions;
 import com.google.common.base.Stopwatch;
 
 import de.bwaldvogel.liblinear.Feature;
@@ -12,10 +11,8 @@ import de.bwaldvogel.liblinear.Problem;
 import de.bwaldvogel.liblinear.SolverType;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.io.OutputStream;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -23,9 +20,6 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.function.BiConsumer;
 
-import edu.colorodo.clear.wsd.feature.model.Vocabulary;
-import edu.colorodo.clear.wsd.feature.model.BaseFeatureModel;
-import edu.colorodo.clear.wsd.feature.model.FeatureModel;
 import lombok.Getter;
 import lombok.experimental.Accessors;
 import lombok.extern.slf4j.Slf4j;
@@ -37,59 +31,9 @@ import lombok.extern.slf4j.Slf4j;
  */
 @Slf4j
 @Accessors(fluent = true)
-public class LibLinearClassifier implements SparseClassifier<LibLinearClassifier.LiblinearModel> {
+public class LibLinearClassifier implements SparseClassifier {
 
-    public static class LiblinearModel implements FeatureModel, ModelParameters {
-
-        private Model liblinearModel;
-        private FeatureModel featureModel;
-
-        public LiblinearModel() {
-            featureModel = new BaseFeatureModel();
-        }
-
-        @Override
-        public Vocabulary features() {
-            return featureModel.features();
-        }
-
-        @Override
-        public LiblinearModel features(Vocabulary features) {
-            featureModel.features(features);
-            return this;
-        }
-
-        @Override
-        public Vocabulary labels() {
-            return featureModel.labels();
-        }
-
-        @Override
-        public LiblinearModel labels(Vocabulary labels) {
-            featureModel.labels(labels);
-            return this;
-        }
-
-        @Override
-        public String label(int index) {
-            return featureModel.label(index);
-        }
-
-        @Override
-        public Integer labelIndex(String label) {
-            return featureModel.labelIndex(label);
-        }
-
-        @Override
-        public String feature(int index) {
-            return featureModel.feature(index);
-        }
-
-        @Override
-        public Integer featureIndex(String feature) {
-            return featureModel.featureIndex(feature);
-        }
-    }
+    private static final long serialVersionUID = -2620708926923172510L;
 
     public enum LibLinearParameter implements Hyperparameter<LibLinearClassifier> {
 
@@ -120,7 +64,7 @@ public class LibLinearClassifier implements SparseClassifier<LibLinearClassifier
     }
 
     @Getter
-    private LiblinearModel parameters;
+    private Model model;
 
     private SolverType solverType;
     private double cost;
@@ -136,77 +80,68 @@ public class LibLinearClassifier implements SparseClassifier<LibLinearClassifier
     }
 
     @Override
-    public Map<String, Double> score(SparseVector instance) {
-        double[] scores = new double[parameters.labels().indices().size()];
-        if (parameters.liblinearModel.isProbabilityModel()) {
-            Linear.predictProbability(parameters.liblinearModel, getFeatureArray(instance), scores);
+    public Map<Integer, Double> score(SparseInstance instance) {
+        double[] scores = new double[model.getNrClass()];
+        if (model.isProbabilityModel()) {
+            Linear.predictProbability(model, getFeatureArray(instance), scores);
         } else {
-            Linear.predictValues(parameters.liblinearModel, getFeatureArray(instance), scores);
+            Linear.predictValues(model, getFeatureArray(instance), scores);
         }
-        Map<String, Double> results = new HashMap<>();
-        for (Map.Entry<String, Integer> entry : parameters.labels().indices().entrySet()) {
-            results.put(entry.getKey(), scores[entry.getValue()]);
+        Map<Integer, Double> results = new HashMap<>();
+        for (double score : scores) {
+            results.put(results.size(), score);
         }
         return results;
     }
 
-
     @Override
-    public void initialize(LiblinearModel parameters) {
-        this.parameters = parameters;
-    }
-
-    @Override
-    public String classify(SparseVector instance) {
+    public Integer classify(SparseInstance instance) {
         Feature[] feat = getFeatureArray(instance);
-        return parameters.label((int) Linear.predict(parameters.liblinearModel, feat));
+        return (int) Linear.predict(model, feat);
     }
 
     @Override
-    public LiblinearModel train(List<StringInstance> train, List<StringInstance> valid) {
-        Preconditions.checkNotNull(parameters, "Model parameters must not be null. Initialize before training.");
+    public void train(List<SparseInstance> train, List<SparseInstance> valid) {
         Problem problem = new Problem();
         problem.l = train.size();
-        problem.n = parameters.features().indices().size();
+        problem.n = getMaxIndex(train);
         problem.x = getFeatures(train);
         problem.y = getLabels(train);
         problem.bias = -1; // don't include bias
         Stopwatch sw = Stopwatch.createStarted();
-        log.debug("Commencing training on {} examples with {} labels and {} features.", problem.l, parameters.labels().indices().size(),
-                problem.n);
-        parameters.liblinearModel = Linear.train(problem, new Parameter(solverType, cost, eps));
+        log.debug("Commencing training on {} examples with {} features.", problem.l, problem.n);
+        model = Linear.train(problem, new Parameter(solverType, cost, eps));
         log.debug("Training completed successfully in {}.", sw.toString());
-        return parameters;
     }
 
     @Override
-    public void load(InputStream inputStream) {
-        try (ObjectInputStream ois = new ObjectInputStream(inputStream)) {
-            parameters = (LiblinearModel) ois.readObject();
-        } catch (ClassNotFoundException | IOException e) {
-            throw new RuntimeException("Unable to load LibLinear classifier model.", e);
+    public void load(ObjectInputStream inputStream) {
+        try {
+            model = (Model) inputStream.readObject();
+        } catch (IOException | ClassNotFoundException e) {
+            throw new RuntimeException(e);
         }
     }
 
     @Override
-    public void save(OutputStream outputStream) {
-        try (ObjectOutputStream oos = new ObjectOutputStream(outputStream)) {
-            oos.writeObject(parameters);
+    public void save(ObjectOutputStream outputStream) {
+        try {
+            outputStream.writeObject(model);
         } catch (IOException e) {
-            throw new RuntimeException("Unable to save LibLinear classifier model.", e);
+            throw new RuntimeException(e);
         }
     }
 
-    private double[] getLabels(List<? extends StringInstance> instances) {
+    private double[] getLabels(List<SparseInstance> instances) {
         return instances.stream()
-                .mapToDouble(StringInstance::target)
+                .mapToDouble(SparseInstance::target)
                 .toArray();
     }
 
-    private Feature[][] getFeatures(List<? extends StringInstance> vectors) {
+    private Feature[][] getFeatures(List<SparseInstance> vectors) {
         Feature[][] features = new FeatureNode[vectors.size()][];
         int index = 0;
-        for (StringInstance vector : vectors) {
+        for (SparseInstance vector : vectors) {
             features[index++] = getFeatureArray(vector);
         }
         return features;
@@ -220,6 +155,16 @@ public class LibLinearClassifier implements SparseClassifier<LibLinearClassifier
             features[i] = new FeatureNode(indices[i] + 1, values[i]);
         }
         return features;
+    }
+
+    private int getMaxIndex(List<? extends SparseInstance> instances) {
+        int maxIndex = 0;
+        for (SparseInstance instance : instances) {
+            for (int index : instance.indices()) {
+                maxIndex = Math.max(maxIndex, index);
+            }
+        }
+        return maxIndex + 1;
     }
 
 }

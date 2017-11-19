@@ -21,6 +21,8 @@ import static edu.colorodo.clear.wsd.feature.util.FeatureUtils.KEY_DELIM;
 @Accessors(fluent = true)
 public class ConcatenatingFeatureExtractor<T extends NlpInstance> extends NlpFeatureExtractor<T, String> {
 
+    private static final long serialVersionUID = 2179984341749253937L;
+
     @JsonProperty
     private List<FeatureExtractor<T, String>> extractors;
 

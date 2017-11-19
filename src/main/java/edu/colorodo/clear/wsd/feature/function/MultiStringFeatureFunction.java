@@ -27,6 +27,7 @@ import lombok.extern.slf4j.Slf4j;
 public class MultiStringFeatureFunction<InputT extends NlpInstance, OutputT extends NlpInstance>
         implements FeatureFunction<InputT> {
 
+    private static final long serialVersionUID = 2326594845630574435L;
     @JsonProperty
     private NlpContextFactory<InputT, OutputT> contextFactory;
     @JsonProperty

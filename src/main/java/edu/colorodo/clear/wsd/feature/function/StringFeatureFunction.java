@@ -24,6 +24,7 @@ import lombok.NoArgsConstructor;
 public class StringFeatureFunction<InputT extends NlpInstance, OutputT extends NlpInstance>
         implements FeatureFunction<InputT> {
 
+    private static final long serialVersionUID = -5155518913022081531L;
     @JsonProperty
     private NlpContextFactory<InputT, OutputT> contextFactory;
     @JsonProperty

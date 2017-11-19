@@ -3,6 +3,7 @@ package edu.colorodo.clear.wsd.feature.resource;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
 import java.io.InputStream;
+import java.io.Serializable;
 
 /**
  * Interface for lookup-based resources.
@@ -11,8 +12,8 @@ import java.io.InputStream;
  * @param <T> lookup value type, such as {@link String}.
  * @author jamesgung
  */
-@JsonTypeInfo(use=JsonTypeInfo.Id.MINIMAL_CLASS, include=JsonTypeInfo.As.PROPERTY, property="@c")
-public interface FeatureResource<K, T> {
+@JsonTypeInfo(use = JsonTypeInfo.Id.MINIMAL_CLASS, include = JsonTypeInfo.As.PROPERTY, property = "@c")
+public interface FeatureResource<K, T> extends Serializable {
 
     /**
      * Unique identifier of this resource.

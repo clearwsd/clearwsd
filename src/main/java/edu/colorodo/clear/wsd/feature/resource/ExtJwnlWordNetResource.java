@@ -36,11 +36,12 @@ import lombok.extern.slf4j.Slf4j;
 @NoArgsConstructor
 public class ExtJwnlWordNetResource<K extends NlpInstance> implements FeatureResource<K, List<String>> {
 
+    private static final long serialVersionUID = 4520884471486094705L;
     @Getter
     @JsonProperty
     private String key;
 
-    private Dictionary dict;
+    private transient Dictionary dict;
 
     public ExtJwnlWordNetResource(String key) {
         this.key = key;

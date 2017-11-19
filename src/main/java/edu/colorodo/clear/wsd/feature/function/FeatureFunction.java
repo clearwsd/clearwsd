@@ -2,6 +2,7 @@ package edu.colorodo.clear.wsd.feature.function;
 
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
+import java.io.Serializable;
 import java.util.List;
 
 import edu.colorodo.clear.wsd.feature.StringFeature;
@@ -13,8 +14,8 @@ import edu.colorodo.clear.wsd.type.NlpInstance;
  * @param <InputT> input type
  * @author jamesgung
  */
-@JsonTypeInfo(use=JsonTypeInfo.Id.MINIMAL_CLASS, include=JsonTypeInfo.As.PROPERTY, property="@c")
-public interface FeatureFunction<InputT extends NlpInstance> {
+@JsonTypeInfo(use = JsonTypeInfo.Id.MINIMAL_CLASS, include = JsonTypeInfo.As.PROPERTY, property = "@c")
+public interface FeatureFunction<InputT extends NlpInstance> extends Serializable {
 
     /**
      * Given an NLP instance type, produce a corresponding list of categorical features.

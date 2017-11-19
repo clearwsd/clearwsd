@@ -21,6 +21,8 @@ import static edu.colorodo.clear.wsd.feature.util.FeatureUtils.KEY_DELIM;
 @Accessors(fluent = true)
 public class StringListLookupFeature<T extends NlpInstance> extends NlpFeatureExtractor<T, List<String>> {
 
+    private static final long serialVersionUID = -5294861373939396232L;
+
     @JsonProperty
     private List<String> keys;
 
