@@ -38,7 +38,7 @@ public class ListAnnotator<T extends NlpInstance, S extends NlpTokenSequence<T>>
     public S annotate(S instance) {
         for (T token : instance.tokens()) {
             String key = baseExtractor.extract(token);
-            token.addFeature(key, resource.lookup(key));
+            token.addFeature(resourceKey, resource.lookup(key));
         }
         return instance;
     }

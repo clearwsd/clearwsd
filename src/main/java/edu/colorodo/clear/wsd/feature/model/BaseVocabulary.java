@@ -18,6 +18,8 @@ import lombok.experimental.Accessors;
 @Accessors(fluent = true)
 public class BaseVocabulary implements Vocabulary {
 
+    private static final long serialVersionUID = 5268053360096219564L;
+
     private BiMap<String, Integer> indices;
 
     @Setter

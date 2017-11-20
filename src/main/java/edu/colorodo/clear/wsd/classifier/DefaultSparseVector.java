@@ -16,6 +16,8 @@ import lombok.experimental.Accessors;
 @Accessors(fluent = true)
 public class DefaultSparseVector implements SparseVector {
 
+    private static final long serialVersionUID = -3910126278417663876L;
+
     private int[] indices;
 
     private float[] data;
