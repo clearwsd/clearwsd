@@ -1,13 +1,19 @@
 package edu.colorado.clear.wsd.app;
 
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.function.Function;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import edu.colorado.clear.wsd.classifier.Classifier;
 import edu.colorado.clear.wsd.classifier.LibLinearClassifier;
 import edu.colorado.clear.wsd.classifier.MultiClassifier;
 import edu.colorado.clear.wsd.corpus.VerbNetReader;
@@ -29,12 +35,13 @@ import edu.colorado.clear.wsd.feature.extractor.StringFunctionExtractor;
 import edu.colorado.clear.wsd.feature.extractor.StringListLookupFeature;
 import edu.colorado.clear.wsd.feature.extractor.string.LowercaseFunction;
 import edu.colorado.clear.wsd.feature.optim.FeaturePipelineFactory;
-import edu.colorado.clear.wsd.feature.optim.NlpFeaturePipelineFactory;
 import edu.colorado.clear.wsd.feature.optim.MetaModelTrainer;
+import edu.colorado.clear.wsd.feature.optim.NlpFeaturePipelineFactory;
 import edu.colorado.clear.wsd.type.DepNode;
 import edu.colorado.clear.wsd.type.DependencyTree;
 import edu.colorado.clear.wsd.type.FeatureType;
 import edu.colorado.clear.wsd.type.FocusInstance;
+import edu.colorado.clear.wsd.verbnet.VerbNetClassifier;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -201,9 +208,15 @@ public class VerbNetClassifierUtils {
         List<CrossValidation.Fold<FocusInstance<DepNode, DependencyTree>>> folds = cv.createFolds(instances, 5, 0.8);
         FeaturePipelineFactory<FocusInstance<DepNode, DependencyTree>> factory = getFactory();
         MultiClassifier<FocusInstance<DepNode, DependencyTree>, String> multi = new MultiClassifier<>(
-                i -> i.focus().feature(FeatureType.Predicate.name()),
-                () -> new MetaModelTrainer<>(factory, LibLinearClassifier::new, 0));
-        Evaluation overall = new Evaluation(cv.crossValidate(multi, folds));
-        log.info(overall.toString());
+                (Serializable & Function<FocusInstance<DepNode, DependencyTree>, String>)
+                        (i) -> i.focus().feature(FeatureType.Predicate.name()),
+                (Serializable & Supplier<Classifier<FocusInstance<DepNode, DependencyTree>, String>>)
+                        () -> new MetaModelTrainer<>(factory, LibLinearClassifier::new, 0));
+        VerbNetClassifier classifier = new VerbNetClassifier(multi);
+        classifier.train(instances, new ArrayList<>());
+        classifier.save(new ObjectOutputStream(new FileOutputStream("data/model.bin")));
+
+        Evaluation overall = new Evaluation(cv.crossValidate(classifier, folds));
+        log.info("\n{}", overall.toString());
     }
 }

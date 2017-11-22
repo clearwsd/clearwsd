@@ -23,7 +23,7 @@ public class MultiClassifier<U, V> implements Classifier<U, V> {
     private static final long serialVersionUID = 2665985487749568860L;
 
     private Function<U, String> keyFunction;
-    private Supplier<Classifier<U, V>> prototypeClassifier;
+    private transient Supplier<Classifier<U, V>> prototypeClassifier;
 
     private Map<String, Classifier<U, V>> classifierMap = new HashMap<>();
 

@@ -13,5 +13,7 @@ public enum FeatureType {
     Dep,
     Gold,
     Predicate,
+    Sense,
+    Metadata
 
 }

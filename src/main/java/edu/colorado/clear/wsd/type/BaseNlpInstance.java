@@ -1,5 +1,6 @@
 package edu.colorado.clear.wsd.type;
 
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -49,6 +50,7 @@ public class BaseNlpInstance implements NlpInstance {
     @Override
     public String toString() {
         return index + "\t" + features.entrySet().stream()
+                .sorted(Comparator.comparing(Map.Entry::getKey))
                 .map((e) -> e.getKey() + ":" + e.getValue())
                 .collect(Collectors.joining("\t"));
     }

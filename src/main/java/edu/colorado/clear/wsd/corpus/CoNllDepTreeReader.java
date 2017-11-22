@@ -123,15 +123,14 @@ public class CoNllDepTreeReader implements CorpusReader<DependencyTree> {
 
     protected String treeToString(DependencyTree tree) {
         List<String> lines = new ArrayList<>();
-        int index = 0;
         for (DepNode depNode : tree.tokens()) {
             List<String> fields = new ArrayList<>();
-            fields.add(Integer.toString(index));
+            fields.add(Integer.toString(depNode.index()));
             fields.add(depNode.feature(FeatureType.Text));
             fields.add(depNode.feature(FeatureType.Lemma));
             fields.add(depNode.feature(FeatureType.Pos));
-            fields.add(Integer.toString(depNode.isRoot() ? -1 : depNode.head().index()));
             fields.add(depNode.feature(FeatureType.Dep));
+            fields.add(Integer.toString(depNode.isRoot() ? -1 : depNode.head().index()));
             lines.add(String.join("\t", fields));
         }
         return String.join("\n", lines);

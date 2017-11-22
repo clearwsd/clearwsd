@@ -4,6 +4,9 @@ import com.google.common.collect.Sets;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -44,6 +47,7 @@ import edu.colorado.clear.wsd.type.DepNode;
 import edu.colorado.clear.wsd.type.DependencyTree;
 import edu.colorado.clear.wsd.type.FeatureType;
 import edu.colorado.clear.wsd.type.FocusInstance;
+import edu.colorado.clear.wsd.verbnet.VerbNetClassifier;
 import lombok.experimental.Accessors;
 import lombok.extern.slf4j.Slf4j;
 
@@ -123,17 +127,20 @@ public class VerbNetClassifierTrainer {
                 new AggregateAnnotator<>(annotators), resourceManager());
     }
 
-    public static void main(String[] args) throws FileNotFoundException {
+    public static void main(String[] args) throws IOException {
         List<FocusInstance<DepNode, DependencyTree>> instances
                 = new VerbNetReader().readInstances(new FileInputStream(args[1]));
         CrossValidation<FocusInstance<DepNode, DependencyTree>> cv
                 = new CrossValidation<>((FocusInstance<DepNode, DependencyTree> i) -> (String) i.feature(FeatureType.Gold));
         List<CrossValidation.Fold<FocusInstance<DepNode, DependencyTree>>> folds = cv.createFolds(instances, 5, 0.8);
 
-        NlpClassifier<FocusInstance<DepNode, DependencyTree>> classifier
+        NlpClassifier<FocusInstance<DepNode, DependencyTree>> baseClassifier
                 = new NlpClassifier<>(new LibLinearClassifier(), initializeFeatures());
+        VerbNetClassifier classifier = new VerbNetClassifier(baseClassifier);
+        classifier.train(instances, new ArrayList<>());
+        classifier.save(new ObjectOutputStream(new FileOutputStream("data/model.bin")));
         Evaluation overall = new Evaluation(cv.crossValidate(classifier, folds));
-        log.info(overall.toString());
+        log.info("\n{}", overall.toString());
     }
 
 }

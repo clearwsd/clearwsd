@@ -34,7 +34,7 @@ public class BaseNlpTokenSequence<T extends NlpInstance> extends BaseNlpInstance
 
     @Override
     public String toString() {
-        return super.toString() + "\n" + tokens.stream()
+        return tokens.stream()
                 .map(Object::toString)
                 .collect(Collectors.joining("\n"));
     }

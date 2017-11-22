@@ -42,7 +42,7 @@ public class MetaModelTrainer<U extends NlpInstance> implements Classifier<U, St
     @Setter
     private double ratio = 0.8;
     @Setter
-    private int iterations = 10;
+    private int iterations = 100;
 
     private NlpClassifier<U> classifier;
 
@@ -66,18 +66,24 @@ public class MetaModelTrainer<U extends NlpInstance> implements Classifier<U, St
     @Override
     public void train(List<U> train, List<U> valid) {
         CrossValidation<U> cv = new CrossValidation<>(seed, t -> t.feature(FeatureType.Gold.name()));
+        // search for best feature function using cross-validation
         Evaluation best = new Evaluation();
-        NlpClassifier<U> result;
+        FeaturePipeline<U> result = null;
         for (int i = 0; i < iterations; ++i) {
+            log.debug("Iteration {} (best score: {})", i, best.f1());
             List<Fold<U>> folds = cv.createFolds(train, this.folds, ratio);
             FeaturePipeline<U> featureFunction = featureFactory.create();
-            result = new NlpClassifier<>(classifierFactory.create(), featureFunction);
-            Evaluation eval = new Evaluation(cv.crossValidate(result, folds));
+            NlpClassifier<U> classifier = new NlpClassifier<>(classifierFactory.create(), featureFunction);
+            Evaluation eval = new Evaluation(cv.crossValidate(classifier, folds));
             if (eval.f1() > best.f1()) {
                 best = eval;
-                classifier = result;
+                result = featureFunction;
             }
         }
+        // train final classifier using the top-scoring feature function
+        classifier = new NlpClassifier<>(classifierFactory.create(), result);
+        classifier.train(train, valid);
+        log.debug("Overall top score: {}\n{}", best.f1(), best.toString());
     }
 
     @Override

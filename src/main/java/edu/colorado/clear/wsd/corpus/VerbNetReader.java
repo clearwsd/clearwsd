@@ -7,10 +7,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import edu.colorado.clear.wsd.type.FocusInstance;
 import edu.colorado.clear.wsd.type.DepNode;
 import edu.colorado.clear.wsd.type.DependencyTree;
 import edu.colorado.clear.wsd.type.FeatureType;
+import edu.colorado.clear.wsd.type.FocusInstance;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -44,13 +44,18 @@ public class VerbNetReader implements CorpusReader<FocusInstance<DepNode, Depend
     public void writeInstances(List<FocusInstance<DepNode, DependencyTree>> instances, OutputStream outputStream) {
         try (PrintWriter writer = new PrintWriter(outputStream)) {
             for (FocusInstance<DepNode, DependencyTree> instance : instances) {
-                writer.println("# " + new VerbNetInstanceParser().toString(new VerbNetInstance()
-                        .path(Integer.toString(instance.index()))
-                        .label(instance.feature(FeatureType.Gold))
-                        .sentence(instance.sequence().index())
-                        .token(instance.focus().index())
-                        .lemma(instance.feature(FeatureType.Predicate))
-                        .originalText(instance.sequence().feature(FeatureType.Text))));
+                String metadata = instance.feature(FeatureType.Metadata);
+                if (metadata == null) {
+                    writer.println("# " + new VerbNetInstanceParser().toString(new VerbNetInstance()
+                            .path(Integer.toString(instance.index()))
+                            .label(instance.feature(FeatureType.Gold))
+                            .sentence(instance.sequence().index())
+                            .token(instance.focus().index())
+                            .lemma(instance.feature(FeatureType.Predicate))
+                            .originalText(instance.sequence().feature(FeatureType.Text))));
+                } else {
+                    writer.println("# " + metadata);
+                }
                 writer.println(depReader.treeToString(instance.sequence()));
                 writer.println();
                 writer.flush();

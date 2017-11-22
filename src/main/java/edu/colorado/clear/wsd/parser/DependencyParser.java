@@ -9,22 +9,14 @@ import edu.colorado.clear.wsd.type.DependencyTree;
  *
  * @author jamesgung
  */
-public interface DependencyParser {
-
-    /**
-     * Split an input into sentences.
-     *
-     * @param input input text
-     * @return list of sentence strings
-     */
-    List<String> segment(String input);
+public interface DependencyParser extends NlpTokenizer {
 
     /**
      * Parse a sentence into an {@link DependencyTree}.
      *
-     * @param input input sentence
+     * @param tokens input sentence tokens
      * @return dependency tree
      */
-    DependencyTree parse(String input);
+    DependencyTree parse(List<String> tokens);
 
 }
