@@ -20,6 +20,8 @@
         <logback.version>1.2.3</logback.version>
         <jwnl.version>1.6.4</jwnl.version>
         <jackson.version>2.9.2</jackson.version>
+        <junit.version>4.12</junit.version>
+        <jverbnet.version>1.2.0</jverbnet.version>
     </properties>
 
     <dependencies>
@@ -57,6 +59,27 @@
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
             <version>${jackson.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>edu.mit</groupId>
+            <artifactId>jverbnet</artifactId>
+            <version>${jverbnet.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>${junit.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>edu.stanford.nlp</groupId>
+            <artifactId>stanford-corenlp</artifactId>
+            <version>3.8.0</version>
+        </dependency>
+        <dependency>
+            <groupId>edu.stanford.nlp</groupId>
+            <artifactId>stanford-corenlp</artifactId>
+            <version>3.8.0</version>
+            <classifier>models</classifier>
         </dependency>
     </dependencies>
 
