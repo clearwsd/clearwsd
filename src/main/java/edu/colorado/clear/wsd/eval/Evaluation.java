@@ -6,6 +6,7 @@ import com.google.common.collect.Sets;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
@@ -30,6 +31,11 @@ public class Evaluation {
         systemCounts = HashMultiset.create();
         goldCounts = HashMultiset.create();
         correctCounts = HashMultiset.create();
+    }
+
+    public Evaluation(Collection<Evaluation> evaluations) {
+        this();
+        evaluations.forEach(this::add);
     }
 
     public void add(String system, String gold) {
@@ -84,22 +90,22 @@ public class Evaluation {
 
     public double precision() {
         int count = countPredictions();
-        return count == 0 ? 1.0 : (double) countCorrect() / count;
+        return count == 0 ? 0.0 : (double) countCorrect() / count;
     }
 
     public double precision(String value) {
         int count = countPredictions(value);
-        return count == 0 ? 1.0 : (double) countCorrect(value) / count;
+        return count == 0 ? 0.0 : (double) countCorrect(value) / count;
     }
 
     public double recall() {
         int count = countGold();
-        return count == 0 ? 1.0 : (double) countCorrect() / count;
+        return count == 0 ? 0.0 : (double) countCorrect() / count;
     }
 
     public double recall(String value) {
         int count = countGold(value);
-        return count == 0 ? 1.0 : (double) countCorrect(value) / count;
+        return count == 0 ? 0.0 : (double) countCorrect(value) / count;
     }
 
     public double fb(double beta) {

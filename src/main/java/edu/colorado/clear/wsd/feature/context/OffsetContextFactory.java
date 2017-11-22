@@ -3,6 +3,7 @@ package edu.colorado.clear.wsd.feature.context;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -25,6 +26,8 @@ public class OffsetContextFactory extends DepContextFactory {
 
     public static final String KEY = "COL";
 
+    private static final long serialVersionUID = 1961214534857020518L;
+
     @JsonProperty
     private List<Integer> offsets;
     @JsonProperty
@@ -43,6 +46,14 @@ public class OffsetContextFactory extends DepContextFactory {
 
     public OffsetContextFactory(List<Integer> offsets) {
         this(offsets, false);
+    }
+
+    public OffsetContextFactory(Integer... offsets) {
+        this(Arrays.asList(offsets), false);
+    }
+
+    public OffsetContextFactory(boolean concatenate, Integer... offsets) {
+        this(Arrays.asList(offsets), concatenate);
     }
 
     @Override

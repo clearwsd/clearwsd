@@ -17,10 +17,11 @@ import lombok.extern.slf4j.Slf4j;
 /**
  * Sampling-based cross validation w/ per-class sub-folds for balanced sampling.
  *
+ * @param <T> instance type
  * @author jamesgung
  */
 @Slf4j
-public class CrossValidation<U, T extends U> {
+public class CrossValidation<T> {
 
     private Random random;
 

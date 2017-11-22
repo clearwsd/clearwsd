@@ -2,6 +2,7 @@ package edu.colorado.clear.wsd.feature.pipeline;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
@@ -11,13 +12,13 @@ import edu.colorado.clear.wsd.classifier.SparseInstance;
 import edu.colorado.clear.wsd.classifier.SparseVectorBuilder;
 import edu.colorado.clear.wsd.feature.StringFeature;
 import edu.colorado.clear.wsd.feature.annotator.Annotator;
+import edu.colorado.clear.wsd.feature.function.FeatureFunction;
 import edu.colorado.clear.wsd.feature.model.BaseFeatureModel;
 import edu.colorado.clear.wsd.feature.model.FeatureModel;
 import edu.colorado.clear.wsd.feature.resource.FeatureResourceManager;
 import edu.colorado.clear.wsd.feature.util.VocabularyBuilder;
 import edu.colorado.clear.wsd.type.FeatureType;
 import edu.colorado.clear.wsd.type.NlpInstance;
-import edu.colorado.clear.wsd.feature.function.FeatureFunction;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -40,7 +41,7 @@ public class DefaultFeaturePipeline<I extends NlpInstance> implements FeaturePip
     private Annotator<I> annotators;
     private FeatureModel model;
 
-    private Function<I, String> labelFunction = (i -> i.feature(FeatureType.Gold));
+    private Function<I, String> labelFunction = (Serializable & Function<I, String>) i -> i.feature(FeatureType.Gold);
     private transient FeatureResourceManager featureResourceManager;
 
     public DefaultFeaturePipeline(FeatureResourceManager featureResourceManager) {
@@ -64,7 +65,7 @@ public class DefaultFeaturePipeline<I extends NlpInstance> implements FeaturePip
         features.stream().map(feature -> model.featureIndex(feature.toString()))
                 .forEach(builder::addIndex);
 
-        int target = model.labelIndex(labelFunction.apply(instance));
+        int target = model.labelIndex(instance.feature(FeatureType.Gold));
         return new DefaultStringInstance(instance.index(), target, builder.build());
     }
 
@@ -85,7 +86,7 @@ public class DefaultFeaturePipeline<I extends NlpInstance> implements FeaturePip
             features.stream().map(f -> featureVocab.index(f.toString()))
                     .forEach(builder::addIndex);
 
-            int target = labelVocab.index(labelFunction.apply(instance));
+            int target = labelVocab.index(instance.feature(FeatureType.Gold));
             results.add(new DefaultStringInstance(instance.index(), target, builder.build()));
         }
 

@@ -56,20 +56,24 @@ import lombok.extern.slf4j.Slf4j;
 @Accessors(fluent = true)
 public class VerbNetClassifierTrainer {
 
-    private static FeatureResourceManager resourceManager() throws FileNotFoundException {
-        DefaultFeatureResourceManager resourceManager = new DefaultFeatureResourceManager();
-        List<String> clusters = Arrays.asList("cluster-100", "cluster-320", "cluster-1000", "cluster-3200", "cluster-10000");
-        for (String cluster : clusters) {
-            MultimapResource<String> multimapResource = new MultimapResource<>(cluster);
-            multimapResource.keyFunction(new LowercaseFunction());
-            multimapResource.initialize(new FileInputStream("data/learningResources/clusters/" + cluster));
-            resourceManager.addResource(cluster, multimapResource);
+    public static FeatureResourceManager resourceManager() {
+        try {
+            DefaultFeatureResourceManager resourceManager = new DefaultFeatureResourceManager();
+            List<String> clusters = Arrays.asList("cluster-100", "cluster-320", "cluster-1000", "cluster-3200", "cluster-10000");
+            for (String cluster : clusters) {
+                MultimapResource<String> multimapResource = new MultimapResource<>(cluster);
+                multimapResource.keyFunction(new LowercaseFunction());
+                multimapResource.initialize(new FileInputStream("data/learningResources/clusters/" + cluster));
+                resourceManager.addResource(cluster, multimapResource);
+            }
+            MultimapResource<String> multimapResource = new MultimapResource<>("brown");
+            multimapResource.initializer(new BrownClusterResourceInitializer<>());
+            multimapResource.initialize(new FileInputStream("data/learningResources/bwc.txt"));
+            resourceManager.addResource("brown", multimapResource);
+            return resourceManager;
+        } catch (FileNotFoundException e) {
+            throw new RuntimeException(e);
         }
-        MultimapResource<String> multimapResource = new MultimapResource<>("brown");
-        multimapResource.initializer(new BrownClusterResourceInitializer<>());
-        multimapResource.initialize(new FileInputStream("data/learningResources/bwc.txt"));
-        resourceManager.addResource("brown", multimapResource);
-        return resourceManager;
     }
 
     private static FeaturePipeline<FocusInstance<DepNode, DependencyTree>> initializeFeatures() throws FileNotFoundException {
@@ -122,17 +126,14 @@ public class VerbNetClassifierTrainer {
     public static void main(String[] args) throws FileNotFoundException {
         List<FocusInstance<DepNode, DependencyTree>> instances
                 = new VerbNetReader().readInstances(new FileInputStream(args[1]));
-        CrossValidation<FocusInstance<DepNode, DependencyTree>, FocusInstance<DepNode, DependencyTree>> cv
+        CrossValidation<FocusInstance<DepNode, DependencyTree>> cv
                 = new CrossValidation<>((FocusInstance<DepNode, DependencyTree> i) -> (String) i.feature(FeatureType.Gold));
-        List<CrossValidation.Fold<FocusInstance<DepNode, DependencyTree>>> folds = cv.createFolds(instances, 1, 0.8);
+        List<CrossValidation.Fold<FocusInstance<DepNode, DependencyTree>>> folds = cv.createFolds(instances, 5, 0.8);
 
         NlpClassifier<FocusInstance<DepNode, DependencyTree>> classifier
                 = new NlpClassifier<>(new LibLinearClassifier(), initializeFeatures());
-
-        List<Evaluation> evaluations = cv.crossValidate(classifier, folds);
-        Evaluation overall = new Evaluation();
-        evaluations.forEach(overall::add);
-        System.out.println(overall.toString());
+        Evaluation overall = new Evaluation(cv.crossValidate(classifier, folds));
+        log.info(overall.toString());
     }
 
 }

@@ -2,6 +2,7 @@ package edu.colorado.clear.wsd.feature.context;
 
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
+import java.io.Serializable;
 import java.util.List;
 
 import edu.colorado.clear.wsd.type.NlpInstance;
@@ -14,7 +15,7 @@ import edu.colorado.clear.wsd.type.NlpInstance;
  * @author jamesgung
  */
 @JsonTypeInfo(use=JsonTypeInfo.Id.MINIMAL_CLASS, include=JsonTypeInfo.As.PROPERTY, property="@c")
-public interface NlpContextFactory<InputT extends NlpInstance, OutputT extends NlpInstance> {
+public interface NlpContextFactory<InputT extends NlpInstance, OutputT extends NlpInstance> extends Serializable {
 
     /**
      * Create a context given an input instance.

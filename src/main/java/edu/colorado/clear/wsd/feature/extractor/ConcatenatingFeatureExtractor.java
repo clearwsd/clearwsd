@@ -2,6 +2,7 @@ package edu.colorado.clear.wsd.feature.extractor;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -27,6 +28,11 @@ public class ConcatenatingFeatureExtractor<T extends NlpInstance> extends NlpFea
     public ConcatenatingFeatureExtractor(@JsonProperty("extractors") List<FeatureExtractor<T, String>> extractors) {
         this.extractors = extractors;
         id = extractors.stream().map(FeatureExtractor::id).collect(Collectors.joining(FeatureUtils.KEY_DELIM));
+    }
+
+    @SafeVarargs
+    public ConcatenatingFeatureExtractor(FeatureExtractor<T, String>... extractors) {
+        this(Arrays.asList(extractors));
     }
 
     @Override

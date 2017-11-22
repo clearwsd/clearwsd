@@ -40,7 +40,8 @@ public class LibLinearClassifier implements SparseClassifier {
         Solver("LibLinear solver", SolverType.L2R_L2LOSS_SVC.name(),
                 (c, value) -> c.solverType = SolverType.valueOf(value)),
         Cost("cost of constraints violation", "1", (c, value) -> c.cost = Double.valueOf(value)),
-        Epsilon("stopping criterion", "0.01", (c, value) -> c.eps = Double.valueOf(value));
+        Epsilon("stopping criterion", "0.01", (c, value) -> c.eps = Double.valueOf(value)),
+        Verbose("display training logs", "false", (c, value) -> c.verbose = Boolean.valueOf(value));
 
         private Hyperparameter<LibLinearClassifier> parameter;
 
@@ -69,6 +70,7 @@ public class LibLinearClassifier implements SparseClassifier {
     private SolverType solverType;
     private double cost;
     private double eps;
+    private boolean verbose;
 
     public LibLinearClassifier() {
         initialize(new Properties());
@@ -102,6 +104,11 @@ public class LibLinearClassifier implements SparseClassifier {
 
     @Override
     public void train(List<SparseInstance> train, List<SparseInstance> valid) {
+        if (verbose) {
+            Linear.enableDebugOutput();
+        } else {
+            Linear.disableDebugOutput();
+        }
         Problem problem = new Problem();
         problem.l = train.size();
         problem.n = getMaxIndex(train);
