@@ -19,8 +19,6 @@ import edu.colorado.clear.wsd.corpus.VerbNetReader;
 import edu.colorado.clear.wsd.eval.CrossValidation;
 import edu.colorado.clear.wsd.eval.Evaluation;
 import edu.colorado.clear.wsd.feature.annotator.AggregateAnnotator;
-import edu.colorado.clear.wsd.feature.annotator.Annotator;
-import edu.colorado.clear.wsd.feature.annotator.ListAnnotator;
 import edu.colorado.clear.wsd.feature.context.DepChildrenContextFactory;
 import edu.colorado.clear.wsd.feature.context.NlpContextFactory;
 import edu.colorado.clear.wsd.feature.context.OffsetContextFactory;
@@ -84,13 +82,9 @@ public class VerbNetClassifierTrainer {
         List<FeatureFunction<FocusInstance<DepNode, DependencyTree>>> features = new ArrayList<>();
         List<FeatureExtractor<DepNode, List<String>>> filteredDepExtractors = new ArrayList<>();
         List<String> clusters = Arrays.asList("cluster-100", "cluster-320", "cluster-1000", "cluster-3200", "cluster-10000");
-        List<Annotator<FocusInstance<DepNode, DependencyTree>>> annotators = new ArrayList<>();
         for (String cluster : clusters) {
-            annotators.add(new ListAnnotator<>(new StringFunctionExtractor<>(
-                    new LookupFeatureExtractor<>(FeatureType.Text.name()), new LowercaseFunction()), cluster));
             filteredDepExtractors.add(new StringListLookupFeature<>(cluster));
         }
-        annotators.add(new ListAnnotator<>(new LookupFeatureExtractor<>(FeatureType.Text.name()), "brown"));
         filteredDepExtractors.add(new StringListLookupFeature<>("brown"));
 
         FeatureExtractor<DepNode, String> text = new StringFunctionExtractor<>(
@@ -123,13 +117,17 @@ public class VerbNetClassifierTrainer {
         features.add(new StringFeatureFunction<>(rootPathContext, depPathExtractors));
         features.add(new BiasFeatureFunction<>());
 
-        return new DefaultFeaturePipeline<>(new AggregateFeatureFunction<>(features),
-                new AggregateAnnotator<>(annotators), resourceManager());
+        return new DefaultFeaturePipeline<>(new AggregateFeatureFunction<>(features));
     }
 
     public static void main(String[] args) throws IOException {
         List<FocusInstance<DepNode, DependencyTree>> instances
                 = new VerbNetReader().readInstances(new FileInputStream(args[1]));
+        AggregateAnnotator<FocusInstance<DepNode, DependencyTree>> annotator
+                = new AggregateAnnotator<>(VerbNetClassifierUtils.annotators());
+        annotator.initialize(resourceManager());
+        instances.forEach(annotator::annotate);
+
         CrossValidation<FocusInstance<DepNode, DependencyTree>> cv
                 = new CrossValidation<>((FocusInstance<DepNode, DependencyTree> i) -> (String) i.feature(FeatureType.Gold));
         List<CrossValidation.Fold<FocusInstance<DepNode, DependencyTree>>> folds = cv.createFolds(instances, 5, 0.8);

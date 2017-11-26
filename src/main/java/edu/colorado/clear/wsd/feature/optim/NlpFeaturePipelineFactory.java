@@ -7,8 +7,6 @@ import java.util.Objects;
 import java.util.Random;
 import java.util.stream.Collectors;
 
-import edu.colorado.clear.wsd.feature.annotator.AggregateAnnotator;
-import edu.colorado.clear.wsd.feature.annotator.Annotator;
 import edu.colorado.clear.wsd.feature.context.NlpContextFactory;
 import edu.colorado.clear.wsd.feature.extractor.FeatureExtractor;
 import edu.colorado.clear.wsd.feature.function.AggregateFeatureFunction;
@@ -18,8 +16,6 @@ import edu.colorado.clear.wsd.feature.function.MultiStringFeatureFunction;
 import edu.colorado.clear.wsd.feature.function.StringFeatureFunction;
 import edu.colorado.clear.wsd.feature.pipeline.DefaultFeaturePipeline;
 import edu.colorado.clear.wsd.feature.pipeline.FeaturePipeline;
-import edu.colorado.clear.wsd.feature.resource.DefaultFeatureResourceManager;
-import edu.colorado.clear.wsd.feature.resource.FeatureResourceManager;
 import edu.colorado.clear.wsd.type.NlpInstance;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -37,8 +33,6 @@ import lombok.experimental.Accessors;
 public class NlpFeaturePipelineFactory<I extends NlpInstance, O extends NlpInstance> implements FeaturePipelineFactory<I> {
 
     private List<FeatureFunctionFactory<I>> factories = new ArrayList<>();
-    private Annotator<I> annotators = new AggregateAnnotator<>(new ArrayList<>());
-    private FeatureResourceManager featureResourceManager = new DefaultFeatureResourceManager();
 
     private Random random;
 
@@ -53,7 +47,7 @@ public class NlpFeaturePipelineFactory<I extends NlpInstance, O extends NlpInsta
                 .filter(Objects::nonNull)
                 .collect(Collectors.toList()));
 
-        return new DefaultFeaturePipeline<>(featureFunction, annotators, featureResourceManager);
+        return new DefaultFeaturePipeline<>(featureFunction);
     }
 
     public NlpFeaturePipelineFactory<I, O> addBias() {

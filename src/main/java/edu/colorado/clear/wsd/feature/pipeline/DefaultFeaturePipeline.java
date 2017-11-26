@@ -11,11 +11,9 @@ import edu.colorado.clear.wsd.classifier.DefaultStringInstance;
 import edu.colorado.clear.wsd.classifier.SparseInstance;
 import edu.colorado.clear.wsd.classifier.SparseVectorBuilder;
 import edu.colorado.clear.wsd.feature.StringFeature;
-import edu.colorado.clear.wsd.feature.annotator.Annotator;
 import edu.colorado.clear.wsd.feature.function.FeatureFunction;
 import edu.colorado.clear.wsd.feature.model.BaseFeatureModel;
 import edu.colorado.clear.wsd.feature.model.FeatureModel;
-import edu.colorado.clear.wsd.feature.resource.FeatureResourceManager;
 import edu.colorado.clear.wsd.feature.util.VocabularyBuilder;
 import edu.colorado.clear.wsd.type.FeatureType;
 import edu.colorado.clear.wsd.type.NlpInstance;
@@ -37,28 +35,16 @@ public class DefaultFeaturePipeline<I extends NlpInstance> implements FeaturePip
 
     @JsonProperty
     private FeatureFunction<I> features;
-    @JsonProperty
-    private Annotator<I> annotators;
     private FeatureModel model;
 
     private Function<I, String> labelFunction = (Serializable & Function<I, String>) i -> i.feature(FeatureType.Gold);
-    private transient FeatureResourceManager featureResourceManager;
 
-    public DefaultFeaturePipeline(FeatureResourceManager featureResourceManager) {
-        this.featureResourceManager = featureResourceManager;
-    }
-
-    public DefaultFeaturePipeline(@JsonProperty("features") FeatureFunction<I> features,
-                                  @JsonProperty("annotators") Annotator<I> annotators,
-                                  FeatureResourceManager featureResourceManager) {
-        this(featureResourceManager);
+    public DefaultFeaturePipeline(@JsonProperty("features") FeatureFunction<I> features) {
         this.features = features;
-        this.annotators = annotators;
     }
 
     @Override
     public SparseInstance process(I instance) {
-        instance = annotators.annotate(instance);
         List<StringFeature> features = this.features.apply(instance);
 
         SparseVectorBuilder builder = new SparseVectorBuilder();
@@ -72,14 +58,12 @@ public class DefaultFeaturePipeline<I extends NlpInstance> implements FeaturePip
     @Override
     public List<SparseInstance> train(List<I> instances) {
         model = new BaseFeatureModel();
-        annotators.initialize(featureResourceManager);
 
         VocabularyBuilder featureVocab = new VocabularyBuilder();
         VocabularyBuilder labelVocab = new VocabularyBuilder();
 
         List<SparseInstance> results = new ArrayList<>();
         for (I instance : instances) {
-            instance = annotators.annotate(instance);
             List<StringFeature> features = this.features.apply(instance);
 
             SparseVectorBuilder builder = new SparseVectorBuilder();

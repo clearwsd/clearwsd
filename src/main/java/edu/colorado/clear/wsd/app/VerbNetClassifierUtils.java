@@ -44,6 +44,8 @@ import edu.colorado.clear.wsd.type.FocusInstance;
 import edu.colorado.clear.wsd.verbnet.VerbNetClassifier;
 import lombok.extern.slf4j.Slf4j;
 
+import static edu.colorado.clear.wsd.app.VerbNetClassifierTrainer.resourceManager;
+
 /**
  * Performs a random search for the best configuration with a performance metric and set of parameters.
  *
@@ -52,12 +54,12 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class VerbNetClassifierUtils {
 
-    private static List<String> CLUSTERS
+    public static List<String> CLUSTERS
             = Arrays.asList("cluster-100", "cluster-320", "cluster-1000", "cluster-3200", "cluster-10000");
 
-    private static String BROWN = "brown";
+    public static String BROWN = "brown";
 
-    private static List<NlpContextFactory<FocusInstance<DepNode, DependencyTree>, DepNode>> windowUnigrams() {
+    public static List<NlpContextFactory<FocusInstance<DepNode, DependencyTree>, DepNode>> windowUnigrams() {
         return Arrays.asList(
                 new OffsetContextFactory(0),
                 new OffsetContextFactory(-1, 0),
@@ -71,7 +73,7 @@ public class VerbNetClassifierUtils {
         );
     }
 
-    private static List<NlpContextFactory<FocusInstance<DepNode, DependencyTree>, DepNode>> collocations() {
+    public static List<NlpContextFactory<FocusInstance<DepNode, DependencyTree>, DepNode>> collocations() {
         return Arrays.asList(
                 new CompositeContextFactory<>(
                         new OffsetContextFactory(true, -2, -1),
@@ -105,7 +107,7 @@ public class VerbNetClassifierUtils {
         );
     }
 
-    private static List<NlpContextFactory<FocusInstance<DepNode, DependencyTree>, DepNode>> filteredContexts(int level) {
+    public static List<NlpContextFactory<FocusInstance<DepNode, DependencyTree>, DepNode>> filteredContexts(int level) {
         return Stream.of(
                 new DepChildrenContextFactory("nsubj", "nsubjpass", "dobj", "iobj", "csubj", "csubjpass", "ccomp", "xcomp",
                         "acl", "nmod", "advcl", "advmod"),
@@ -182,15 +184,11 @@ public class VerbNetClassifierUtils {
                 .addFeatureFunctionFactory(childModContexts, posDep, true)
                 .addFeatureFunctionFactory(childModContexts, dep, true)
                 .addFeatureFunctionFactory(childSkipModContexts, posDep, true)
-                .addFeatureFunctionFactory(childSkipModContexts, dep, true)
-
-                .annotators(new AggregateAnnotator<>(annotators()))
-                .featureResourceManager(VerbNetClassifierTrainer.resourceManager());
-
+                .addFeatureFunctionFactory(childSkipModContexts, dep, true);
         return featureFunctionFactory;
     }
 
-    private static List<Annotator<FocusInstance<DepNode, DependencyTree>>> annotators() {
+    public static List<Annotator<FocusInstance<DepNode, DependencyTree>>> annotators() {
         List<Annotator<FocusInstance<DepNode, DependencyTree>>> annotators = new ArrayList<>();
         for (String cluster : CLUSTERS) {
             annotators.add(new ListAnnotator<>(new StringFunctionExtractor<>(
@@ -203,6 +201,11 @@ public class VerbNetClassifierUtils {
     public static void main(String[] args) throws Throwable {
         List<FocusInstance<DepNode, DependencyTree>> instances
                 = new VerbNetReader().readInstances(new FileInputStream(args[1]));
+        AggregateAnnotator<FocusInstance<DepNode, DependencyTree>> annotator
+                = new AggregateAnnotator<>(VerbNetClassifierUtils.annotators());
+        annotator.initialize(resourceManager());
+        instances.forEach(annotator::annotate);
+
         CrossValidation<FocusInstance<DepNode, DependencyTree>> cv
                 = new CrossValidation<>((FocusInstance<DepNode, DependencyTree> i) -> (String) i.feature(FeatureType.Gold));
         List<CrossValidation.Fold<FocusInstance<DepNode, DependencyTree>>> folds = cv.createFolds(instances, 5, 0.8);

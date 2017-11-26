@@ -116,9 +116,13 @@ public class LibLinearClassifier implements SparseClassifier {
         problem.y = getLabels(train);
         problem.bias = -1; // don't include bias
         Stopwatch sw = Stopwatch.createStarted();
-        log.debug("Commencing training on {} examples with {} features.", problem.l, problem.n);
+        if (verbose) {
+            log.debug("Commencing training on {} examples with {} features.", problem.l, problem.n);
+        }
         model = Linear.train(problem, new Parameter(solverType, cost, eps));
-        log.debug("Training completed successfully in {}.", sw.toString());
+        if (verbose) {
+            log.debug("Training completed successfully in {}.", sw.toString());
+        }
     }
 
     @Override

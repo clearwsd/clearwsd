@@ -1,5 +1,8 @@
 package edu.colorado.clear.wsd.utils;
 
+import java.util.Collections;
+import java.util.List;
+import java.util.Objects;
 import java.util.Scanner;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -43,18 +46,30 @@ public class InteractiveTestLoop {
         test(dependencyParser, new InlineFormatter(key));
     }
 
+    public static void test(DependencyParser dependencyParser, List<String> keys) {
+        test(dependencyParser, new InlineFormatter(keys));
+    }
+
     @AllArgsConstructor
     public static class InlineFormatter implements Function<DependencyTree, String> {
 
-        private String key;
+        private List<String> keys;
+
+        public InlineFormatter(String key) {
+            this.keys = Collections.singletonList(key);
+        }
 
         @Override
         public String apply(DependencyTree dependencyTree) {
             return dependencyTree.tokens().stream().map(t -> {
                 String text = t.feature(FeatureType.Text);
-                Object result = t.feature(key);
-                if (result != null) {
-                    return String.format("%s[%s]", text, result.toString());
+                List<String> results = keys.stream()
+                        .map(t::feature)
+                        .filter(Objects::nonNull)
+                        .map(Object::toString)
+                        .collect(Collectors.toList());
+                if (results.size() > 0) {
+                    return String.format("%s%s", text, results);
                 } else {
                     return text;
                 }
