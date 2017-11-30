@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
 
-import edu.colorado.clear.wsd.classifier.DefaultStringInstance;
+import edu.colorado.clear.wsd.classifier.DefaultSparseInstance;
 import edu.colorado.clear.wsd.classifier.SparseInstance;
 import edu.colorado.clear.wsd.classifier.SparseVectorBuilder;
 import edu.colorado.clear.wsd.feature.StringFeature;
@@ -52,7 +52,7 @@ public class DefaultFeaturePipeline<I extends NlpInstance> implements FeaturePip
                 .forEach(builder::addIndex);
 
         int target = model.labelIndex(instance.feature(FeatureType.Gold));
-        return new DefaultStringInstance(instance.index(), target, builder.build());
+        return new DefaultSparseInstance(instance.index(), target, builder.build());
     }
 
     @Override
@@ -71,7 +71,7 @@ public class DefaultFeaturePipeline<I extends NlpInstance> implements FeaturePip
                     .forEach(builder::addIndex);
 
             int target = labelVocab.index(instance.feature(FeatureType.Gold));
-            results.add(new DefaultStringInstance(instance.index(), target, builder.build()));
+            results.add(new DefaultSparseInstance(instance.index(), target, builder.build()));
         }
 
         model.features(featureVocab.build());

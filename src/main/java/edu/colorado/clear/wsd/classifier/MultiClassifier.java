@@ -13,11 +13,14 @@ import java.util.Map;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
+import lombok.extern.slf4j.Slf4j;
+
 /**
  * Multi-model classifier. Given a key function, map inputs onto sub-models, specialized for the input types.
  *
  * @author jamesgung
  */
+@Slf4j
 public class MultiClassifier<U, V> implements Classifier<U, V> {
 
     private static final long serialVersionUID = 2665985487749568860L;
@@ -52,7 +55,10 @@ public class MultiClassifier<U, V> implements Classifier<U, V> {
     public void train(List<U> train, List<U> valid) {
         ImmutableListMultimap<String, U> trainSplits = Multimaps.index(train, keyFunction::apply);
         ImmutableListMultimap<String, U> validSplits = Multimaps.index(valid, keyFunction::apply);
+        int numCategories = trainSplits.keySet().size();
+        int index = 1;
         for (String category : trainSplits.keySet()) {
+            log.debug("Training sub-model for {} ({} of {})", category, index++, numCategories);
             ImmutableList<U> trainCat = trainSplits.get(category);
             ImmutableList<U> validCat = validSplits.get(category);
             Classifier<U, V> classifier = prototypeClassifier.get();

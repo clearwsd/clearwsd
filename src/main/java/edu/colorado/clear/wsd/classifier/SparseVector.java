@@ -20,4 +20,6 @@ public interface SparseVector extends Serializable {
      */
     float[] data();
 
+    float l2();
+
 }

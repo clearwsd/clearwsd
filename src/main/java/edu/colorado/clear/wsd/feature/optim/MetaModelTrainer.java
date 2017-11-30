@@ -3,6 +3,7 @@ package edu.colorado.clear.wsd.feature.optim;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.text.DecimalFormat;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -14,6 +15,7 @@ import edu.colorado.clear.wsd.classifier.SparseClassifier;
 import edu.colorado.clear.wsd.eval.CrossValidation;
 import edu.colorado.clear.wsd.eval.CrossValidation.Fold;
 import edu.colorado.clear.wsd.eval.Evaluation;
+import edu.colorado.clear.wsd.feature.pipeline.DefaultFeaturePipeline;
 import edu.colorado.clear.wsd.feature.pipeline.FeaturePipeline;
 import edu.colorado.clear.wsd.feature.pipeline.NlpClassifier;
 import edu.colorado.clear.wsd.type.FeatureType;
@@ -43,6 +45,12 @@ public class MetaModelTrainer<U extends NlpInstance> implements Classifier<U, St
     private double ratio = 0.8;
     @Setter
     private int iterations = 100;
+    @Setter
+    private int patience = 50;
+    @Setter
+    private double maxScore = 1.0;
+    @Setter
+    private boolean parallel = true;
 
     private NlpClassifier<U> classifier;
 
@@ -69,21 +77,34 @@ public class MetaModelTrainer<U extends NlpInstance> implements Classifier<U, St
         // search for best feature function using cross-validation
         Evaluation best = new Evaluation();
         FeaturePipeline<U> result = null;
-        for (int i = 0; i < iterations; ++i) {
-            log.debug("Iteration {} (best score: {})", i, best.f1());
-            List<Fold<U>> folds = cv.createFolds(train, this.folds, ratio);
+        List<Fold<U>> folds = cv.createFolds(train, this.folds, ratio);
+        int epochsNoChange = 0;
+        for (int i = 1; i <= iterations && epochsNoChange < patience; ++i) {
             FeaturePipeline<U> featureFunction = featureFactory.create();
             NlpClassifier<U> classifier = new NlpClassifier<>(classifierFactory.create(), featureFunction);
-            Evaluation eval = new Evaluation(cv.crossValidate(classifier, folds));
-            if (eval.f1() > best.f1()) {
+
+            Evaluation eval = new Evaluation(
+                    parallel ? cv.crossValidateParallel(() -> new NlpClassifier<>(classifierFactory.create(),
+                            new DefaultFeaturePipeline<>(((DefaultFeaturePipeline<U>) featureFunction).features())), folds)
+                            : cv.crossValidate(classifier, folds)
+            );
+
+            if (eval.f1() > best.f1() || result == null) {
+                epochsNoChange = 0;
                 best = eval;
                 result = featureFunction;
+                log.debug("Iteration {}/{} (F1: {})", i, iterations, new DecimalFormat("#.###").format(best.f1()));
+            } else {
+                epochsNoChange++;
+            }
+            if (best.f1() >= maxScore) {
+                break;
             }
         }
         // train final classifier using the top-scoring feature function
         classifier = new NlpClassifier<>(classifierFactory.create(), result);
         classifier.train(train, valid);
-        log.debug("Overall top score: {}\n{}", best.f1(), best.toString());
+        log.debug("Overall top score: {}\n{}", new DecimalFormat("#.###").format(best.f1()), best.toString());
     }
 
     @Override
