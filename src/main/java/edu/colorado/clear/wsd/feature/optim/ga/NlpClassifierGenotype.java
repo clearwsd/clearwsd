@@ -23,11 +23,11 @@ import lombok.experimental.Accessors;
  *
  * @author jamesgung
  */
+@Setter
 @Getter
-@Accessors(fluent = true)
+@Accessors(fluent = true, chain = false)
 public class NlpClassifierGenotype<T extends NlpInstance, C extends SparseClassifier> implements Genotype<NlpClassifier<T>> {
 
-    @Setter
     private double fitness = -Double.MAX_VALUE;
 
     private Chromosome<OptionGene<FeatureFunction<T>>> features;

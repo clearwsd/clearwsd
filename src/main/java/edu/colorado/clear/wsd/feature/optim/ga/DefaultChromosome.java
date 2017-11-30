@@ -18,11 +18,11 @@ import lombok.experimental.Accessors;
  * @author jamesgung
  */
 @Setter
-@Accessors(fluent = true)
+@Getter
+@Accessors(fluent = true, chain = false)
 @AllArgsConstructor
 public class DefaultChromosome<G extends Gene> implements Chromosome<G> {
 
-    @Getter
     private List<G> genes;
     private Random random;
 
@@ -38,9 +38,7 @@ public class DefaultChromosome<G extends Gene> implements Chromosome<G> {
 
     @Override
     public DefaultChromosome<G> copy() {
-        DefaultChromosome<G> copy = new DefaultChromosome<>(genesCopy(), random);
-        copy.random = random;
-        return copy;
+        return new DefaultChromosome<>(genesCopy(), random);
     }
 
     @Override

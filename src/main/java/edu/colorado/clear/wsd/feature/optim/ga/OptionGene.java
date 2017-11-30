@@ -1,5 +1,7 @@
 package edu.colorado.clear.wsd.feature.optim.ga;
 
+import com.google.common.collect.ImmutableList;
+
 import java.util.List;
 import java.util.Random;
 
@@ -22,12 +24,12 @@ public class OptionGene<T> implements Gene {
     private Random random;
 
     private double activationProbability;
-    private List<T> possibleValues;
+    private ImmutableList<T> possibleValues;
 
     public OptionGene(List<T> possibleValues, Random random, double activationProbability) {
         this.random = random;
         this.activationProbability = activationProbability;
-        this.possibleValues = possibleValues;
+        this.possibleValues = ImmutableList.copyOf(possibleValues);
     }
 
     @Override

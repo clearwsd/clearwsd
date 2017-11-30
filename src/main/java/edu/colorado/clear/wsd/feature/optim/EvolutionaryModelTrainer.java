@@ -9,6 +9,7 @@ import java.util.Properties;
 
 import edu.colorado.clear.wsd.classifier.Classifier;
 import edu.colorado.clear.wsd.classifier.Hyperparameter;
+import edu.colorado.clear.wsd.feature.optim.ga.CrossValidatingFitnessFunction;
 import edu.colorado.clear.wsd.feature.optim.ga.GeneticAlgorithm;
 import edu.colorado.clear.wsd.feature.pipeline.NlpClassifier;
 import edu.colorado.clear.wsd.type.NlpInstance;
@@ -49,6 +50,7 @@ public class EvolutionaryModelTrainer<U extends NlpInstance> implements Classifi
     @Override
     public void train(List<U> train, List<U> valid) {
         // find the optimal feature architecture through cross-validation on training data
+        ((CrossValidatingFitnessFunction<U>) ga.fitnessFunction()).initialize(train);
         ga.run();
         // train on best genotype w/ full training set
         classifier = ga.best().phenotype();

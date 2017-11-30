@@ -1,5 +1,6 @@
 package edu.colorado.clear.wsd.feature.optim.ga;
 
+import com.google.common.base.Stopwatch;
 import com.google.common.collect.Lists;
 
 import java.text.DecimalFormat;
@@ -26,20 +27,21 @@ public class GeneticAlgorithm<T> {
     private Random random;
 
     @Setter
-    private double activationProbability = 0.8;
+    private double activationProbability = 0.75;
     @Setter
-    private int size = 25;
+    private int size = 100;
     @Setter
-    private int maxEpochs = 100;
+    private int maxEpochs = 50;
     @Setter
     private int patience = 10;
     @Setter
     private double maxFitness = 1.0;
     @Setter
-    private double baseMutationProbability = 0.5;
-
+    private double baseMutationProbability = 0.2;
     @Setter
-    private int numElites = 3;
+    private double baseCrossoverProbability = 0.9;
+    @Setter
+    private int numElites = 1;
 
     private int epoch;
     private int epochsNoChange;
@@ -54,7 +56,6 @@ public class GeneticAlgorithm<T> {
     private Genotype<T> prototype;
     @Setter
     private Function<T, Double> fitnessFunction;
-    private CrossoverOp<? extends Gene> crossoverOp = new SinglePointCrossover<>();
 
     public GeneticAlgorithm(int seed, Function<T, Double> fitnessFunction) {
         this.fitnessFunction = fitnessFunction;
@@ -89,14 +90,11 @@ public class GeneticAlgorithm<T> {
         // add cross-over population
         while (newPopulation.size() < size - numElites - 1) {
             List<Genotype<T>> children = cross(select(), select());
-            children.forEach(this::mutate);
-            newPopulation.addAll(children);
+            children.stream().map(this::mutate).forEach(newPopulation::add);
         }
         // if not even, add single mutated selection
         if (newPopulation.size() < size - numElites) {
-            Genotype<T> selection = select();
-            mutate(selection);
-            newPopulation.add(selection);
+            newPopulation.add(mutate(select()));
         }
         // add elites
         for (int i = 0; i < numElites; ++i) {
@@ -106,12 +104,12 @@ public class GeneticAlgorithm<T> {
     }
 
     private Genotype<T> select() {
-        double total = size * (1 + size) / 2; // averageFitness * population.size();
+        double total = size * (1 + size) / 2;
         double rand = random.nextDouble();
         double probability = 0;
         int index = 1;
         for (Genotype<T> individual : population) {
-            probability += index++ / total; // chromsome.fitness() / total
+            probability += index++ / total;
             if (rand < probability) {
                 return individual;
             }
@@ -120,11 +118,9 @@ public class GeneticAlgorithm<T> {
     }
 
     private List<Genotype<T>> cross(Genotype<T> first, Genotype<T> second) {
-        double maxFitness = Math.max(first.fitness(), second.fitness());
-        double prob = maxFitness <= averageFitness ? 1 : (this.overallBest - maxFitness) / (this.overallBest - averageFitness);
         Genotype<T> firstCopy = first.copy();
         Genotype<T> secondCopy = second.copy();
-        if (random.nextDouble() < prob) {
+        if (random.nextDouble() < baseCrossoverProbability) {
             firstCopy.cross(secondCopy);
             firstCopy.fitness(averageFitness);
             secondCopy.fitness(averageFitness);
@@ -132,28 +128,26 @@ public class GeneticAlgorithm<T> {
         return Arrays.asList(firstCopy, secondCopy);
     }
 
-
-    private void mutate(Genotype<T> individual) {
+    private Genotype<T> mutate(Genotype<T> individual) {
+        individual = individual.copy();
         double fitness = individual.fitness();
         double mutationProbability = fitness <= averageFitness ? baseMutationProbability
                 : baseMutationProbability * (maxFitness - fitness) / (maxFitness - averageFitness);
         for (Chromosome<?> chromosome : individual.chromosomes()) {
-            if (random.nextDouble() < mutationProbability) {
-                chromosome.genes().get(random.nextInt(chromosome.genes().size())).mutate();
+            for (Gene gene : chromosome.genes()) {
+                if (random.nextDouble() < mutationProbability) {
+                    gene.mutate();
+                }
             }
         }
+        return individual;
     }
 
     public void run() {
         overallBest = -Double.MAX_VALUE;
         averageFitness = -Double.MAX_VALUE;
         for (epoch = 0, epochsNoChange = 0; epoch < maxEpochs && (patience <= 0 || epochsNoChange < patience); ++epoch) {
-            log.debug("Start of epoch {} ({} epochs remain, max: {}, avg: {}", epoch,
-                    patience > 0 ? String.format("%d or %d", Math.max(0, maxEpochs - epoch),
-                            Math.max(0, patience - epochsNoChange)) : Math.max(0, maxEpochs - epoch),
-                    overallBest == -Double.MAX_VALUE ? "N/A" : new DecimalFormat("#.####").format(overallBest),
-                    averageFitness == -Double.MAX_VALUE ? "N/A" : new DecimalFormat("#.####").format(averageFitness));
-
+            Stopwatch sw = Stopwatch.createStarted();
             population = next();
             computeFitness();
 
@@ -161,6 +155,12 @@ public class GeneticAlgorithm<T> {
                 overallBest = best.fitness();
                 elites = Lists.reverse(population).subList(0, numElites);
                 epochsNoChange = 0;
+                log.debug("Epoch {} ({} epochs remain, max: {}, avg: {}, epoch time: {}", epoch,
+                        patience > 0 && patience < (maxEpochs - epoch)
+                                ? String.format("%d or %d", Math.max(0, maxEpochs - epoch),
+                                Math.max(0, patience - epochsNoChange)) : Math.max(0, maxEpochs - epoch),
+                        new DecimalFormat("#.####").format(overallBest),
+                        new DecimalFormat("#.####").format(averageFitness), sw);
             } else {
                 ++epochsNoChange;
             }
