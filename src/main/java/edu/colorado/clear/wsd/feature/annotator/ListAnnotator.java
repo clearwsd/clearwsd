@@ -4,11 +4,11 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.List;
 
-import edu.colorado.clear.wsd.feature.resource.FeatureResource;
-import edu.colorado.clear.wsd.type.NlpTokenSequence;
 import edu.colorado.clear.wsd.feature.extractor.FeatureExtractor;
+import edu.colorado.clear.wsd.feature.resource.FeatureResource;
 import edu.colorado.clear.wsd.feature.resource.FeatureResourceManager;
 import edu.colorado.clear.wsd.type.NlpInstance;
+import edu.colorado.clear.wsd.type.NlpTokenSequence;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 

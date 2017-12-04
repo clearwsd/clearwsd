@@ -8,8 +8,8 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.stream.Collectors;
 
-import edu.colorado.clear.wsd.classifier.Hyperparameter;
 import edu.colorado.clear.wsd.classifier.Classifier;
+import edu.colorado.clear.wsd.classifier.Hyperparameter;
 import edu.colorado.clear.wsd.classifier.SparseClassifier;
 import edu.colorado.clear.wsd.classifier.SparseInstance;
 import edu.colorado.clear.wsd.feature.model.FeatureModel;
