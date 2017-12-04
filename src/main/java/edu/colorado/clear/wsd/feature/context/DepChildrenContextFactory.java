@@ -29,7 +29,7 @@ public class DepChildrenContextFactory extends DepContextFactory {
 
     private static final long serialVersionUID = 8128479595556229276L;
 
-    public static final String KEY = "CHILD";
+    public static final String KEY = "D";
 
     @JsonProperty
     private Set<String> exclude;
@@ -37,6 +37,8 @@ public class DepChildrenContextFactory extends DepContextFactory {
     private Set<String> include;
     @JsonProperty
     private int level;
+    @JsonProperty
+    private boolean includeRel = false;
 
     /**
      * Initialize a {@link DepChildrenContextFactory} with child dependency label exclusions and inclusions.
@@ -66,11 +68,11 @@ public class DepChildrenContextFactory extends DepContextFactory {
     @Override
     public List<NlpContext<DepNode>> apply(FocusInstance<DepNode, DependencyTree> instance) {
         List<NlpContext<DepNode>> results = new ArrayList<>();
-        String key = String.format("%s[%d]", KEY, level);
         for (DepNode child : instance.focus().children().stream()
                 .filter(c -> include.size() == 0 || include.contains(c.dep()))
                 .filter(c -> exclude.size() == 0 || !exclude.contains(c.dep()))
                 .collect(Collectors.toList())) {
+            String key = includeRel ? String.format("%s:%s[%d]", KEY, child.dep(), level) : String.format("%s[%d]", KEY, level);
             if (level == 0) {
                 results.add(new NlpContext<>(key, child));
             } else {

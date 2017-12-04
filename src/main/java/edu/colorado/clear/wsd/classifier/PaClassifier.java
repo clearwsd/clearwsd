@@ -20,6 +20,7 @@ import java.util.function.BiConsumer;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import edu.colorado.clear.wsd.eval.Evaluation;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -40,7 +41,7 @@ public class PaClassifier implements SparseClassifier {
 
     public enum PaParameter implements Hyperparameter<PaClassifier> {
 
-        Averaging("perform parameter averaging", "false", (c, value) -> c.averaging = Boolean.valueOf(value)),
+        Averaging("perform parameter averaging", "true", (c, value) -> c.averaging = Boolean.valueOf(value)),
         Aggressiveness("aggressiveness parameter C", "0.0025", (c, value) -> c.aggressiveness = Float.valueOf(value)),
         Epochs("maximum number of epochs", "999", (c, value) -> c.epochs = Integer.valueOf(value)),
         Patience("number of epochs with no change in loss before early stopping", "10",
@@ -136,7 +137,9 @@ public class PaClassifier implements SparseClassifier {
                 if (validScore > maxScore) {
                     epochsNoChange = 0;
                     maxScore = validScore;
-                    saveParameters();
+                    if (!averaging) {
+                        saveParameters();
+                    }
                 } else {
                     ++epochsNoChange;
                 }
@@ -153,10 +156,9 @@ public class PaClassifier implements SparseClassifier {
                 }
             }
             if (verbose) {
-                log.debug("{} epochs remaining.",
-                        patience > 0 && patience < (epochsNoChange - epoch)
-                                ? String.format("%d or %d", Math.max(0, epochs - epoch),
-                                Math.max(0, patience - epochsNoChange)) : Math.max(0, epochs - epoch));
+                log.debug("{} epochs remaining.", patience > 0 && patience < (epochs - epoch)
+                        ? String.format("%d or %d", Math.max(0, epochs - epoch),
+                        Math.max(0, patience - epochsNoChange)) : Math.max(0, epochs - epoch));
             }
             ++count;
         }
@@ -195,13 +197,11 @@ public class PaClassifier implements SparseClassifier {
     }
 
     private double test(List<SparseInstance> instances) {
-        int correct = 0;
+        Evaluation evaluation = new Evaluation();
         for (SparseInstance instance : instances) {
-            if (classify(instance) == instance.target()) {
-                correct++;
-            }
+            evaluation.add(classify(instance).toString(), Integer.toString(instance.target()));
         }
-        return (double) correct / instances.size();
+        return evaluation.f1();
     }
 
     private void initParameters(List<SparseInstance> instances) {
