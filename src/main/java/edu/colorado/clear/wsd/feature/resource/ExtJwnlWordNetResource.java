@@ -65,17 +65,17 @@ public class ExtJwnlWordNetResource<K extends NlpInstance> implements FeatureRes
         if (dict == null) {
             initialize(null);
         }
-        return new ArrayList<>(getHypernyms(key.feature(FeatureType.Pos), key.feature(FeatureType.Lemma)));
+        return new ArrayList<>(hypernyms(key.feature(FeatureType.Lemma), key.feature(FeatureType.Pos)));
     }
 
-    private Set<String> getHypernyms(String pos, String string) {
+    private Set<String> hypernyms(String lemma, String pos) {
         Set<String> words = new HashSet<>();
         try {
-            POS wordNetPos = getPos(pos);
-            if (!POS.NOUN.equals(wordNetPos)) {
+            POS wnPos = getPos(pos);
+            if (!POS.NOUN.equals(wnPos)) {
                 return words;
             }
-            IndexWord indexWord = dict.getIndexWord(wordNetPos, string);
+            IndexWord indexWord = dict.getIndexWord(wnPos, lemma);
             if (indexWord == null) {
                 return words;
             }
@@ -87,7 +87,7 @@ public class ExtJwnlWordNetResource<K extends NlpInstance> implements FeatureRes
                         .collect(Collectors.toSet()));
             }
         } catch (Exception e) {
-            log.warn("Error getting WordNet hypernyms for {}-{}", string, pos, e);
+            log.warn("Error getting WordNet hypernyms for {}-{}", lemma, pos, e);
         }
         return words;
     }

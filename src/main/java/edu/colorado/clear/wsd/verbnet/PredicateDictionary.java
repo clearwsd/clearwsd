@@ -43,7 +43,6 @@ public class PredicateDictionary implements Function<NlpInstance, String>, Seria
         return mappings.getOrDefault(key, lemma);
     }
 
-
     @Data
     @Accessors(fluent = true)
     @AllArgsConstructor

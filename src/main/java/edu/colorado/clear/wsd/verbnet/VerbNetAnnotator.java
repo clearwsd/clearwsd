@@ -17,14 +17,15 @@ import lombok.experimental.Accessors;
  * @author jamesgung
  */
 @Getter
-@Setter
 @Accessors(fluent = true)
 public class VerbNetAnnotator implements Annotator<DependencyTree> {
 
     private static final long serialVersionUID = 1756016409763214122L;
 
-    private Classifier<FocusInstance<DepNode, DependencyTree>, String> classifier;
-    private Annotator<DependencyTree> predicateAnnotator;
+    private final Classifier<FocusInstance<DepNode, DependencyTree>, String> classifier;
+    private final Annotator<DependencyTree> predicateAnnotator;
+
+    @Setter
     private String annotationType = FeatureType.Sense.name();
 
     public VerbNetAnnotator(Classifier<FocusInstance<DepNode, DependencyTree>, String> classifier,

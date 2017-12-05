@@ -6,8 +6,6 @@ import edu.colorado.clear.wsd.type.DepNode;
 import edu.colorado.clear.wsd.type.DependencyTree;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 import static edu.colorado.clear.wsd.type.FeatureType.Pos;
 import static edu.colorado.clear.wsd.type.FeatureType.Predicate;
@@ -18,15 +16,13 @@ import static edu.colorado.clear.wsd.type.FeatureType.Predicate;
  *
  * @author jamesgung
  */
-@NoArgsConstructor
 @AllArgsConstructor
 public class DefaultPredicateAnnotator implements Annotator<DependencyTree> {
 
     private static final long serialVersionUID = -2953300591005876159L;
 
     @Getter
-    @Setter
-    private PredicateDictionary dictionary = new PredicateDictionary();
+    private final PredicateDictionary dictionary;
 
     @Override
     public DependencyTree annotate(DependencyTree instance) {

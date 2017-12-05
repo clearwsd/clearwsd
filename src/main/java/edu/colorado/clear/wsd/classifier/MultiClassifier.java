@@ -43,12 +43,21 @@ public class MultiClassifier<U, V> implements Classifier<U, V> {
 
     @Override
     public V classify(U instance) {
-        return classifierMap.get(keyFunction.apply(instance)).classify(instance);
+        String key = keyFunction.apply(instance);
+        if (classifierMap.containsKey(key)) {
+            classifierMap.get(key).classify(instance);
+        }
+        return null;
     }
 
     @Override
     public Map<V, Double> score(U instance) {
-        return classifierMap.get(keyFunction.apply(instance)).score(instance);
+        String key = keyFunction.apply(instance);
+        if (classifierMap.containsKey(key)) {
+            return classifierMap.get(key).score(instance);
+        } else {
+            return new HashMap<>();
+        }
     }
 
     @Override

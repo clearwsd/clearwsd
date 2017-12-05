@@ -26,7 +26,11 @@ public class CountingSenseInventory implements SenseInventory, Serializable {
     @Override
     @Nullable
     public String defaultSense(String lemma) {
-        return inventoryMap.get(lemma).entrySet().stream()
+        Map<String, Integer> senseMap = inventoryMap.get(lemma);
+        if (senseMap == null) {
+            return null;
+        }
+        return senseMap.entrySet().stream()
                 .reduce((e1, e2) -> e1.getValue() >= e2.getValue() ? e1 : e2)
                 .map(Map.Entry::getKey).orElse(null);
     }
