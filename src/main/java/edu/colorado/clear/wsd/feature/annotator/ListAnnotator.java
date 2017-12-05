@@ -1,37 +1,24 @@
 package edu.colorado.clear.wsd.feature.annotator;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-
-import java.util.List;
-
 import edu.colorado.clear.wsd.feature.extractor.FeatureExtractor;
-import edu.colorado.clear.wsd.feature.resource.FeatureResource;
 import edu.colorado.clear.wsd.feature.resource.FeatureResourceManager;
 import edu.colorado.clear.wsd.type.NlpInstance;
 import edu.colorado.clear.wsd.type.NlpTokenSequence;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
 
 /**
  * Annotates tokens in a sequence with lists.
  *
  * @author jamesgung
  */
-@Getter
-@AllArgsConstructor
-public class ListAnnotator<T extends NlpInstance, S extends NlpTokenSequence<T>> implements Annotator<S> {
+public class ListAnnotator<T extends NlpInstance, S extends NlpTokenSequence<T>> extends ResourceAnnotator<String, S> {
 
     private static final long serialVersionUID = -6170529305032382231L;
-    @JsonProperty
+
     private FeatureExtractor<T, String> baseExtractor;
-    @JsonProperty
-    private String resourceKey;
 
-    private FeatureResource<String, List<String>> resource;
-
-    public ListAnnotator(FeatureExtractor<T, String> baseExtractor, String resourceKey) {
+    public ListAnnotator(String resourceKey, FeatureExtractor<T, String> baseExtractor) {
+        super(resourceKey);
         this.baseExtractor = baseExtractor;
-        this.resourceKey = resourceKey;
     }
 
     @Override
@@ -47,4 +34,5 @@ public class ListAnnotator<T extends NlpInstance, S extends NlpTokenSequence<T>>
     public void initialize(FeatureResourceManager featureResourceManager) {
         this.resource = featureResourceManager.getResource(resourceKey);
     }
+
 }

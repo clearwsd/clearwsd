@@ -2,8 +2,6 @@ package edu.colorado.clear.wsd.feature.resource;
 
 import com.google.common.base.Stopwatch;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 import net.sf.extjwnl.data.IndexWord;
 import net.sf.extjwnl.data.POS;
 import net.sf.extjwnl.data.PointerUtils;
@@ -39,7 +37,6 @@ public class ExtJwnlWordNetResource<K extends NlpInstance> implements FeatureRes
     public static final String KEY = "WN";
 
     @Getter
-    @JsonProperty
     private String key = KEY;
 
     private Dictionary dict;

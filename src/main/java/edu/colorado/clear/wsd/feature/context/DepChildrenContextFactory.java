@@ -1,7 +1,5 @@
 package edu.colorado.clear.wsd.feature.context;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -31,13 +29,9 @@ public class DepChildrenContextFactory extends DepContextFactory {
 
     public static final String KEY = "D";
 
-    @JsonProperty
     private Set<String> exclude;
-    @JsonProperty
     private Set<String> include;
-    @JsonProperty
     private int level;
-    @JsonProperty
     private boolean includeRel = false;
 
     /**

@@ -7,16 +7,12 @@ import edu.colorado.clear.wsd.feature.StringFeature;
 import edu.colorado.clear.wsd.feature.util.FeatureUtils;
 import edu.colorado.clear.wsd.type.NlpInstance;
 import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.Setter;
 
 /**
  * Conjoin the results of two feature functions.
  *
  * @author jamesgung
  */
-@Getter
-@Setter
 @AllArgsConstructor
 public class ConjunctionFunction<InputT extends NlpInstance> implements FeatureFunction<InputT> {
 

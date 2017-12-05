@@ -1,37 +1,25 @@
 package edu.colorado.clear.wsd.feature.extractor;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 import java.util.Collections;
 import java.util.List;
 
 import edu.colorado.clear.wsd.feature.util.FeatureUtils;
 import edu.colorado.clear.wsd.type.NlpInstance;
-import lombok.Getter;
-import lombok.experimental.Accessors;
 
 /**
  * Feature extractor that looks up an associated key or keys, optionally falling back to another extractor if nothing is found.
  *
  * @author jamesgung
  */
-@Getter
-@Accessors(fluent = true)
 public class LookupFeatureExtractor<T extends NlpInstance> extends NlpFeatureExtractor<T, String> {
 
-    public static final String DEFAULT_VALUE = "<NONE>";
-
+    private static final String DEFAULT_VALUE = "<NONE>";
     private static final long serialVersionUID = -8167041300890840929L;
 
-    @JsonProperty
     private List<String> keys;
-    @JsonProperty
     private FeatureExtractor<T, String> fallbackExtractor;
 
-    @JsonCreator
-    public LookupFeatureExtractor(@JsonProperty("keys") List<String> keys,
-                                  @JsonProperty("fallbackExtractor") FeatureExtractor<T, String> fallbackExtractor) {
+    public LookupFeatureExtractor(List<String> keys, FeatureExtractor<T, String> fallbackExtractor) {
         this.keys = keys;
         this.fallbackExtractor = fallbackExtractor;
         id = String.join(FeatureUtils.KEY_DELIM, keys);

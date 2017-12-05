@@ -1,7 +1,5 @@
 package edu.colorado.clear.wsd.feature.pipeline;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -22,7 +20,7 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 
 /**
- * Default feature pipeline. Feature configuration is JSON-serializable through Jackson.
+ * Default feature pipeline.
  *
  * @author jamesgung
  */
@@ -33,13 +31,12 @@ public class DefaultFeaturePipeline<I extends NlpInstance> implements FeaturePip
 
     private static final long serialVersionUID = 7756681760870831311L;
 
-    @JsonProperty
     private FeatureFunction<I> features;
     private FeatureModel model;
 
     private Function<I, String> labelFunction = (Serializable & Function<I, String>) i -> i.feature(FeatureType.Gold);
 
-    public DefaultFeaturePipeline(@JsonProperty("features") FeatureFunction<I> features) {
+    public DefaultFeaturePipeline(FeatureFunction<I> features) {
         this.features = features;
     }
 

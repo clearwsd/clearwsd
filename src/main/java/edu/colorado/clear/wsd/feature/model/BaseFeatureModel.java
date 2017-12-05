@@ -1,6 +1,5 @@
 package edu.colorado.clear.wsd.feature.model;
 
-import edu.colorado.clear.wsd.feature.resource.FeatureResourceManager;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -43,8 +42,5 @@ public class BaseFeatureModel implements FeatureModel {
     public Integer featureIndex(String feature) {
         return features.index(feature);
     }
-
-    @Getter
-    private transient FeatureResourceManager resourceManager;
 
 }

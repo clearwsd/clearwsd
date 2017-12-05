@@ -6,8 +6,9 @@ import java.util.Collections;
 
 import edu.colorado.clear.wsd.feature.TestInstanceBuilder;
 import edu.colorado.clear.wsd.feature.extractor.LookupFeatureExtractor;
-import edu.colorado.clear.wsd.feature.resource.MultimapResource;
+import edu.colorado.clear.wsd.feature.resource.DefaultFeatureResourceManager;
 import edu.colorado.clear.wsd.feature.resource.DefaultTsvResourceInitializer;
+import edu.colorado.clear.wsd.feature.resource.MultimapResource;
 import edu.colorado.clear.wsd.type.DepNode;
 import edu.colorado.clear.wsd.type.DependencyTree;
 import edu.colorado.clear.wsd.type.FeatureType;
@@ -36,8 +37,8 @@ public class ListAnnotatorTest {
         MultimapResource<String> testResource = new DefaultTsvResourceInitializer<String>(
                 "testResource", "src/test/resources/test_resource.tsv").get();
         ListAnnotator<DepNode, FocusInstance<DepNode, DependencyTree>> annotator = new ListAnnotator<>(
-                new LookupFeatureExtractor<DepNode>(FeatureType.Text.name()),
-                "testResource", testResource);
+                "testResource", new LookupFeatureExtractor<DepNode>(FeatureType.Text.name()));
+        annotator.initialize(new DefaultFeatureResourceManager().addResource("testResource", testResource));
         FocusInstance<DepNode, DependencyTree> annotated = annotator.annotate(getTestInstance());
         assertEquals(Collections.singletonList("noun"), annotated.get(1).feature("testResource"));
         assertEquals(Collections.singletonList("verb"), annotated.get(2).feature("testResource"));

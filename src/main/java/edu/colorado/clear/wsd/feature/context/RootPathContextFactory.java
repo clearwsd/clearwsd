@@ -1,7 +1,5 @@
 package edu.colorado.clear.wsd.feature.context;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -10,7 +8,6 @@ import edu.colorado.clear.wsd.type.DepNode;
 import edu.colorado.clear.wsd.type.DependencyTree;
 import edu.colorado.clear.wsd.type.FocusInstance;
 import lombok.AllArgsConstructor;
-import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 /**
@@ -18,7 +15,6 @@ import lombok.NoArgsConstructor;
  *
  * @author jamesgung
  */
-@Getter
 @NoArgsConstructor
 @AllArgsConstructor
 public class RootPathContextFactory extends DepContextFactory {
@@ -27,9 +23,7 @@ public class RootPathContextFactory extends DepContextFactory {
 
     private static final long serialVersionUID = 1084074273199439311L;
 
-    @JsonProperty
     private boolean includeNode = false;
-    @JsonProperty
     private int maxLength = -1;
 
     @Override

@@ -1,7 +1,5 @@
 package edu.colorado.clear.wsd.feature.extractor;
 
-import com.fasterxml.jackson.annotation.JsonTypeInfo;
-
 import java.io.Serializable;
 
 /**
@@ -11,7 +9,6 @@ import java.io.Serializable;
  * @param <S> feature output type
  * @author jamesgung
  */
-@JsonTypeInfo(use = JsonTypeInfo.Id.MINIMAL_CLASS, include = JsonTypeInfo.As.PROPERTY, property = "@c")
 public interface FeatureExtractor<T, S> extends Serializable {
 
     /**

@@ -10,5 +10,7 @@ import edu.colorado.clear.wsd.type.FocusInstance;
  * @author jamesgung
  */
 abstract class DepContextFactory implements NlpContextFactory<FocusInstance<DepNode, DependencyTree>, DepNode> {
+
     private static final long serialVersionUID = -3387961962284032456L;
+
 }

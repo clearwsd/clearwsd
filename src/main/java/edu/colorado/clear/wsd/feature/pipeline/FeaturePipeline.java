@@ -1,7 +1,5 @@
 package edu.colorado.clear.wsd.feature.pipeline;
 
-import com.fasterxml.jackson.annotation.JsonTypeInfo;
-
 import java.io.Serializable;
 import java.util.List;
 
@@ -15,7 +13,6 @@ import edu.colorado.clear.wsd.type.NlpInstance;
  * @param <I> input instance type
  * @author jamesgung
  */
-@JsonTypeInfo(use = JsonTypeInfo.Id.MINIMAL_CLASS, include = JsonTypeInfo.As.PROPERTY, property = "@c")
 public interface FeaturePipeline<I extends NlpInstance> extends Serializable {
 
     /**

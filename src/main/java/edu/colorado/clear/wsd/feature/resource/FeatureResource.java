@@ -1,7 +1,5 @@
 package edu.colorado.clear.wsd.feature.resource;
 
-import com.fasterxml.jackson.annotation.JsonTypeInfo;
-
 import java.io.Serializable;
 
 /**
@@ -11,7 +9,6 @@ import java.io.Serializable;
  * @param <T> lookup value type, such as {@link String}.
  * @author jamesgung
  */
-@JsonTypeInfo(use = JsonTypeInfo.Id.MINIMAL_CLASS, include = JsonTypeInfo.As.PROPERTY, property = "@c")
 public interface FeatureResource<K, T> extends Serializable {
 
     /**

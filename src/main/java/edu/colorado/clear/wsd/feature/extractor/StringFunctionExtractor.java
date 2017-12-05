@@ -1,8 +1,5 @@
 package edu.colorado.clear.wsd.feature.extractor;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -11,7 +8,6 @@ import edu.colorado.clear.wsd.feature.extractor.string.StringFunction;
 import edu.colorado.clear.wsd.type.NlpInstance;
 
 import static edu.colorado.clear.wsd.feature.util.FeatureUtils.KEY_DELIM;
-
 
 /**
  * Extractor that performs a series of string functions to the output of a base extractor.
@@ -22,14 +18,10 @@ public class StringFunctionExtractor<T extends NlpInstance> extends NlpFeatureEx
 
     private static final long serialVersionUID = -6703070360030390063L;
 
-    @JsonProperty
     private FeatureExtractor<T, String> baseExtractor;
-    @JsonProperty
     private List<StringFunction> stringFunctions;
 
-    @JsonCreator
-    public StringFunctionExtractor(@JsonProperty("baseExtractor") FeatureExtractor<T, String> baseExtractor,
-                                   @JsonProperty("stringFunctions") List<StringFunction> stringFunctions) {
+    public StringFunctionExtractor(FeatureExtractor<T, String> baseExtractor, List<StringFunction> stringFunctions) {
         this.baseExtractor = baseExtractor;
         this.stringFunctions = stringFunctions;
         id = baseExtractor.id() + KEY_DELIM + this.stringFunctions.stream()

@@ -1,7 +1,5 @@
 package edu.colorado.clear.wsd.feature;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 import java.io.Serializable;
 
 import lombok.AllArgsConstructor;
@@ -22,9 +20,7 @@ public class StringFeature implements Serializable {
 
     private static final long serialVersionUID = -4634062576141187574L;
 
-    @JsonProperty
     private String id;
-    @JsonProperty
     private String value;
 
     @Override

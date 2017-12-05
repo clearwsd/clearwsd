@@ -1,7 +1,5 @@
 package edu.colorado.clear.wsd.feature.context;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -11,8 +9,6 @@ import java.util.stream.Collectors;
 import edu.colorado.clear.wsd.type.DepNode;
 import edu.colorado.clear.wsd.type.DependencyTree;
 import edu.colorado.clear.wsd.type.FocusInstance;
-import lombok.Getter;
-import lombok.experimental.Accessors;
 
 /**
  * Offset-based context factory. Provides option to either concatenate resulting offsets into a single context,
@@ -20,23 +16,17 @@ import lombok.experimental.Accessors;
  *
  * @author jamesgung
  */
-@Getter
-@Accessors(fluent = true)
 public class OffsetContextFactory extends DepContextFactory {
 
     public static final String KEY = "COL";
 
     private static final long serialVersionUID = 1961214534857020518L;
 
-    @JsonProperty
     private List<Integer> offsets;
-    @JsonProperty
     private boolean concatenate;
-
     private String id;
 
-    public OffsetContextFactory(@JsonProperty("offsets") List<Integer> offsets,
-                                @JsonProperty("concatenate") boolean concatenate) {
+    public OffsetContextFactory(List<Integer> offsets, boolean concatenate) {
         this.offsets = offsets;
         this.concatenate = concatenate;
         id = String.format("%s[%s]", KEY, offsets.stream()

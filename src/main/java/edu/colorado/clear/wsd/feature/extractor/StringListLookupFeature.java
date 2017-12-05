@@ -1,31 +1,24 @@
 package edu.colorado.clear.wsd.feature.extractor;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 import edu.colorado.clear.wsd.feature.util.FeatureUtils;
 import edu.colorado.clear.wsd.type.NlpInstance;
-import lombok.Getter;
-import lombok.experimental.Accessors;
 
 /**
  * Feature extractor that looks up the values corresponding to an associated key or keys.
  *
  * @author jamesgung
  */
-@Getter
-@Accessors(fluent = true)
 public class StringListLookupFeature<T extends NlpInstance> extends NlpFeatureExtractor<T, List<String>> {
 
     private static final long serialVersionUID = -5294861373939396232L;
 
-    @JsonProperty
     private List<String> keys;
 
-    public StringListLookupFeature(@JsonProperty("keys") List<String> keys) {
+    public StringListLookupFeature(List<String> keys) {
         this.keys = keys;
         id = String.join(FeatureUtils.KEY_DELIM, keys);
     }

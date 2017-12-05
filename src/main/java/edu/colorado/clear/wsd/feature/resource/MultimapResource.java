@@ -2,9 +2,6 @@ package edu.colorado.clear.wsd.feature.resource;
 
 import com.google.common.collect.ImmutableListMultimap;
 
-import com.fasterxml.jackson.annotation.JsonAutoDetect;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
 import java.util.List;
 
 import edu.colorado.clear.wsd.feature.extractor.FeatureExtractor;
@@ -25,12 +22,11 @@ import lombok.extern.slf4j.Slf4j;
 @Setter
 @Getter
 @Accessors(fluent = true)
-@JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
 public class MultimapResource<K> implements FeatureResource<K, List<String>> {
 
     private static final long serialVersionUID = 7402042556816462306L;
+
     private String key;
-    @JsonIgnore
     private ImmutableListMultimap<String, String> multimap;
     private FeatureExtractor<K, String> mappingFunction = new IdentityFeatureExtractor<>();
 

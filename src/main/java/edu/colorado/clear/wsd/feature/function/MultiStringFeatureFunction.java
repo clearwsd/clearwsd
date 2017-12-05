@@ -1,7 +1,5 @@
 package edu.colorado.clear.wsd.feature.function;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -12,7 +10,6 @@ import edu.colorado.clear.wsd.feature.extractor.FeatureExtractor;
 import edu.colorado.clear.wsd.feature.util.FeatureUtils;
 import edu.colorado.clear.wsd.type.NlpInstance;
 import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -22,15 +19,13 @@ import lombok.extern.slf4j.Slf4j;
  * @author jamesgung
  */
 @Slf4j
-@NoArgsConstructor
 @AllArgsConstructor
 public class MultiStringFeatureFunction<InputT extends NlpInstance, OutputT extends NlpInstance>
         implements FeatureFunction<InputT> {
 
     private static final long serialVersionUID = 2326594845630574435L;
-    @JsonProperty
+
     private NlpContextFactory<InputT, OutputT> contextFactory;
-    @JsonProperty
     private List<FeatureExtractor<OutputT, List<String>>> featureExtractors;
 
     @Override

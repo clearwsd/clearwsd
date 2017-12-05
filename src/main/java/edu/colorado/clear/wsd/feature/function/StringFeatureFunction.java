@@ -1,7 +1,5 @@
 package edu.colorado.clear.wsd.feature.function;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -12,22 +10,19 @@ import edu.colorado.clear.wsd.feature.extractor.FeatureExtractor;
 import edu.colorado.clear.wsd.feature.util.FeatureUtils;
 import edu.colorado.clear.wsd.type.NlpInstance;
 import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
 
 /**
  * String feature function.
  *
  * @author jamesgung
  */
-@NoArgsConstructor
 @AllArgsConstructor
 public class StringFeatureFunction<InputT extends NlpInstance, OutputT extends NlpInstance>
         implements FeatureFunction<InputT> {
 
     private static final long serialVersionUID = -5155518913022081531L;
-    @JsonProperty
+
     private NlpContextFactory<InputT, OutputT> contextFactory;
-    @JsonProperty
     private List<FeatureExtractor<OutputT, String>> featureExtractors;
 
     @Override
