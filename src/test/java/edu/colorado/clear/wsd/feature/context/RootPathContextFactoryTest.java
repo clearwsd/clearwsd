@@ -27,7 +27,7 @@ public class RootPathContextFactoryTest {
 
     @Test
     public void testAll() {
-        RootPathContextFactory factory = new RootPathContextFactory();
+        RootPathContextFactory factory = new RootPathContextFactory(true, -1);
         List<NlpContext<DepNode>> contexts = factory.apply(getTestInstance());
         assertEquals(1, contexts.size());
         assertEquals(4, contexts.get(0).tokens().size());

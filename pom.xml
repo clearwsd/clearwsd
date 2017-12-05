@@ -18,10 +18,12 @@
         <lombok.version>1.16.18</lombok.version>
         <slf4j.version>1.7.25</slf4j.version>
         <logback.version>1.2.3</logback.version>
-        <jwnl.version>1.6.4</jwnl.version>
+        <jwnl.version>1.9.4</jwnl.version>
+        <jwnldata.version>1.2</jwnldata.version>
         <jackson.version>2.9.2</jackson.version>
         <junit.version>4.12</junit.version>
         <jverbnet.version>1.2.0</jverbnet.version>
+        <lucene.version>3.6.2</lucene.version>
     </properties>
 
     <dependencies>
@@ -51,11 +53,6 @@
             <version>${logback.version}</version>
         </dependency>
         <dependency>
-            <groupId>net.sf.extjwnl</groupId>
-            <artifactId>extjwnl</artifactId>
-            <version>${jwnl.version}</version>
-        </dependency>
-        <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
             <version>${jackson.version}</version>
@@ -69,6 +66,23 @@
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
             <version>${junit.version}</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>net.sf.extjwnl</groupId>
+            <artifactId>extjwnl</artifactId>
+            <version>${jwnl.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>net.sf.extjwnl</groupId>
+            <artifactId>extjwnl-data-wn31</artifactId>
+            <version>${jwnldata.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.lucene</groupId>
+            <artifactId>lucene-core</artifactId>
+            <version>${lucene.version}</version>
         </dependency>
         <dependency>
             <groupId>edu.stanford.nlp</groupId>
