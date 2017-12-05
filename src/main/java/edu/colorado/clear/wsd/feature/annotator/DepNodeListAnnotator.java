@@ -19,17 +19,17 @@ import lombok.Getter;
  */
 @Getter
 @AllArgsConstructor
-public class ListAnnotator<T extends NlpInstance, S extends NlpTokenSequence<T>> implements Annotator<S> {
+public class DepNodeListAnnotator<T extends NlpInstance, S extends NlpTokenSequence<T>> implements Annotator<S> {
 
-    private static final long serialVersionUID = -6170529305032382231L;
+    private static final long serialVersionUID = 7456297953368403608L;
     @JsonProperty
     private FeatureExtractor<T, String> baseExtractor;
     @JsonProperty
     private String resourceKey;
 
-    private FeatureResource<String, List<String>> resource;
+    private FeatureResource<T, List<String>> resource;
 
-    public ListAnnotator(FeatureExtractor<T, String> baseExtractor, String resourceKey) {
+    public DepNodeListAnnotator(FeatureExtractor<T, String> baseExtractor, String resourceKey) {
         this.baseExtractor = baseExtractor;
         this.resourceKey = resourceKey;
     }
@@ -37,8 +37,7 @@ public class ListAnnotator<T extends NlpInstance, S extends NlpTokenSequence<T>>
     @Override
     public S annotate(S instance) {
         for (T token : instance.tokens()) {
-            String key = baseExtractor.extract(token);
-            token.addFeature(resourceKey, resource.lookup(key));
+            token.addFeature(resourceKey, resource.lookup(token));
         }
         return instance;
     }

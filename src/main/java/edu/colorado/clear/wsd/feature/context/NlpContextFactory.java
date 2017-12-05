@@ -14,8 +14,8 @@ import edu.colorado.clear.wsd.type.NlpInstance;
  * @param <OutputT> output type used as input to a feature extractor
  * @author jamesgung
  */
-@JsonTypeInfo(use=JsonTypeInfo.Id.MINIMAL_CLASS, include=JsonTypeInfo.As.PROPERTY, property="@c")
-public interface NlpContextFactory<InputT extends NlpInstance, OutputT extends NlpInstance> extends Serializable {
+@JsonTypeInfo(use = JsonTypeInfo.Id.MINIMAL_CLASS, include = JsonTypeInfo.As.PROPERTY, property = "@c")
+public interface NlpContextFactory<InputT, OutputT extends NlpInstance> extends Serializable {
 
     /**
      * Create a context given an input instance.

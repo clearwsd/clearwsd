@@ -12,7 +12,9 @@ import lombok.experimental.Accessors;
 @Getter
 @Accessors(fluent = true)
 @AllArgsConstructor
-public class DefaultStringInstance implements SparseInstance {
+public class DefaultSparseInstance implements SparseInstance {
+
+    private static final long serialVersionUID = 8110247727099551710L;
 
     private int id;
 
@@ -28,6 +30,11 @@ public class DefaultStringInstance implements SparseInstance {
     @Override
     public float[] data() {
         return sparseVector.data();
+    }
+
+    @Override
+    public float l2() {
+        return sparseVector.l2();
     }
 
 }

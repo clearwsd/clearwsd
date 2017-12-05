@@ -22,4 +22,12 @@ public class DefaultSparseVector implements SparseVector {
 
     private float[] data;
 
+    @Override
+    public float l2() {
+        float sum = 0;
+        for (int i = 0; i < indices.length; ++i) {
+            sum += data[i] * data[i];
+        }
+        return (float) Math.sqrt(sum);
+    }
 }

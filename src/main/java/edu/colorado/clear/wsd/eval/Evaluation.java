@@ -148,6 +148,19 @@ public class Evaluation {
         String line = String.join("", Collections.nCopies(heading.length() - 1, "-")) + "\n";
         sb.append(heading);
         sb.append(line);
+        List<String> outcomes = new ArrayList<>(Sets.union(goldCounts.elementSet(), systemCounts.elementSet()));
+        Collections.sort(outcomes);
+        for (String outcome : outcomes) {
+            sb.append(String.format(formatter,
+                    outcome,
+                    this.correctCounts.count(outcome),
+                    this.systemCounts.count(outcome),
+                    this.goldCounts.count(outcome),
+                    df.format(this.precision(outcome)),
+                    df.format(this.recall(outcome)),
+                    df.format(this.f1(outcome))));
+        }
+        sb.append(line);
         sb.append(String.format(formatter,
                 "Overall",
                 this.correctCounts.size(),
@@ -156,20 +169,6 @@ public class Evaluation {
                 df.format(this.precision()),
                 df.format(this.recall()),
                 df.format(this.f1())));
-        List<String> outcomes = new ArrayList<>(Sets.union(goldCounts.elementSet(), systemCounts.elementSet()));
-        if (outcomes.size() > 1) {
-            Collections.sort(outcomes);
-            for (String outcome : outcomes) {
-                sb.append(String.format(formatter,
-                        outcome,
-                        this.correctCounts.count(outcome),
-                        this.systemCounts.count(outcome),
-                        this.goldCounts.count(outcome),
-                        df.format(this.precision(outcome)),
-                        df.format(this.recall(outcome)),
-                        df.format(this.f1(outcome))));
-            }
-        }
         return sb.toString();
     }
 

@@ -26,6 +26,7 @@ import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 import lombok.extern.slf4j.Slf4j;
 
+
 /**
  * WordNet resource wrapping ExtJWNL (<a href="https://github.com/extjwnl/extjwnl">https://github.com/extjwnl/extjwnl</a>).
  *
@@ -37,33 +38,37 @@ import lombok.extern.slf4j.Slf4j;
 public class ExtJwnlWordNetResource<K extends NlpInstance> implements FeatureResource<K, List<String>> {
 
     private static final long serialVersionUID = 4520884471486094705L;
+
+    public static final String KEY = "WN";
+
     @Getter
     @JsonProperty
-    private String key;
+    private String key = KEY;
 
-    private transient Dictionary dict;
-
-    public ExtJwnlWordNetResource(String key) {
-        this.key = key;
-    }
+    private static Dictionary dict;
 
     @Override
     public void initialize(InputStream inputStream) {
-        Stopwatch stopwatch = Stopwatch.createStarted();
-        try {
-            dict = Dictionary.getInstance(inputStream);
-            log.debug("Loaded WordNet in {}.", stopwatch.toString());
-        } catch (Exception e) {
-            log.error("Error loading WordNet dictionary.", e);
+        if (dict == null) {
+            Stopwatch stopwatch = Stopwatch.createStarted();
+            try {
+                dict = Dictionary.getDefaultResourceInstance();
+                log.debug("Loaded WordNet in {}.", stopwatch.toString());
+            } catch (Exception e) {
+                log.error("Error loading WordNet dictionary.", e);
+            }
         }
     }
 
     @Override
     public List<String> lookup(K key) {
+        if (dict == null) {
+            initialize(null);
+        }
         return new ArrayList<>(getHypernyms(key.feature(FeatureType.Pos), key.feature(FeatureType.Lemma)));
     }
 
-    private Set<String> getHypernyms(String string, String pos) {
+    private Set<String> getHypernyms(String pos, String string) {
         Set<String> words = new HashSet<>();
         try {
             POS wordNetPos = getPos(pos);
@@ -77,11 +82,12 @@ public class ExtJwnlWordNetResource<K extends NlpInstance> implements FeatureRes
             for (Synset id : indexWord.getSenses()) {
                 words.addAll(words(id));
                 words.addAll(PointerUtils.getDirectHypernyms(id).stream()
-                        .map(s -> s.getWord().getLemma())
+                        .map(node -> words(node.getSynset()))
+                        .flatMap(Set::stream)
                         .collect(Collectors.toSet()));
             }
         } catch (Exception e) {
-            log.warn("Error getting WordNet hypernyms for {}-{}", string, pos);
+            log.warn("Error getting WordNet hypernyms for {}-{}", string, pos, e);
         }
         return words;
     }

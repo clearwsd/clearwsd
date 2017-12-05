@@ -37,7 +37,7 @@ public class DepChildrenContextFactoryTest {
         List<NlpContext<DepNode>> contexts = factory.apply(getTestInstance());
         assertEquals(2, contexts.size());
         assertEquals("fox", contexts.get(0).tokens().get(0).feature(FeatureType.Text));
-        assertEquals(DepChildrenContextFactory.KEY, contexts.get(0).identifier());
+        assertEquals(DepChildrenContextFactory.KEY + "[0]", contexts.get(0).identifier());
         assertEquals("fence", contexts.get(1).tokens().get(0).feature(FeatureType.Text));
     }
 

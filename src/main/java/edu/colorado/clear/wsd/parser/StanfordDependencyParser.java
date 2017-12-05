@@ -2,17 +2,19 @@ package edu.colorado.clear.wsd.parser;
 
 import java.io.StringReader;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
+import java.util.stream.Collectors;
 
 import edu.colorado.clear.wsd.type.BaseDepNode;
 import edu.colorado.clear.wsd.type.BaseDependencyTree;
 import edu.colorado.clear.wsd.type.DepNode;
 import edu.colorado.clear.wsd.type.DependencyTree;
 import edu.colorado.clear.wsd.type.FeatureType;
+import edu.stanford.nlp.international.Language;
 import edu.stanford.nlp.ling.CoreLabel;
 import edu.stanford.nlp.ling.HasWord;
 import edu.stanford.nlp.ling.SentenceUtils;
@@ -22,8 +24,11 @@ import edu.stanford.nlp.process.PTBTokenizer;
 import edu.stanford.nlp.process.Tokenizer;
 import edu.stanford.nlp.process.TokenizerFactory;
 import edu.stanford.nlp.tagger.maxent.MaxentTagger;
+import edu.stanford.nlp.trees.GrammaticalStructure;
 import edu.stanford.nlp.trees.TypedDependency;
+import lombok.Getter;
 
+import static edu.stanford.nlp.parser.nndep.DependencyParser.DEFAULT_MODEL;
 import static edu.stanford.nlp.parser.nndep.DependencyParser.loadFromModelFile;
 
 /**
@@ -40,11 +45,31 @@ public class StanfordDependencyParser implements DependencyParser {
     private Morphology lemmatizer;
     private edu.stanford.nlp.parser.nndep.DependencyParser depParser;
 
-    public StanfordDependencyParser() {
+    public enum StanfordParserModel {
+        UD(DEFAULT_MODEL, Language.UniversalEnglish.name()),
+        SD("edu/stanford/nlp/models/parser/nndep/english_SD.gz", Language.English.name());
+        @Getter
+        private String path;
+        @Getter
+        private Properties language;
+
+        StanfordParserModel(String path, String language) {
+            this.path = path;
+            Properties properties = new Properties();
+            properties.setProperty("language", language);
+            this.language = properties;
+        }
+    }
+
+    public StanfordDependencyParser(StanfordParserModel model) {
         tokenizer = PTBTokenizer.coreLabelFactory();
         posTagger = new MaxentTagger(MaxentTagger.DEFAULT_JAR_PATH);
         lemmatizer = new Morphology();
-        depParser = loadFromModelFile(edu.stanford.nlp.parser.nndep.DependencyParser.DEFAULT_MODEL);
+        depParser = loadFromModelFile(model.path, model.language);
+    }
+
+    public StanfordDependencyParser() {
+        this(StanfordParserModel.SD);
     }
 
     @Override
@@ -113,22 +138,33 @@ public class StanfordDependencyParser implements DependencyParser {
 
     private DependencyTree parseTokens(List<CoreLabel> cls) {
         List<DepNode> tokens = toTokens(cls);
-        Collection<TypedDependency> dependencies = depParser.predict(cls).typedDependencies();
-        Map<Integer, TypedDependency> dependencyMap = new HashMap<>();
-        for (TypedDependency dep : dependencies) {
-            dependencyMap.put(dep.dep().index(), dep);
+        GrammaticalStructure structure = depParser.predict(cls);
+        Map<Integer, TypedDependency> dependencyMap = structure.typedDependencies()
+                .stream().collect(Collectors.toMap(dep -> dep.dep().index(), dep -> dep));
+
+        Map<Integer, TypedDependency> collapsedDeps = new HashMap<>();
+        for (TypedDependency dependency: structure.typedDependenciesCollapsed()) {
+            collapsedDeps.put(dependency.dep().index(), dependency);
         }
+
         DepNode root = null;
         for (DepNode token : tokens) {
-            int head = dependencyMap.get(token.index() + 1).gov().index() - 1;
+            int index = token.index() + 1;
+            TypedDependency rel = collapsedDeps.get(index);
+            boolean collapsed = rel == null;
+            if (collapsed) {
+                rel = dependencyMap.get(index);
+            }
+            token.addFeature(FeatureType.Dep, rel.reln().toString());
+            int head = rel.gov().index() - 1;
             if (head >= 0) {
                 ((BaseDepNode) token).head(tokens.get(head));
-                tokens.get(head).children().add(token);
+                if (!collapsed) {
+                    tokens.get(head).children().add(token);
+                }
             } else {
                 root = token;
             }
-            TypedDependency parent = dependencyMap.get(token.index() + 1);
-            token.addFeature(FeatureType.Dep, parent.reln().toString());
         }
 
         return new BaseDependencyTree(0, tokens, root);

@@ -1,14 +1,18 @@
 package edu.colorado.clear.wsd.eval;
 
+import com.google.common.base.Preconditions;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ListMultimap;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
 import java.util.function.Function;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import edu.colorado.clear.wsd.classifier.Classifier;
 import lombok.Getter;
@@ -60,22 +64,64 @@ public class CrossValidation<T> {
         return sampleFolds(partition, numFolds, ratio);
     }
 
+    public List<Fold<T>> createFolds(List<T> instances, int numFolds) {
+        Collections.shuffle(instances, random);
+        Preconditions.checkArgument(instances.size() >= numFolds * 2, "K-fold cross-validation"
+                + " requires at least 2*K instances.");
+
+        Iterator<T> iterator = instances.iterator();
+        List<List<T>> folds = IntStream.range(0, numFolds)
+                .mapToObj(i -> new ArrayList<T>())
+                .collect(Collectors.toList());
+        int index = 0;
+        while (iterator.hasNext()) {
+            folds.get(index % numFolds).add(iterator.next());
+            ++index;
+        }
+
+        List<Fold<T>> result = new ArrayList<>();
+        for (index = 0; index < numFolds; ++index) {
+            int foldNumber = index;
+            List<T> train = IntStream.range(0, numFolds)
+                    .filter(fold -> fold != foldNumber)
+                    .mapToObj(folds::get).flatMap(List::stream).collect(Collectors.toList());
+            result.add(new Fold<>(train, folds.get(foldNumber)));
+        }
+        return result;
+    }
+
     /**
      * Perform cross validation with a given classifier on a given list of {@link Fold Folds}.
      *
      * @param classifier input classifier
+     * @param folds      cross validation folds
      */
     public List<Evaluation> crossValidate(Classifier<T, String> classifier, List<CrossValidation.Fold<T>> folds) {
         List<Evaluation> evaluations = new ArrayList<>();
-        for (CrossValidation.Fold<T> fold : folds) {
+        folds.forEach(fold -> {
             classifier.train(fold.getTrainInstances(), fold.getTestInstances());
             Evaluation evaluation = new Evaluation();
             for (T input : fold.getTestInstances()) {
                 evaluation.add(classifier.classify(input), labelFunction.apply(input));
             }
             evaluations.add(evaluation);
-        }
+        });
         return evaluations;
+    }
+
+    public List<Evaluation> crossValidateParallel(Supplier<Classifier<T, String>> classifierSupplier,
+                                                  List<CrossValidation.Fold<T>> folds) {
+        return folds.parallelStream()
+                .map(fold -> {
+                    Classifier<T, String> classifier = classifierSupplier.get();
+                    classifier.train(fold.getTrainInstances(), fold.getTestInstances());
+                    Evaluation evaluation = new Evaluation();
+                    for (T input : fold.getTestInstances()) {
+                        evaluation.add(classifier.classify(input), labelFunction.apply(input));
+                    }
+                    return evaluation;
+                })
+                .collect(Collectors.toList());
     }
 
     private List<Fold<T>> sampleFolds(ListMultimap<String, T> partition, int numFolds, double ratio) {
