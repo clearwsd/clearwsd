@@ -2,7 +2,6 @@ package edu.colorado.clear.wsd.feature.resource;
 
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
-import java.io.InputStream;
 import java.io.Serializable;
 
 /**
@@ -27,12 +26,5 @@ public interface FeatureResource<K, T> extends Serializable {
      * @return lookup value
      */
     T lookup(K key);
-
-    /**
-     * Initialize this resource.
-     *
-     * @param inputStream resource
-     */
-    void initialize(InputStream inputStream);
 
 }

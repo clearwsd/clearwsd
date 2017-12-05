@@ -11,7 +11,6 @@ import net.sf.extjwnl.data.Synset;
 import net.sf.extjwnl.data.Word;
 import net.sf.extjwnl.dictionary.Dictionary;
 
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -22,7 +21,6 @@ import edu.colorado.clear.wsd.feature.util.PosUtils;
 import edu.colorado.clear.wsd.type.FeatureType;
 import edu.colorado.clear.wsd.type.NlpInstance;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 import lombok.extern.slf4j.Slf4j;
 
@@ -34,7 +32,6 @@ import lombok.extern.slf4j.Slf4j;
  */
 @Slf4j
 @Accessors(fluent = true)
-@NoArgsConstructor
 public class ExtJwnlWordNetResource<K extends NlpInstance> implements FeatureResource<K, List<String>> {
 
     private static final long serialVersionUID = 4520884471486094705L;
@@ -45,26 +42,28 @@ public class ExtJwnlWordNetResource<K extends NlpInstance> implements FeatureRes
     @JsonProperty
     private String key = KEY;
 
-    private static Dictionary dict;
+    private Dictionary dict;
 
-    @Override
-    public void initialize(InputStream inputStream) {
-        if (dict == null) {
-            Stopwatch stopwatch = Stopwatch.createStarted();
-            try {
+    public ExtJwnlWordNetResource(String inputPath) {
+        Stopwatch stopwatch = Stopwatch.createStarted();
+        try {
+            if (inputPath != null) {
+                dict = Dictionary.getFileBackedInstance(inputPath);
+            } else {
                 dict = Dictionary.getDefaultResourceInstance();
-                log.debug("Loaded WordNet in {}.", stopwatch.toString());
-            } catch (Exception e) {
-                log.error("Error loading WordNet dictionary.", e);
             }
+            log.debug("Loaded WordNet in {}.", stopwatch.toString());
+        } catch (Exception e) {
+            log.error("Error loading WordNet dictionary.", e);
         }
+    }
+
+    public ExtJwnlWordNetResource() {
+        this(null);
     }
 
     @Override
     public List<String> lookup(K key) {
-        if (dict == null) {
-            initialize(null);
-        }
         return new ArrayList<>(hypernyms(key.feature(FeatureType.Lemma), key.feature(FeatureType.Pos)));
     }
 

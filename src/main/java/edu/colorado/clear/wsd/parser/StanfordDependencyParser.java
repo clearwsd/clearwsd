@@ -38,13 +38,6 @@ import static edu.stanford.nlp.parser.nndep.DependencyParser.loadFromModelFile;
  */
 public class StanfordDependencyParser implements DependencyParser {
 
-    private static final String NO_ESCAPING = "ptb3Escaping=false";
-
-    private TokenizerFactory tokenizer;
-    private MaxentTagger posTagger;
-    private Morphology lemmatizer;
-    private edu.stanford.nlp.parser.nndep.DependencyParser depParser;
-
     public enum StanfordParserModel {
         UD(DEFAULT_MODEL, Language.UniversalEnglish.name()),
         SD("edu/stanford/nlp/models/parser/nndep/english_SD.gz", Language.English.name());
@@ -60,6 +53,13 @@ public class StanfordDependencyParser implements DependencyParser {
             this.language = properties;
         }
     }
+
+    private static final String NO_ESCAPING = "ptb3Escaping=false";
+
+    private TokenizerFactory tokenizer;
+    private MaxentTagger posTagger;
+    private Morphology lemmatizer;
+    private edu.stanford.nlp.parser.nndep.DependencyParser depParser;
 
     public StanfordDependencyParser(StanfordParserModel model) {
         tokenizer = PTBTokenizer.coreLabelFactory();

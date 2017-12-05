@@ -2,9 +2,8 @@ package edu.colorado.clear.wsd.feature.resource;
 
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
-import java.io.InputStream;
 import java.io.Serializable;
-import java.util.function.BiConsumer;
+import java.util.function.Supplier;
 
 /**
  * Resource initializer.
@@ -12,6 +11,6 @@ import java.util.function.BiConsumer;
  * @author jamesgung
  */
 @JsonTypeInfo(use = JsonTypeInfo.Id.MINIMAL_CLASS, include = JsonTypeInfo.As.PROPERTY, property = "@c")
-public interface ResourceInitializer<T> extends BiConsumer<T, InputStream>, Serializable {
+public interface StringResourceInitializer<T> extends Supplier<T>, Serializable {
 
 }

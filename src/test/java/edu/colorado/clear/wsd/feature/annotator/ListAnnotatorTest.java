@@ -2,12 +2,12 @@ package edu.colorado.clear.wsd.feature.annotator;
 
 import org.junit.Test;
 
-import java.io.IOException;
 import java.util.Collections;
 
 import edu.colorado.clear.wsd.feature.TestInstanceBuilder;
 import edu.colorado.clear.wsd.feature.extractor.LookupFeatureExtractor;
 import edu.colorado.clear.wsd.feature.resource.MultimapResource;
+import edu.colorado.clear.wsd.feature.resource.DefaultTsvResourceInitializer;
 import edu.colorado.clear.wsd.type.DepNode;
 import edu.colorado.clear.wsd.type.DependencyTree;
 import edu.colorado.clear.wsd.type.FeatureType;
@@ -32,10 +32,9 @@ public class ListAnnotatorTest {
     }
 
     @Test
-    public void testAnnotate() throws IOException {
-        MultimapResource<String> testResource = new MultimapResource<>("testResource");
-        //noinspection ConstantConditions
-        testResource.initialize(getClass().getClassLoader().getResource("test_resource.tsv").openStream());
+    public void testAnnotate() {
+        MultimapResource<String> testResource = new DefaultTsvResourceInitializer<String>(
+                "testResource", "src/test/resources/test_resource.tsv").get();
         ListAnnotator<DepNode, FocusInstance<DepNode, DependencyTree>> annotator = new ListAnnotator<>(
                 new LookupFeatureExtractor<DepNode>(FeatureType.Text.name()),
                 "testResource", testResource);

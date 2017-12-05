@@ -19,6 +19,8 @@ import lombok.experimental.Accessors;
 @Accessors(fluent = true)
 public class VocabularyBuilder implements Vocabulary {
 
+    private static final long serialVersionUID = 4581175527928695153L;
+
     @Getter
     private Map<String, Integer> counts = new HashMap<>();
     @Getter

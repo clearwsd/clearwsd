@@ -3,26 +3,47 @@ package edu.colorado.clear.wsd.feature.resource;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ImmutableListMultimap;
 import com.google.common.collect.ListMultimap;
+import com.google.common.collect.Multimap;
 
 import java.io.BufferedReader;
-import java.io.InputStream;
+import java.io.FileInputStream;
 import java.io.InputStreamReader;
 import java.util.Arrays;
 import java.util.List;
 
+import edu.colorado.clear.wsd.feature.extractor.string.IdentityStringFunction;
+import edu.colorado.clear.wsd.feature.extractor.string.StringFunction;
+import lombok.Setter;
+import lombok.experimental.Accessors;
+
 /**
- * TSV resource initializer used to initialize a {@link MultimapResource} from an {@link InputStream}.
+ * TSV resource initializer.
  *
  * @author jamesgung
  */
-public class TsvResourceInitializer<K> implements ResourceInitializer<MultimapResource<K>> {
+@Accessors(fluent = true)
+public abstract class TsvResourceInitializer<K> implements StringResourceInitializer<MultimapResource<K>> {
 
-    private static final long serialVersionUID = -1044802169525334439L;
+    private static final long serialVersionUID = 7969133672311229L;
+
+    @Setter
+    protected StringFunction valueFunction = new IdentityStringFunction();
+    @Setter
+    protected StringFunction keyFunction = new IdentityStringFunction();
+
+    private final String key;
+    private final String path;
+
+    public TsvResourceInitializer(String key, String path) {
+        this.key = key;
+        this.path = path;
+    }
 
     @Override
-    public void accept(MultimapResource<K> resource, InputStream inputStream) {
+    public MultimapResource<K> get() {
         ListMultimap<String, String> multimap = ArrayListMultimap.create();
-        try (BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream))) {
+        MultimapResource<K> resource = new MultimapResource<>(key);
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(path)))) {
             String line;
             while ((line = reader.readLine()) != null) {
                 line = line.trim();
@@ -30,14 +51,15 @@ public class TsvResourceInitializer<K> implements ResourceInitializer<MultimapRe
                     continue;
                 }
                 List<String> fields = Arrays.asList(line.split("\t"));
-                String key = resource.keyFunction().apply(fields.get(0));
-                fields.subList(1, fields.size()).stream()
-                        .map(s -> resource.valueFunction().apply(s))
-                        .forEach(s -> multimap.put(key, s));
+                apply(fields, multimap);
             }
         } catch (Exception e) {
             throw new RuntimeException("Error initializing TSV resource.", e);
         }
         resource.multimap(ImmutableListMultimap.copyOf(multimap));
+        return resource;
     }
+
+    protected abstract void apply(List<String> fields, Multimap<String, String> multimap);
+
 }
