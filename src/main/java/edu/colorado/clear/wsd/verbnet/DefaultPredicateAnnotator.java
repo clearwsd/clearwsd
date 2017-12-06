@@ -34,4 +34,9 @@ public class DefaultPredicateAnnotator implements Annotator<DependencyTree> {
         return instance;
     }
 
+    @Override
+    public boolean initialized() {
+        return true;
+    }
+
 }

@@ -3,18 +3,22 @@ package edu.colorado.clear.wsd.feature.extractor;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 
+import java.io.File;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Supplier;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+import edu.colorado.clear.wsd.feature.resource.FeatureResource;
 import edu.colorado.clear.wsd.feature.util.LuceneWrapper;
 import edu.colorado.clear.wsd.feature.util.PosUtils;
 import edu.colorado.clear.wsd.type.DepNode;
 import edu.colorado.clear.wsd.type.FeatureType;
-import lombok.Getter;
 import lombok.Setter;
+import lombok.experimental.Accessors;
 
 /**
  * DDN (Dynamic Dependency Neighbors) extractor based on work described in
@@ -24,35 +28,32 @@ import lombok.Setter;
  *
  * @author jamesgung
  */
-public class DynamicDependencyNeighborExtractor implements FeatureExtractor<DepNode, List<String>> {
+public class DynamicDependencyNeighborsResource implements FeatureResource<DepNode, List<String>> {
 
     public static final String KEY = "DDN";
     public static final String OBJECT = "object";
 
-    private static final long serialVersionUID = 2473639936326103840L;
-
+    private final LuceneWrapper ddnIndex;
+    private final int maxNeighbors; // Maximum number of DDN features
+    private final int maxSearch; // Maximum number of hits when searching Lucene index
     private final Pattern tokenPattern = Pattern.compile("^[a-z]+$");
-    @Setter
-    private int maxDDNs = 50; // Maximum number of DDN features
-    @Setter
-    private int maxSearch = 1000; // Maximum number of hits when searching Lucene index
-    @Getter
-    private LuceneWrapper ddnIndex;
 
     private Cache<String, List<String>> ddnCache;
 
-    public DynamicDependencyNeighborExtractor(LuceneWrapper ddnIndex) {
+    public DynamicDependencyNeighborsResource(LuceneWrapper ddnIndex, int maxNeighbors, int maxSearch) {
         this.ddnIndex = ddnIndex;
+        this.maxNeighbors = maxNeighbors;
+        this.maxSearch = maxSearch;
         ddnCache = CacheBuilder.newBuilder().build();
     }
 
     @Override
-    public String id() {
+    public String key() {
         return KEY;
     }
 
     @Override
-    public List<String> extract(DepNode token) {
+    public List<String> lookup(DepNode token) {
         if (!PosUtils.isNoun(token.feature(FeatureType.Pos)) || !tokenPattern.matcher(
                 ((String) token.feature(FeatureType.Text)).toLowerCase()).matches()) {
             return new ArrayList<>();
@@ -66,11 +67,33 @@ public class DynamicDependencyNeighborExtractor implements FeatureExtractor<DepN
                 .entrySet().stream()
                 .sorted((e1, e2) -> e2.getValue() - e1.getValue())
                 .map(Map.Entry::getKey)
-                .limit(maxDDNs)
+                .limit(maxNeighbors)
                 .distinct()
                 .collect(Collectors.toList());
         ddnCache.put(lemma, ddnFeature);
         return ddnFeature;
+    }
+
+    @Accessors(fluent = true)
+    public static class DdnResourceInitializer implements Supplier<DynamicDependencyNeighborsResource>, Serializable {
+
+        private static final long serialVersionUID = -5135704509811250797L;
+
+        @Setter
+        private int maxNeighbors = 50;
+        @Setter
+        private int maxSearch = 1000;
+
+        private File indexDirectory;
+
+        public DdnResourceInitializer(File indexDirectory) {
+            this.indexDirectory = indexDirectory;
+        }
+
+        @Override
+        public DynamicDependencyNeighborsResource get() {
+            return new DynamicDependencyNeighborsResource(new LuceneWrapper(indexDirectory), maxNeighbors, maxSearch);
+        }
     }
 
 }

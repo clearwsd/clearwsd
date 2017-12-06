@@ -47,4 +47,9 @@ public class VerbNetAnnotator implements Annotator<DependencyTree> {
         return instance;
     }
 
+    @Override
+    public boolean initialized() {
+        return predicateAnnotator.initialized();
+    }
+
 }

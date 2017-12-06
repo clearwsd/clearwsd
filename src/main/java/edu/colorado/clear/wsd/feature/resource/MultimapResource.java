@@ -24,8 +24,6 @@ import lombok.extern.slf4j.Slf4j;
 @Accessors(fluent = true)
 public class MultimapResource<K> implements FeatureResource<K, List<String>> {
 
-    private static final long serialVersionUID = 7402042556816462306L;
-
     private String key;
     private ImmutableListMultimap<String, String> multimap;
     private FeatureExtractor<K, String> mappingFunction = new IdentityFeatureExtractor<>();

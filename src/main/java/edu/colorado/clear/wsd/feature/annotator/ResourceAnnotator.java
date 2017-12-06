@@ -23,6 +23,11 @@ public abstract class ResourceAnnotator<T, S extends NlpInstance> implements Ann
     }
 
     @Override
+    public boolean initialized() {
+        return resource != null;
+    }
+
+    @Override
     public void initialize(FeatureResourceManager featureResourceManager) {
         this.resource = featureResourceManager.getResource(resourceKey);
     }

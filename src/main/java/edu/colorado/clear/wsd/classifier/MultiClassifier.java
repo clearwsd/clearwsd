@@ -27,8 +27,7 @@ public class MultiClassifier<U, V> implements Classifier<U, V> {
 
     private Function<U, String> keyFunction;
     private transient Supplier<Classifier<U, V>> prototypeClassifier;
-
-    private Map<String, Classifier<U, V>> classifierMap = new HashMap<>();
+    private Map<String, Classifier<U, V>> classifierMap;
 
     /**
      * Instantiate a multi-model classifier with a function used to determine which sub-model to apply to a given istanceinstance.
@@ -39,6 +38,7 @@ public class MultiClassifier<U, V> implements Classifier<U, V> {
     public MultiClassifier(Function<U, String> keyFunction, Supplier<Classifier<U, V>> prototypeClassifier) {
         this.keyFunction = keyFunction;
         this.prototypeClassifier = prototypeClassifier;
+        classifierMap = new HashMap<>();
     }
 
     @Override

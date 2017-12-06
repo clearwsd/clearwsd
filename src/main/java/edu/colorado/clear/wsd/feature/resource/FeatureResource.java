@@ -1,7 +1,5 @@
 package edu.colorado.clear.wsd.feature.resource;
 
-import java.io.Serializable;
-
 /**
  * Interface for lookup-based resources.
  *
@@ -9,7 +7,7 @@ import java.io.Serializable;
  * @param <T> lookup value type, such as {@link String}.
  * @author jamesgung
  */
-public interface FeatureResource<K, T> extends Serializable {
+public interface FeatureResource<K, T> {
 
     /**
      * Unique identifier of this resource.

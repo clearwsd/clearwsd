@@ -27,6 +27,11 @@ public class AggregateAnnotator<S extends NlpInstance> implements Annotator<S> {
     }
 
     @Override
+    public boolean initialized() {
+        return annotators.stream().allMatch(Annotator::initialized);
+    }
+
+    @Override
     public void initialize(FeatureResourceManager featureResourceManager) {
         for (Annotator<S> annotator : annotators) {
             annotator.initialize(featureResourceManager);

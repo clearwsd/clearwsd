@@ -32,8 +32,6 @@ import lombok.extern.slf4j.Slf4j;
 @Accessors(fluent = true)
 public class ExtJwnlWordNetResource<K extends NlpInstance> implements FeatureResource<K, List<String>> {
 
-    private static final long serialVersionUID = 4520884471486094705L;
-
     public static final String KEY = "WN";
 
     @Getter
