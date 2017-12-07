@@ -46,11 +46,18 @@ public class LibLinearClassifier implements SparseClassifier {
         private Hyperparameter<LibLinearClassifier> parameter;
 
         LibLinearParameter(String parameter, String defaultValue, BiConsumer<LibLinearClassifier, String> assign) {
-            this.parameter = new DefaultHyperparameter<>(this.name(), parameter, defaultValue, assign);
+            this.parameter = new DefaultHyperparameter<>(this.name(),
+                    LibLinearClassifier.class.getSimpleName() + ":" + name(), parameter, defaultValue, assign);
         }
 
+        @Override
         public String description() {
             return parameter.description();
+        }
+
+        @Override
+        public String key() {
+            return parameter.key();
         }
 
         @Override

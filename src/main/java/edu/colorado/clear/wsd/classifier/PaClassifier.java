@@ -54,11 +54,18 @@ public class PaClassifier implements SparseClassifier {
         private Hyperparameter<PaClassifier> parameter;
 
         PaParameter(String parameter, String defaultValue, BiConsumer<PaClassifier, String> assign) {
-            this.parameter = new DefaultHyperparameter<>(this.name(), parameter, defaultValue, assign);
+            this.parameter = new DefaultHyperparameter<>(this.name(),
+                    PaClassifier.class.getSimpleName() + ":" + name(), parameter, defaultValue, assign);
         }
 
+        @Override
         public String description() {
             return parameter.description();
+        }
+
+        @Override
+        public String key() {
+            return parameter.key();
         }
 
         @Override

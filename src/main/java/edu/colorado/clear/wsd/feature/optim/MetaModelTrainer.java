@@ -4,12 +4,17 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.text.DecimalFormat;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.function.BiConsumer;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import edu.colorado.clear.wsd.classifier.Classifier;
 import edu.colorado.clear.wsd.classifier.ClassifierFactory;
+import edu.colorado.clear.wsd.classifier.DefaultHyperparameter;
 import edu.colorado.clear.wsd.classifier.Hyperparameter;
 import edu.colorado.clear.wsd.classifier.SparseClassifier;
 import edu.colorado.clear.wsd.eval.CrossValidation;
@@ -35,10 +40,50 @@ public class MetaModelTrainer<U extends NlpInstance> implements Classifier<U, St
 
     private static final long serialVersionUID = 6414091079202692687L;
 
-    private transient FeaturePipelineFactory<U> featureFactory;
-    private transient ClassifierFactory<SparseClassifier> classifierFactory;
+    public enum MetaModelParameter implements Hyperparameter<MetaModelTrainer> {
+        Multithread("use parallel model scoring", "true", (c, value) -> c.parallel = Boolean.valueOf(value)),
+        Iterations("maximum number of epochs", "100", (c, value) -> c.iterations = Integer.valueOf(value)),
+        Patience("number of epochs with no change in loss before early stopping", "50",
+                (c, value) -> c.patience = Integer.valueOf(value)),
+        Folds("number of cross validation folds per iteration", "5",
+                (c, value) -> c.folds = Integer.valueOf(value)),
+        TrainRatio("percentage of data to use in training per fold", "0.8",
+                (c, value) -> c.ratio = Double.valueOf(value)),
+        Seed("random seed for shuffling", "0", (c, value) -> c.seed = Integer.valueOf(value)),
+        Verbose("display training logs", "true", (c, value) -> c.verbose = Boolean.valueOf(value));
+        private Hyperparameter<MetaModelTrainer> parameter;
 
-    private int seed;
+        MetaModelParameter(String parameter, String defaultValue, BiConsumer<MetaModelTrainer, String> assign) {
+            this.parameter = new DefaultHyperparameter<>(this.name(),
+                    MetaModelTrainer.class.getSimpleName() + ":" + name(), parameter, defaultValue, assign);
+        }
+
+        @Override
+        public String key() {
+            return parameter.key();
+        }
+
+        @Override
+        public String description() {
+            return parameter.description();
+        }
+
+        @Override
+        public String defaultValue() {
+            return parameter.defaultValue();
+        }
+
+        @Override
+        public void assignValue(MetaModelTrainer model, String value) {
+            parameter.assignValue(model, value);
+        }
+    }
+
+    private final transient FeaturePipelineFactory<U> featureFactory;
+    private final transient ClassifierFactory<SparseClassifier> classifierFactory;
+
+    @Setter
+    private int seed = 0;
     @Setter
     private int folds = 5;
     @Setter
@@ -51,14 +96,15 @@ public class MetaModelTrainer<U extends NlpInstance> implements Classifier<U, St
     private double maxScore = 1.0;
     @Setter
     private boolean parallel = true;
+    @Setter
+    private boolean verbose = true;
 
     private NlpClassifier<U> classifier;
 
     public MetaModelTrainer(FeaturePipelineFactory<U> featureFactory,
-                            ClassifierFactory<SparseClassifier> classifierFactory, int seed) {
+                            ClassifierFactory<SparseClassifier> classifierFactory) {
         this.featureFactory = featureFactory;
         this.classifierFactory = classifierFactory;
-        this.seed = seed;
     }
 
     @Override
@@ -93,7 +139,9 @@ public class MetaModelTrainer<U extends NlpInstance> implements Classifier<U, St
                 epochsNoChange = 0;
                 best = eval;
                 result = featureFunction;
-                log.debug("Iteration {}/{} (F1: {})", i, iterations, new DecimalFormat("#.###").format(best.f1()));
+                if (verbose) {
+                    log.debug("Iteration {}/{} (F1: {})", i, iterations, new DecimalFormat("#.###").format(best.f1()));
+                }
             } else {
                 epochsNoChange++;
             }
@@ -104,17 +152,28 @@ public class MetaModelTrainer<U extends NlpInstance> implements Classifier<U, St
         // train final classifier using the top-scoring feature function
         classifier = new NlpClassifier<>(classifierFactory.create(), result);
         classifier.train(train, valid);
-        log.debug("Overall top score: {}\n{}", new DecimalFormat("#.###").format(best.f1()), best.toString());
+        if (verbose) {
+            log.debug("Overall top score: {}\n{}", new DecimalFormat("#.###").format(best.f1()), best.toString());
+        }
     }
 
     @Override
     public List<Hyperparameter> hyperparameters() {
-        return classifier.hyperparameters();
+        return Stream.of(Arrays.asList(MetaModelParameter.values()), classifier.hyperparameters())
+                .flatMap(List::stream)
+                .collect(Collectors.toList());
     }
 
     @Override
     public void initialize(Properties properties) {
         classifier.initialize(properties);
+        for (MetaModelParameter property : MetaModelParameter.values()) {
+            if (properties.containsKey(property.name())) {
+                property.assignValue(this, properties.getProperty(property.name()));
+            } else {
+                property.assignValue(this, property.defaultValue());
+            }
+        }
     }
 
     @Override

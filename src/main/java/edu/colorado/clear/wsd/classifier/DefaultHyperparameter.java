@@ -17,6 +17,7 @@ import lombok.experimental.Accessors;
 public class DefaultHyperparameter<T> implements Hyperparameter<T> {
 
     private String name;
+    private String key;
     private String description;
     private String defaultValue;
     private BiConsumer<T, String> assign;

@@ -13,6 +13,11 @@ public interface Hyperparameter<T> {
     String name();
 
     /**
+     * Unique identifier.
+     */
+    String key();
+
+    /**
      * Description of parameter.
      */
     String description();

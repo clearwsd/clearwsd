@@ -33,6 +33,11 @@ public class AnnotatingClassifier<T> implements Classifier<T, String> {
         this.annotator = annotator;
     }
 
+    /**
+     * Initialize annotators with resources.
+     *
+     * @param featureResourceManager resource manager
+     */
     public void initialize(FeatureResourceManager featureResourceManager) {
         annotator.initialize(featureResourceManager);
     }
