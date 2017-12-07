@@ -69,7 +69,7 @@ public class StanfordDependencyParser implements DependencyParser {
     }
 
     public StanfordDependencyParser() {
-        this(StanfordParserModel.SD);
+        this(StanfordParserModel.UD);
     }
 
     @Override
@@ -143,7 +143,7 @@ public class StanfordDependencyParser implements DependencyParser {
                 .stream().collect(Collectors.toMap(dep -> dep.dep().index(), dep -> dep));
 
         Map<Integer, TypedDependency> collapsedDeps = new HashMap<>();
-        for (TypedDependency dependency: structure.typedDependenciesCollapsed()) {
+        for (TypedDependency dependency : structure.typedDependenciesCollapsed()) {
             collapsedDeps.put(dependency.dep().index(), dependency);
         }
 
@@ -151,9 +151,10 @@ public class StanfordDependencyParser implements DependencyParser {
         for (DepNode token : tokens) {
             int index = token.index() + 1;
             TypedDependency rel = collapsedDeps.get(index);
+            TypedDependency collapsedRel = dependencyMap.get(index);
             boolean collapsed = rel == null;
-            if (collapsed) {
-                rel = dependencyMap.get(index);
+            if (collapsed || collapsedRel.gov().index() <= 0) {
+                rel = collapsedRel;
             }
             token.addFeature(FeatureType.Dep, rel.reln().toString());
             int head = rel.gov().index() - 1;
