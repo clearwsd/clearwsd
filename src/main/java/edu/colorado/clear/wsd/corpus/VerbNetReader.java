@@ -5,15 +5,22 @@ import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import edu.colorado.clear.wsd.type.DepNode;
 import edu.colorado.clear.wsd.type.DependencyTree;
-import edu.colorado.clear.wsd.type.FeatureType;
 import edu.colorado.clear.wsd.type.FocusInstance;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
+
+import static edu.colorado.clear.wsd.corpus.CoNllDepTreeReader.treeToString;
+import static edu.colorado.clear.wsd.type.FeatureType.Gold;
+import static edu.colorado.clear.wsd.type.FeatureType.Metadata;
+import static edu.colorado.clear.wsd.type.FeatureType.Predicate;
+import static edu.colorado.clear.wsd.type.FeatureType.Sense;
+import static edu.colorado.clear.wsd.type.FeatureType.Text;
 
 /**
  * VerbNet (parsed) corpus reader.
@@ -30,10 +37,10 @@ public class VerbNetReader implements CorpusReader<FocusInstance<DepNode, Depend
         int index = 0;
         for (DependencyTree tree : depReader.readInstances(inputStream)) {
             for (DepNode focus : tree.tokens().stream()
-                    .filter(t -> t.feature(FeatureType.Gold) != null)
+                    .filter(t -> t.feature(Gold) != null)
                     .collect(Collectors.toList())) {
                 FocusInstance<DepNode, DependencyTree> instance = new FocusInstance<>(index++, focus, tree);
-                instance.addFeature(FeatureType.Gold, focus.feature(FeatureType.Gold));
+                instance.addFeature(Gold, focus.feature(Gold));
                 results.add(instance);
             }
         }
@@ -43,23 +50,34 @@ public class VerbNetReader implements CorpusReader<FocusInstance<DepNode, Depend
     @Override
     public void writeInstances(List<FocusInstance<DepNode, DependencyTree>> instances, OutputStream outputStream) {
         try (PrintWriter writer = new PrintWriter(outputStream)) {
+            if (instances.size() == 0) {
+                return;
+            }
+            DependencyTree currentTree = instances.get(0).sequence();
             for (FocusInstance<DepNode, DependencyTree> instance : instances) {
-                String metadata = instance.feature(FeatureType.Metadata);
+                if (instance.sequence() != currentTree) {
+                    writer.println(treeToString(currentTree, Sense.name()));
+                    writer.println();
+                    currentTree = instance.sequence();
+                }
+                String metadata = instance.feature(Metadata);
                 if (metadata == null) {
                     writer.println("# " + new VerbNetInstanceParser().toString(new VerbNetInstance()
                             .path(Integer.toString(instance.index()))
-                            .label(instance.feature(FeatureType.Gold))
+                            .label(Optional.<String>ofNullable(instance.focus().feature(Gold))
+                                    .orElse(instance.focus().feature(Sense)))
                             .sentence(instance.sequence().index())
                             .token(instance.focus().index())
-                            .lemma(instance.feature(FeatureType.Predicate))
-                            .originalText(instance.sequence().feature(FeatureType.Text))));
+                            .lemma(instance.focus().feature(Predicate))
+                            .originalText(Optional.<String>ofNullable(instance.sequence().feature(Text)).orElse(
+                                    currentTree.tokens().stream().map(t -> (String) t.feature(Text))
+                                            .collect(Collectors.joining(" "))))));
                 } else {
                     writer.println("# " + metadata);
                 }
-                writer.println(depReader.treeToString(instance.sequence()));
-                writer.println();
                 writer.flush();
             }
+            writer.println(treeToString(currentTree, Sense.name()));
         }
     }
 
@@ -70,9 +88,9 @@ public class VerbNetReader implements CorpusReader<FocusInstance<DepNode, Depend
                 headerLine = headerLine.replaceAll("^#\\s*", "");
                 VerbNetInstance instance = new VerbNetInstanceParser().parse(headerLine);
                 DepNode focus = result.get(instance.token);
-                focus.addFeature(FeatureType.Gold, instance.label);
-                focus.addFeature(FeatureType.Predicate, instance.lemma);
-                result.addFeature(FeatureType.Text, instance.originalText);
+                focus.addFeature(Gold, instance.label);
+                focus.addFeature(Predicate, instance.lemma);
+                result.addFeature(Text, instance.originalText);
             }
         }
     }

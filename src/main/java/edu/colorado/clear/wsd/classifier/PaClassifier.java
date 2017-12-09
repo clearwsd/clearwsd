@@ -125,10 +125,11 @@ public class PaClassifier implements SparseClassifier {
             log.debug("Commencing training on {} examples with {} features and {} classes.", train.size(),
                     parameters.get(0).length, parameters.size());
         }
+        Random random = new Random(seed);
         Stopwatch sw = Stopwatch.createStarted();
         for (int epoch = 0; epoch < epochs && epochsNoChange < patience; ++epoch) {
             if (shuffle) {
-                Collections.shuffle(train, new Random(seed));
+                Collections.shuffle(train, random);
             }
             int incorrect = 0;
             for (SparseInstance instance : train) {

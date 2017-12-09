@@ -153,7 +153,7 @@ public class StanfordDependencyParser implements DependencyParser {
             TypedDependency rel = collapsedDeps.get(index);
             TypedDependency collapsedRel = dependencyMap.get(index);
             boolean collapsed = rel == null;
-            if (collapsed || collapsedRel.gov().index() <= 0) {
+            if (collapsed || (rel.dep().index() == rel.gov().index()) || collapsedRel.gov().index() <= 0) {
                 rel = collapsedRel;
             }
             token.addFeature(FeatureType.Dep, rel.reln().toString());

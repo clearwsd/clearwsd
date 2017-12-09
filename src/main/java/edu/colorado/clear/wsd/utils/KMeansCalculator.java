@@ -5,6 +5,7 @@ import com.beust.jcommander.Parameter;
 import com.beust.jcommander.ParameterException;
 
 import java.io.File;
+import java.util.List;
 import java.util.Map;
 
 import static edu.colorado.clear.wsd.utils.EmbeddingIoUtils.readVectors;
@@ -16,12 +17,13 @@ import static edu.colorado.clear.wsd.utils.EmbeddingIoUtils.readVectors;
  */
 public class KMeansCalculator {
 
-    @Parameter(names = "-k", description = "Number of clusters (k)", required = true)
-    private int kVal;
+    @Parameter(names = "-k", description = "Number of clusters (k) -- can provide comma separated list for multiple granularities",
+            required = true)
+    private List<Integer> kVals;
     @Parameter(names = {"-inputPath", "-i"}, description = "Input path to vector file", required = true)
     private String inputPath;
-    @Parameter(names = {"-outputPath", "-o"}, description = "Output cluster path")
-    private String outputPath;
+    @Parameter(names = {"-outputExt", "-o"}, description = "Output extension")
+    private String outputExt = "txt";
     @Parameter(names = {"-maxIter"}, description = "Maximum number of iterations")
     private int maxEpochs = 100;
     @Parameter(names = "-outputEvery", description = "Output clusters every x iterations")
@@ -46,16 +48,16 @@ public class KMeansCalculator {
     }
 
     private void run() {
-        if (outputPath == null) {
-            outputPath = new File(String.format("%s.%d.txt", inputPath, kVal)).getAbsolutePath();
+        for (int kVal : kVals) {
+            String outputPath = new File(String.format("%s.%d.%s", inputPath, kVal, outputExt)).getAbsolutePath();
+            Map<String, float[]> vectors = readVectors(inputPath, limitPoints, true);
+            new KMeans<>(seed, kVal, vectors)
+                    .outputPath(new File(outputPath))
+                    .outputEvery(outputEvery)
+                    .maxEpochs(maxEpochs)
+                    .kMeansPlusPlus(!randomInitialization)
+                    .run();
         }
-        Map<String, float[]> vectors = readVectors(inputPath, limitPoints, true);
-        new KMeans<>(seed, kVal, vectors)
-                .outputPath(new File(outputPath))
-                .outputEvery(outputEvery)
-                .maxEpochs(maxEpochs)
-                .kMeansPlusPlus(!randomInitialization)
-                .run();
     }
 
     public static void main(String... args) {

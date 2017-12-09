@@ -21,7 +21,7 @@ import edu.colorado.clear.wsd.parser.WhitespaceTokenizer;
 import edu.colorado.clear.wsd.type.DepNode;
 import edu.colorado.clear.wsd.type.DependencyTree;
 import edu.colorado.clear.wsd.type.FocusInstance;
-import lombok.AllArgsConstructor;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 
 import static edu.colorado.clear.wsd.type.FeatureType.Gold;
@@ -36,11 +36,18 @@ import static edu.colorado.clear.wsd.type.FeatureType.Text;
  * @author jamesgung
  */
 @Slf4j
-@AllArgsConstructor
 public class ParsingSemlinkReader implements CorpusReader<FocusInstance<DepNode, DependencyTree>> {
 
     private DependencyParser dependencyParser;
     private NlpTokenizer tokenizer;
+
+    @Setter
+    private boolean writeSemlink = false;
+
+    public ParsingSemlinkReader(DependencyParser dependencyParser, NlpTokenizer tokenizer) {
+        this.dependencyParser = dependencyParser;
+        this.tokenizer = tokenizer;
+    }
 
     @Override
     public List<FocusInstance<DepNode, DependencyTree>> readInstances(InputStream inputStream) {
@@ -82,6 +89,9 @@ public class ParsingSemlinkReader implements CorpusReader<FocusInstance<DepNode,
 
     @Override
     public void writeInstances(List<FocusInstance<DepNode, DependencyTree>> instances, OutputStream outputStream) {
+        if (!writeSemlink) {
+            new VerbNetReader().writeInstances(instances, outputStream);
+        }
         try (PrintWriter writer = new PrintWriter(outputStream)) {
             for (FocusInstance<DepNode, DependencyTree> instance : instances) {
                 String result = instance.feature(Metadata);
@@ -99,6 +109,18 @@ public class ParsingSemlinkReader implements CorpusReader<FocusInstance<DepNode,
                 writer.println(result);
             }
         }
+    }
+
+    public static List<FocusInstance<DepNode, DependencyTree>> getFocusInstances(List<DependencyTree> dependencyTrees) {
+        List<FocusInstance<DepNode, DependencyTree>> instances = new ArrayList<>();
+        for (DependencyTree dependencyTree : dependencyTrees) {
+            for (DepNode depNode : dependencyTree.tokens()) {
+                if (depNode.feature(Predicate) != null) {
+                    instances.add(new FocusInstance<>(instances.size(), depNode, dependencyTree));
+                }
+            }
+        }
+        return instances;
     }
 
     public static void main(String[] args) throws FileNotFoundException {

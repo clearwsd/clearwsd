@@ -69,12 +69,12 @@ public class VerbNetSenseInventory implements SenseInventory, Serializable {
     private CountingSenseInventory countingSenseInventory = new CountingSenseInventory();
     private URL url;
 
-    public VerbNetSenseInventory(URL url) throws IOException {
+    public VerbNetSenseInventory(URL url) {
         this.url = url;
         initialize();
     }
 
-    public VerbNetSenseInventory() throws IOException {
+    public VerbNetSenseInventory() {
         this(VerbNetSenseInventory.class.getClassLoader().getResource("vn32.xml"));
     }
 
@@ -104,15 +104,19 @@ public class VerbNetSenseInventory implements SenseInventory, Serializable {
 
     @Override
     public void addSense(String lemma, String sense) {
-        if (!senseVnMap.containsKey(sense)) {
+        if (!senseVnMap.containsKey(sense) && !countingSenseInventory.senses(lemma).contains(sense)) {
             log.warn("Unrecognized sense: {}", sense);
         }
         countingSenseInventory.addSense(lemma, sense);
     }
 
-    private void initialize() throws IOException {
+    private void initialize() {
         verbnet = new VerbIndex(url);
-        verbnet.open();
+        try {
+            verbnet.open();
+        } catch (IOException e) {
+            throw new RuntimeException("Error loading VerbNet dictionary: " + e.getMessage(), e);
+        }
         Iterator<IVerbClass> clsIterator = verbnet.iterator();
         lemmaVnMap = HashMultimap.create();
         lemmaWnMap = HashMultimap.create();

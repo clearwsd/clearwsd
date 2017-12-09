@@ -7,10 +7,12 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import edu.colorado.clear.wsd.type.BaseDepNode;
 import edu.colorado.clear.wsd.type.BaseDependencyTree;
@@ -112,6 +114,16 @@ public class CoNllDepTreeReader implements CorpusReader<DependencyTree> {
 
     @Override
     public void writeInstances(List<DependencyTree> trees, OutputStream outputStream) {
+        writeDependencyTrees(trees, outputStream);
+    }
+
+    /**
+     * Write a list of {@link DependencyTree} to an {@link OutputStream} in a CoNLL-style format.
+     *
+     * @param trees        dependency trees
+     * @param outputStream output stream
+     */
+    public static void writeDependencyTrees(List<DependencyTree> trees, OutputStream outputStream) {
         try (PrintWriter writer = new PrintWriter(outputStream)) {
             for (DependencyTree tree : trees) {
                 writer.println(treeToString(tree));
@@ -121,7 +133,13 @@ public class CoNllDepTreeReader implements CorpusReader<DependencyTree> {
         }
     }
 
-    protected String treeToString(DependencyTree tree) {
+    /**
+     * Convert an {@link DependencyTree} to a tab-separated CoNLL-style string (index word lemma pos dep head).
+     *
+     * @param tree dependency tree
+     * @return CoNLL-style string
+     */
+    public static String treeToString(DependencyTree tree, String... extra) {
         List<String> lines = new ArrayList<>();
         for (DepNode depNode : tree.tokens()) {
             List<String> fields = new ArrayList<>();
@@ -131,6 +149,9 @@ public class CoNllDepTreeReader implements CorpusReader<DependencyTree> {
             fields.add(depNode.feature(FeatureType.Pos));
             fields.add(depNode.feature(FeatureType.Dep));
             fields.add(Integer.toString(depNode.isRoot() ? -1 : depNode.head().index()));
+            fields.add(Arrays.stream(extra).filter(s -> depNode.feature(s) != null)
+                    .map(s -> s + "=" + depNode.feature(s))
+                    .collect(Collectors.joining("|")));
             lines.add(String.join("\t", fields));
         }
         return String.join("\n", lines);

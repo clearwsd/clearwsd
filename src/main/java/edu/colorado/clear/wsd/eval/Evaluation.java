@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 
 import lombok.Getter;
 
@@ -62,6 +63,10 @@ public class Evaluation {
         for (String value : evaluation.correctCounts.elementSet()) {
             correctCounts.add(value, evaluation.correctCounts.count(value));
         }
+    }
+
+    public Set<String> labels() {
+        return Sets.union(goldCounts.elementSet(), systemCounts.elementSet());
     }
 
     public int countCorrect(String value) {
@@ -133,22 +138,22 @@ public class Evaluation {
     }
 
     private int labelLength() {
-        return Sets.union(goldCounts.elementSet(), systemCounts.elementSet()).stream()
-                .map(Object::toString)
-                .sorted((s1, s2) -> Integer.compare(s2.length(), s1.length()))
-                .findFirst().orElse("").length();
+        return labels().stream()
+                .mapToInt(String::length)
+                .max()
+                .orElse(0);
     }
 
     @Override
     public String toString() {
         DecimalFormat df = new DecimalFormat("##.####");
         StringBuilder sb = new StringBuilder();
-        String formatter = "%" + (Math.max(7, labelLength())) + "s  %7s  %7s  %7s  %12s  %12s  %12s\n";
+        String formatter = "%-" + (Math.max(7, labelLength())) + "s  %-7s  %-7s  %-7s  %-10s %-10s %-10s\n";
         String heading = String.format(formatter, "", "Correct", "System", "Gold", "Precision", "Recall", "F-Measure");
         String line = String.join("", Collections.nCopies(heading.length() - 1, "-")) + "\n";
         sb.append(heading);
         sb.append(line);
-        List<String> outcomes = new ArrayList<>(Sets.union(goldCounts.elementSet(), systemCounts.elementSet()));
+        List<String> outcomes = new ArrayList<>(labels());
         Collections.sort(outcomes);
         for (String outcome : outcomes) {
             sb.append(String.format(formatter,

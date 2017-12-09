@@ -8,12 +8,12 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 import java.text.DecimalFormat;
+import java.util.ArrayList;
 import java.util.Comparator;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Random;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 import lombok.Getter;
@@ -71,26 +71,26 @@ public class KMeans<T> {
         Preconditions.checkState(points.size() > kVal,
                 "k-value is greater than or equal to number of points (%d >= %d).", kVal, points.size());
         Stopwatch sw = Stopwatch.createStarted();
-        KmeansPoint<T> sample = sampleUniform(points, random);
+        List<KmeansPoint<T>> pool = new ArrayList<>(points);
+        KmeansPoint<T> sample = sampleUniform(pool, random);
+        pool.remove(sample);
+
         KmeansCentroid point = KmeansCentroid.centroid(sample, 0);
         centroids = Lists.newArrayList(point);
-        Set<T> used = new HashSet<>();
-        used.add(sample.id);
         for (int i = 1; i < kVal; ++i) {
             if (kMeansPlusPlus) {
                 KmeansCentroid current = point;
-                points.parallelStream().forEach(p -> distanceToCentroid(p, current));
-                do {
-                    sample = samplePoint(i - 1);
-                } while (used.contains(sample.id));
+                pool.parallelStream().forEach(p -> distanceToCentroid(p, current));
+                sample = samplePoint(i - 1);
             } else {
-                sample = sampleUniform(points, random);
+                sample = sampleUniform(pool, random);
             }
+            pool.remove(sample);
+
             point = KmeansCentroid.centroid(sample, i);
-            used.add(sample.id);
             centroids.add(point);
         }
-        log.debug("Initialized centroids in {}.", sw);
+        log.info("Initialized centroids in {}.", sw);
     }
 
     /**
@@ -114,7 +114,7 @@ public class KMeans<T> {
             points.parallelStream().forEach(p -> centroids.get(p.clusterId).add(p));
             centroids.parallelStream().forEach(KmeansCentroid::mean);
 
-            log.info("Epoch {} avg. dist={}, time={}", i, new DecimalFormat("#.####").format(total / points.size()), sw);
+            log.info("Iteration {} dist={}, time={}", i, new DecimalFormat("#.####").format(total / points.size()), sw);
             if (total >= previousTotal) {
                 log.info("Terminating k-means due to no improvement in loss");
                 break;
@@ -206,6 +206,23 @@ public class KMeans<T> {
                 ++index;
             }
             clusterId = minIndex;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) {
+                return true;
+            }
+            if (o == null || getClass() != o.getClass()) {
+                return false;
+            }
+            KmeansPoint<?> that = (KmeansPoint<?>) o;
+            return Objects.equals(id, that.id);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(id);
         }
     }
 
