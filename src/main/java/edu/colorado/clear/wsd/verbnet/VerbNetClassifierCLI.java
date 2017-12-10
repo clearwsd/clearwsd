@@ -61,15 +61,15 @@ public class VerbNetClassifierCLI {
 
     private final String helpMessage = VerbNetClassifierCLI.class.getSimpleName()
             + " can be used to train, evaluate, or apply a VerbNet classifier on provided data. \n" +
-            "1. In order to train the classifier, a path to a training data file must be provided, using '-train':" +
-            "\n\t-train path/to/training/data.txt\n2. You can also save a model to a " +
-            "specific path with \"-model path/to/saved/model.bin\".\n3. To evaluate, you must provide a test file:\n" +
-            "\t-test path/to/test/data/txt -model path/to/saved/model.bin\n4. In order to " +
+            " 1. In order to train the classifier, a path to a training data file must be provided, using '-train':" +
+            "\n\t-train path/to/training/data.txt\n 2. You can also save a model to a " +
+            "specific path with \"-model path/to/saved/model.bin\".\n 3. To evaluate, you must provide a test file:\n" +
+            "\t-test path/to/test/data/txt -model path/to/saved/model.bin\n 4. In order to " +
             "apply the classifier to new data, use the \"-input\" option with an input file:\n" +
-            "\t-input path/to/raw/data.txt -model path/to/saved/model.bin\n5. You can perform k-fold " +
-            "cross-validation using the \"-cv\" option, e.g. \"-cv 5\" for 5-fold cross-validation.\n6. You can " +
+            "\t-input path/to/raw/data.txt -model path/to/saved/model.bin\n 5. You can perform k-fold " +
+            "cross-validation using the \"-cv\" option, e.g. \"-cv 5\" for 5-fold cross-validation.\n 6. You can " +
             "start an interactive test loop to try how various inputs are classified using \"--itl\".\n" +
-            "7. Note that all of these options can be combined, so it is possible to train, test, apply, and " +
+            " 7. Note that all of these options can be combined, so it is possible to train, test, apply, and " +
             "interactively test in a single command:\n\t-train path/to/training/data.txt -test " +
             "path/to/test/data.txt -apply path/to/input/data.txt --itl\n";
 

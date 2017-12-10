@@ -11,6 +11,8 @@ import java.io.InputStreamReader;
 import java.util.Arrays;
 import java.util.List;
 
+import edu.colorado.clear.wsd.feature.extractor.FeatureExtractor;
+import edu.colorado.clear.wsd.feature.extractor.IdentityFeatureExtractor;
 import edu.colorado.clear.wsd.feature.extractor.string.IdentityStringFunction;
 import edu.colorado.clear.wsd.feature.extractor.string.StringFunction;
 import lombok.Setter;
@@ -30,6 +32,8 @@ public abstract class TsvResourceInitializer<K> implements StringResourceInitial
     protected StringFunction valueFunction = new IdentityStringFunction();
     @Setter
     protected StringFunction keyFunction = new IdentityStringFunction();
+    @Setter
+    protected FeatureExtractor<K, String> mappingFunction = new IdentityFeatureExtractor<>();
 
     private final String key;
     private final String path;
@@ -57,6 +61,7 @@ public abstract class TsvResourceInitializer<K> implements StringResourceInitial
             throw new RuntimeException("Error initializing TSV resource.", e);
         }
         resource.multimap(ImmutableListMultimap.copyOf(multimap));
+        resource.mappingFunction(mappingFunction);
         return resource;
     }
 
