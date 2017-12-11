@@ -3,7 +3,6 @@ package edu.colorado.clear.wsd.app;
 import com.google.common.collect.Sets;
 
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
@@ -14,7 +13,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import edu.colorado.clear.wsd.classifier.LibLinearClassifier;
+import edu.colorado.clear.wsd.classifier.PaClassifier;
 import edu.colorado.clear.wsd.corpus.VerbNetReader;
 import edu.colorado.clear.wsd.eval.CrossValidation;
 import edu.colorado.clear.wsd.eval.Evaluation;
@@ -39,15 +38,20 @@ import edu.colorado.clear.wsd.feature.pipeline.FeaturePipeline;
 import edu.colorado.clear.wsd.feature.pipeline.NlpClassifier;
 import edu.colorado.clear.wsd.feature.resource.BrownClusterResourceInitializer;
 import edu.colorado.clear.wsd.feature.resource.DefaultFeatureResourceManager;
+import edu.colorado.clear.wsd.feature.resource.DefaultTsvResourceInitializer;
+import edu.colorado.clear.wsd.feature.resource.ExtJwnlWordNetResource;
 import edu.colorado.clear.wsd.feature.resource.FeatureResourceManager;
-import edu.colorado.clear.wsd.feature.resource.MultimapResource;
 import edu.colorado.clear.wsd.type.DepNode;
 import edu.colorado.clear.wsd.type.DependencyTree;
 import edu.colorado.clear.wsd.type.FeatureType;
 import edu.colorado.clear.wsd.type.FocusInstance;
+import edu.colorado.clear.wsd.utils.CountingSenseInventory;
+import edu.colorado.clear.wsd.verbnet.PredicateDictionary;
 import edu.colorado.clear.wsd.verbnet.VerbNetClassifier;
 import lombok.experimental.Accessors;
 import lombok.extern.slf4j.Slf4j;
+
+import static edu.colorado.clear.wsd.feature.extractor.DynamicDependencyNeighborsResource.KEY;
 
 /**
  * VerbNet classifier trainer.
@@ -58,31 +62,30 @@ import lombok.extern.slf4j.Slf4j;
 @Accessors(fluent = true)
 public class VerbNetClassifierTrainer {
 
+    private static final String BWC_PATH = "data/learningResources/bwc.txt";
+    private static final String CLUSTER_PATH = "data/learningResources/clusters/";
+    private static final List<String> CLUSTERS = Arrays.asList("cluster-100", "cluster-320", "cluster-1000", "cluster-3200", "cluster-10000");
+
     public static FeatureResourceManager resourceManager() {
-        try {
-            DefaultFeatureResourceManager resourceManager = new DefaultFeatureResourceManager();
-            List<String> clusters = Arrays.asList("cluster-100", "cluster-320", "cluster-1000", "cluster-3200", "cluster-10000");
-            for (String cluster : clusters) {
-                MultimapResource<String> multimapResource = new MultimapResource<>(cluster);
-                multimapResource.keyFunction(new LowercaseFunction());
-                multimapResource.initialize(new FileInputStream("data/learningResources/clusters/" + cluster));
-                resourceManager.addResource(cluster, multimapResource);
-            }
-            MultimapResource<String> multimapResource = new MultimapResource<>("brown");
-            multimapResource.initializer(new BrownClusterResourceInitializer<>());
-            multimapResource.initialize(new FileInputStream("data/learningResources/bwc.txt"));
-            resourceManager.addResource("brown", multimapResource);
-            return resourceManager;
-        } catch (FileNotFoundException e) {
-            throw new RuntimeException(e);
+        FeatureResourceManager resourceManager = new DefaultFeatureResourceManager();
+        for (String cluster : CLUSTERS) {
+            resourceManager.registerInitializer(cluster, new DefaultTsvResourceInitializer<>(cluster, CLUSTER_PATH + cluster)
+                    .keyFunction(new LowercaseFunction()));
         }
+        resourceManager.registerInitializer("brown", new BrownClusterResourceInitializer<>("brown", BWC_PATH));
+        resourceManager.registerInitializer(ExtJwnlWordNetResource.KEY, ExtJwnlWordNetResource::new);
+//        resourceManager.registerInitializer(KEY, new DdnResourceInitializer(new File("data/learningResources/ddnIndex")));
+        resourceManager.registerInitializer(KEY,
+                new DefaultTsvResourceInitializer<DepNode>(KEY, "data/learningResources/ddnObjects.txt")
+                .mappingFunction(new LookupFeatureExtractor<>(FeatureType.Lemma.name()))
+        );
+        return resourceManager;
     }
 
-    private static FeaturePipeline<FocusInstance<DepNode, DependencyTree>> initializeFeatures() throws FileNotFoundException {
+    public static FeaturePipeline<FocusInstance<DepNode, DependencyTree>> initializeFeatures() {
         List<FeatureFunction<FocusInstance<DepNode, DependencyTree>>> features = new ArrayList<>();
         List<FeatureExtractor<DepNode, List<String>>> filteredDepExtractors = new ArrayList<>();
-        List<String> clusters = Arrays.asList("cluster-100", "cluster-320", "cluster-1000", "cluster-3200", "cluster-10000");
-        for (String cluster : clusters) {
+        for (String cluster : CLUSTERS) {
             filteredDepExtractors.add(new StringListLookupFeature<>(cluster));
         }
         filteredDepExtractors.add(new StringListLookupFeature<>("brown"));
@@ -129,12 +132,12 @@ public class VerbNetClassifierTrainer {
         instances.forEach(annotator::annotate);
 
         CrossValidation<FocusInstance<DepNode, DependencyTree>> cv
-                = new CrossValidation<>((FocusInstance<DepNode, DependencyTree> i) -> (String) i.feature(FeatureType.Gold));
-        List<CrossValidation.Fold<FocusInstance<DepNode, DependencyTree>>> folds = cv.createFolds(instances, 5, 0.8);
+                = new CrossValidation<>((FocusInstance<DepNode, DependencyTree> i) -> i.feature(FeatureType.Gold));
+        List<CrossValidation.Fold<FocusInstance<DepNode, DependencyTree>>> folds = cv.createFolds(instances, 5);
 
         NlpClassifier<FocusInstance<DepNode, DependencyTree>> baseClassifier
-                = new NlpClassifier<>(new LibLinearClassifier(), initializeFeatures());
-        VerbNetClassifier classifier = new VerbNetClassifier(baseClassifier);
+                = new NlpClassifier<>(new PaClassifier(), initializeFeatures());
+        VerbNetClassifier classifier = new VerbNetClassifier(baseClassifier, new CountingSenseInventory(), new PredicateDictionary());
         classifier.train(instances, new ArrayList<>());
         classifier.save(new ObjectOutputStream(new FileOutputStream("data/model.bin")));
         Evaluation overall = new Evaluation(cv.crossValidate(classifier, folds));

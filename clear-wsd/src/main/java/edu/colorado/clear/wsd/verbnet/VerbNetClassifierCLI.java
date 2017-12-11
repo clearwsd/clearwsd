@@ -35,7 +35,6 @@ import edu.colorado.clear.wsd.eval.Evaluation;
 import edu.colorado.clear.wsd.eval.Predictions;
 import edu.colorado.clear.wsd.feature.pipeline.NlpClassifier;
 import edu.colorado.clear.wsd.parser.DependencyParser;
-import edu.colorado.clear.wsd.parser.StanfordDependencyParser;
 import edu.colorado.clear.wsd.parser.WhitespaceTokenizer;
 import edu.colorado.clear.wsd.type.DepNode;
 import edu.colorado.clear.wsd.type.DependencyTree;
@@ -57,7 +56,7 @@ import static edu.colorado.clear.wsd.type.FeatureType.Text;
  */
 @Slf4j
 @NoArgsConstructor
-public class VerbNetClassifierCLI {
+public abstract class VerbNetClassifierCLI {
 
     private final String helpMessage = VerbNetClassifierCLI.class.getSimpleName()
             + " can be used to train, evaluate, or apply a VerbNet classifier on provided data. \n" +
@@ -112,14 +111,14 @@ public class VerbNetClassifierCLI {
     @Parameter(names = {"--help", "--usage"}, description = "Display usage", help = true)
     private Boolean help = false;
 
-    private DependencyParser parser;
+    protected DependencyParser parser;
     private VerbNetClassifier classifier;
     private List<FocusInstance<DepNode, DependencyTree>> trainInstances;
     private Pattern depPattern;
 
     private JCommander cmd;
 
-    private VerbNetClassifierCLI(String[] args) {
+    VerbNetClassifierCLI(String[] args) {
         cmd = new JCommander(this);
         cmd.setProgramName(this.getClass().getSimpleName());
         try {
@@ -136,13 +135,18 @@ public class VerbNetClassifierCLI {
         }
     }
 
-    private void run() {
-        checkParameters();     // (1) validate parameters
-        crossValidate();       // (2) perform cross validation
-        train();               // (3) train with training data and validation data
-        evaluate();            // (4) evaluate on test data
-        apply();               // (5) apply model to input data
-        interactiveTestLoop(); // (6) test in interactive loop
+    public void run() {
+        try {
+            checkParameters();     // (1) validate parameters
+            crossValidate();       // (2) perform cross validation
+            train();               // (3) train with training data and validation data
+            evaluate();            // (4) evaluate on test data
+            apply();               // (5) apply model to input data
+            interactiveTestLoop(); // (6) test in interactive loop
+        } catch (IllegalStateException e) {
+            System.err.println(e.getMessage());
+            cmd.usage();
+        }
     }
 
     private void checkParameters() {
@@ -177,9 +181,6 @@ public class VerbNetClassifierCLI {
     private void train() {
         if (trainPath == null) {
             return;
-        }
-        if (validPath == null) {
-            log.warn("Training without development (validation) data");
         }
         trainInstances = getParseTrees(trainPath, VerbNetReader::new, () -> new ParsingSemlinkReader(
                 getParser(), new WhitespaceTokenizer()));
@@ -285,9 +286,11 @@ public class VerbNetClassifierCLI {
         InteractiveTestLoop.test(parser, Sense.name());
     }
 
+    protected abstract DependencyParser parser();
+
     private DependencyParser getParser() {
         if (parser == null) {
-            parser = new StanfordDependencyParser();
+            parser = parser();
         }
         return parser;
     }
@@ -348,15 +351,6 @@ public class VerbNetClassifierCLI {
             throw new RuntimeException("Unable to locate input file at " + inputPath, e);
         } catch (Exception e) {
             throw new RuntimeException("Error while parsing file at " + inputPath, e);
-        }
-    }
-
-    public static void main(String[] args) {
-        try {
-            new VerbNetClassifierCLI(args).run();
-        } catch (IllegalStateException e) {
-            System.err.println(e.getMessage());
-            new JCommander(new VerbNetClassifierCLI()).usage();
         }
     }
 

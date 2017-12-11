@@ -1,5 +1,7 @@
 package edu.colorado.clear.wsd.app;
 
+import com.google.common.collect.Sets;
+
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.ObjectOutputStream;
@@ -7,6 +9,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -21,6 +24,7 @@ import edu.colorado.clear.wsd.eval.CrossValidation;
 import edu.colorado.clear.wsd.eval.Evaluation;
 import edu.colorado.clear.wsd.feature.annotator.AggregateAnnotator;
 import edu.colorado.clear.wsd.feature.annotator.Annotator;
+import edu.colorado.clear.wsd.feature.annotator.DepNodeListAnnotator;
 import edu.colorado.clear.wsd.feature.annotator.ListAnnotator;
 import edu.colorado.clear.wsd.feature.context.CompositeContextFactory;
 import edu.colorado.clear.wsd.feature.context.DepChildrenContextFactory;
@@ -28,6 +32,7 @@ import edu.colorado.clear.wsd.feature.context.NlpContextFactory;
 import edu.colorado.clear.wsd.feature.context.OffsetContextFactory;
 import edu.colorado.clear.wsd.feature.context.RootPathContextFactory;
 import edu.colorado.clear.wsd.feature.extractor.ConcatenatingFeatureExtractor;
+import edu.colorado.clear.wsd.feature.extractor.DynamicDependencyNeighborsResource;
 import edu.colorado.clear.wsd.feature.extractor.ListConcatenatingFeatureExtractor;
 import edu.colorado.clear.wsd.feature.extractor.LookupFeatureExtractor;
 import edu.colorado.clear.wsd.feature.extractor.NlpFeatureExtractor;
@@ -37,10 +42,13 @@ import edu.colorado.clear.wsd.feature.extractor.string.LowercaseFunction;
 import edu.colorado.clear.wsd.feature.optim.FeaturePipelineFactory;
 import edu.colorado.clear.wsd.feature.optim.MetaModelTrainer;
 import edu.colorado.clear.wsd.feature.optim.NlpFeaturePipelineFactory;
+import edu.colorado.clear.wsd.feature.resource.ExtJwnlWordNetResource;
 import edu.colorado.clear.wsd.type.DepNode;
 import edu.colorado.clear.wsd.type.DependencyTree;
 import edu.colorado.clear.wsd.type.FeatureType;
 import edu.colorado.clear.wsd.type.FocusInstance;
+import edu.colorado.clear.wsd.utils.CountingSenseInventory;
+import edu.colorado.clear.wsd.verbnet.PredicateDictionary;
 import edu.colorado.clear.wsd.verbnet.VerbNetClassifier;
 import lombok.extern.slf4j.Slf4j;
 
@@ -109,26 +117,28 @@ public class VerbNetClassifierUtils {
 
     public static List<NlpContextFactory<FocusInstance<DepNode, DependencyTree>, DepNode>> filteredContexts(int level) {
         return Stream.of(
-                new DepChildrenContextFactory("nsubj", "nsubjpass", "dobj", "iobj", "csubj", "csubjpass", "ccomp", "xcomp",
-                        "acl", "nmod", "advcl", "advmod"),
-                new DepChildrenContextFactory("nsubj", "nsubjpass", "dobj", "iobj"),
-                new DepChildrenContextFactory("nsubj", "nsubjpass", "dobj", "iobj", "acl", "nmod"),
-                new DepChildrenContextFactory("nsubj", "nsubjpass", "dobj", "iobj", "acl", "nmod"),
-                new DepChildrenContextFactory("nsubj", "nsubjpass", "dobj", "iobj", "acl", "nmod", "advcl", "advmod"),
-                new DepChildrenContextFactory("nsubj", "nsubjpass", "dobj", "iobj", "csubj", "csubjpass", "ccomp", "xcomp")
+                new DepChildrenContextFactory("dobj", "iobj", "nmod", "xcomp", "advmod"),
+                new DepChildrenContextFactory("dobj", "iobj", "nmod", "xcomp", "advmod", "nsubj", "nsubjpass"),
+                new DepChildrenContextFactory("dobj", "iobj", "nmod", "xcomp", "advmod", "nsubj", "nsubjpass", "advcl"),
+                new DepChildrenContextFactory("dobj", "nmod", "xcomp", "iobj"),
+                new DepChildrenContextFactory("dobj", "nmod"),
+                new DepChildrenContextFactory("dobj")
         ).map(f -> f.level(level)).collect(Collectors.toList());
     }
 
-    private static FeaturePipelineFactory<FocusInstance<DepNode, DependencyTree>> getFactory() {
+    public static FeaturePipelineFactory<FocusInstance<DepNode, DependencyTree>> getFactory() {
         List<NlpContextFactory<FocusInstance<DepNode, DependencyTree>, DepNode>> windowUnigrams = windowUnigrams();
         List<NlpContextFactory<FocusInstance<DepNode, DependencyTree>, DepNode>> windowBigrams = collocations();
+        List<NlpContextFactory<FocusInstance<DepNode, DependencyTree>, DepNode>> allDeps =
+                Collections.singletonList(new DepChildrenContextFactory(Sets.newHashSet("punct"), new HashSet<>()));
         List<NlpContextFactory<FocusInstance<DepNode, DependencyTree>, DepNode>> depContexts = filteredContexts(0);
         List<NlpContextFactory<FocusInstance<DepNode, DependencyTree>, DepNode>> childModContexts = filteredContexts(1);
         List<NlpContextFactory<FocusInstance<DepNode, DependencyTree>, DepNode>> childSkipModContexts = filteredContexts(2);
 
         List<NlpContextFactory<FocusInstance<DepNode, DependencyTree>, DepNode>> rootPath = Collections.singletonList(
                 new RootPathContextFactory());
-
+        List<NlpContextFactory<FocusInstance<DepNode, DependencyTree>, DepNode>> head = Collections.singletonList(
+                new RootPathContextFactory(false, 1));
         NlpFeatureExtractor<DepNode, String> text = new LookupFeatureExtractor<>(FeatureType.Text.name());
         NlpFeatureExtractor<DepNode, String> pos = new LookupFeatureExtractor<>(FeatureType.Pos.name());
         NlpFeatureExtractor<DepNode, String> lemma = new LookupFeatureExtractor<>(FeatureType.Lemma.name());
@@ -142,9 +152,9 @@ public class VerbNetClassifierUtils {
         featureFunctionFactory.addFeatureFunctionFactory(windowUnigrams, text, true)
                 .addFeatureFunctionFactory(windowUnigrams, pos, true)
                 .addFeatureFunctionFactory(windowUnigrams, lemma, true)
-                .addFeatureFunctionFactory(windowUnigrams, dep, true)
+                .addFeatureFunctionFactory(windowUnigrams, dep, true);
 
-                .addFeatureFunctionFactory(windowBigrams, text, true)
+        featureFunctionFactory.addFeatureFunctionFactory(windowBigrams, text, true)
                 .addFeatureFunctionFactory(windowBigrams, pos, true)
                 .addFeatureFunctionFactory(windowBigrams, lemma, true)
                 .addFeatureFunctionFactory(windowBigrams, dep, true);
@@ -153,13 +163,16 @@ public class VerbNetClassifierUtils {
         NlpFeatureExtractor<DepNode, String> posDep = new ConcatenatingFeatureExtractor<>(pos, dep);
         NlpFeatureExtractor<DepNode, String> lemmaDep = new ConcatenatingFeatureExtractor<>(lemma, dep);
 
-        featureFunctionFactory.addFeatureFunctionFactory(depContexts, textDep, true)
-                .addFeatureFunctionFactory(depContexts, posDep, true)
-                .addFeatureFunctionFactory(depContexts, lemmaDep, true)
+        featureFunctionFactory.addFeatureFunctionFactory(allDeps, textDep, true)
+                .addFeatureFunctionFactory(allDeps, posDep, true)
+                .addFeatureFunctionFactory(allDeps, lemmaDep, true)
 
                 .addFeatureFunctionFactory(rootPath, pos, true)
                 .addFeatureFunctionFactory(rootPath, dep, true)
-                .addFeatureFunctionFactory(rootPath, lemma, true);
+                .addFeatureFunctionFactory(rootPath, lemma, true)
+                .addFeatureFunctionFactory(head, pos, true)
+                .addFeatureFunctionFactory(head, dep, true)
+                .addFeatureFunctionFactory(head, lemma, true);
 
         NlpFeatureExtractor<DepNode, List<String>> brown = new ListConcatenatingFeatureExtractor<>(
                 new StringListLookupFeature<>(BROWN), dep);
@@ -173,6 +186,10 @@ public class VerbNetClassifierUtils {
                 new StringListLookupFeature<>(CLUSTERS.get(3)), dep);
         NlpFeatureExtractor<DepNode, List<String>> cluster10000 = new ListConcatenatingFeatureExtractor<>(
                 new StringListLookupFeature<>(CLUSTERS.get(4)), dep);
+        NlpFeatureExtractor<DepNode, List<String>> wn = new ListConcatenatingFeatureExtractor<>(
+                new StringListLookupFeature<>(ExtJwnlWordNetResource.KEY), dep);
+        NlpFeatureExtractor<DepNode, List<String>> ddn = new ListConcatenatingFeatureExtractor<>(
+                new StringListLookupFeature<>(DynamicDependencyNeighborsResource.KEY), dep);
 
         featureFunctionFactory.addMultiFeatureFunctionFactory(depContexts, brown, true)
                 .addMultiFeatureFunctionFactory(depContexts, cluster100, true)
@@ -180,6 +197,8 @@ public class VerbNetClassifierUtils {
                 .addMultiFeatureFunctionFactory(depContexts, cluster1000, true)
                 .addMultiFeatureFunctionFactory(depContexts, cluster3200, true)
                 .addMultiFeatureFunctionFactory(depContexts, cluster10000, true)
+                .addMultiFeatureFunctionFactory(depContexts, wn, true)
+                .addMultiFeatureFunctionFactory(depContexts, ddn, true)
 
                 .addFeatureFunctionFactory(childModContexts, posDep, true)
                 .addFeatureFunctionFactory(childModContexts, dep, true)
@@ -191,10 +210,13 @@ public class VerbNetClassifierUtils {
     public static List<Annotator<FocusInstance<DepNode, DependencyTree>>> annotators() {
         List<Annotator<FocusInstance<DepNode, DependencyTree>>> annotators = new ArrayList<>();
         for (String cluster : CLUSTERS) {
-            annotators.add(new ListAnnotator<>(new StringFunctionExtractor<>(
-                    new LookupFeatureExtractor<>(FeatureType.Text.name()), new LowercaseFunction()), cluster));
+            annotators.add(new ListAnnotator<>(cluster, new StringFunctionExtractor<>(
+                    new LookupFeatureExtractor<>(FeatureType.Text.name()), new LowercaseFunction())));
         }
-        annotators.add(new ListAnnotator<>(new LookupFeatureExtractor<>(FeatureType.Text.name()), BROWN));
+        annotators.add(new ListAnnotator<>(BROWN, new LookupFeatureExtractor<>(FeatureType.Text.name())));
+        annotators.add(new DepNodeListAnnotator<>("WN"));
+        annotators.add(new DepNodeListAnnotator<>(DynamicDependencyNeighborsResource.KEY,
+                new DepChildrenContextFactory("dobj", "iobj", "nmod", "xcomp", "advmod")));
         return annotators;
     }
 
@@ -206,19 +228,19 @@ public class VerbNetClassifierUtils {
         annotator.initialize(resourceManager());
         instances.forEach(annotator::annotate);
 
-        CrossValidation<FocusInstance<DepNode, DependencyTree>> cv
-                = new CrossValidation<>((FocusInstance<DepNode, DependencyTree> i) -> (String) i.feature(FeatureType.Gold));
-        List<CrossValidation.Fold<FocusInstance<DepNode, DependencyTree>>> folds = cv.createFolds(instances, 5, 0.8);
+        CrossValidation<FocusInstance<DepNode, DependencyTree>> cv = new CrossValidation<>(
+                (FocusInstance<DepNode, DependencyTree> i) -> i.feature(FeatureType.Gold));
+        List<CrossValidation.Fold<FocusInstance<DepNode, DependencyTree>>> folds = cv.createFolds(instances, 5);
+
         FeaturePipelineFactory<FocusInstance<DepNode, DependencyTree>> factory = getFactory();
         MultiClassifier<FocusInstance<DepNode, DependencyTree>, String> multi = new MultiClassifier<>(
                 (Serializable & Function<FocusInstance<DepNode, DependencyTree>, String>)
                         (i) -> i.focus().feature(FeatureType.Predicate.name()),
                 (Serializable & Supplier<Classifier<FocusInstance<DepNode, DependencyTree>, String>>)
-                        () -> new MetaModelTrainer<>(factory, LibLinearClassifier::new, 0));
-        VerbNetClassifier classifier = new VerbNetClassifier(multi);
+                        () -> new MetaModelTrainer<>(factory, LibLinearClassifier::new));
+        VerbNetClassifier classifier = new VerbNetClassifier(multi, new CountingSenseInventory(), new PredicateDictionary());
         classifier.train(instances, new ArrayList<>());
         classifier.save(new ObjectOutputStream(new FileOutputStream("data/model.bin")));
-
         Evaluation overall = new Evaluation(cv.crossValidate(classifier, folds));
         log.info("\n{}", overall.toString());
     }

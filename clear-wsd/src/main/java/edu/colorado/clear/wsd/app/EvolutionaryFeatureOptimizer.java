@@ -1,9 +1,7 @@
 package edu.colorado.clear.wsd.app;
 
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -11,7 +9,7 @@ import java.util.List;
 import java.util.Properties;
 import java.util.stream.Collectors;
 
-import edu.colorado.clear.wsd.classifier.LibLinearClassifier;
+import edu.colorado.clear.wsd.classifier.PaClassifier;
 import edu.colorado.clear.wsd.corpus.VerbNetReader;
 import edu.colorado.clear.wsd.eval.CrossValidation;
 import edu.colorado.clear.wsd.eval.Evaluation;
@@ -39,7 +37,6 @@ import edu.colorado.clear.wsd.type.DepNode;
 import edu.colorado.clear.wsd.type.DependencyTree;
 import edu.colorado.clear.wsd.type.FeatureType;
 import edu.colorado.clear.wsd.type.FocusInstance;
-import edu.colorado.clear.wsd.verbnet.VerbNetClassifier;
 import lombok.extern.slf4j.Slf4j;
 
 import static edu.colorado.clear.wsd.app.VerbNetClassifierTrainer.resourceManager;
@@ -91,8 +88,8 @@ public class EvolutionaryFeatureOptimizer {
 
     private static Chromosome<OptionGene<Properties>> hyperparams(GeneticAlgorithm ga) {
         List<OptionGene<Properties>> genes = new ArrayList<>();
-        genes.add(propertyGene(ga, "Cost", "1000", "100", "10", "1", "0.1", "0.01", "0.001", "0.0001", "0.00001"));
-        genes.add(propertyGene(ga, "Epsilon", "1", "0.1", "0.01", "0.001", "0.0001"));
+        genes.add(propertyGene(ga, "Cost", "10", "1", "0.1"));
+        genes.add(propertyGene(ga, "Epsilon", "0.1", "0.01", "0.001"));
         return new DefaultChromosome<>(genes, ga.random());
     }
 
@@ -172,15 +169,15 @@ public class EvolutionaryFeatureOptimizer {
         instances.forEach(annotator::annotate);
 
         CrossValidation<FocusInstance<DepNode, DependencyTree>> cv = new CrossValidation<>(
-                (FocusInstance<DepNode, DependencyTree> i) -> (String) i.feature(FeatureType.Gold));
-        List<CrossValidation.Fold<FocusInstance<DepNode, DependencyTree>>> folds = cv.createFolds(instances, 5, 0.8);
+                (FocusInstance<DepNode, DependencyTree> i) -> i.feature(FeatureType.Gold));
+        List<CrossValidation.Fold<FocusInstance<DepNode, DependencyTree>>> folds = cv.createFolds(instances, 5);
 
         CrossValidatingFitnessFunction<FocusInstance<DepNode, DependencyTree>> fitness
-                = new CrossValidatingFitnessFunction<>(folds, cv);
+                = new CrossValidatingFitnessFunction<>(cv);
 
         GeneticAlgorithm<NlpClassifier<FocusInstance<DepNode, DependencyTree>>> ga = new GeneticAlgorithm<>(0, fitness);
         Genotype<NlpClassifier<FocusInstance<DepNode, DependencyTree>>> genotype =
-                new NlpClassifierGenotype<>(chromosome(ga), hyperparams(ga), LibLinearClassifier::new);
+                new NlpClassifierGenotype<>(chromosome(ga), hyperparams(ga), PaClassifier::new);
         ga.prototype(genotype);
         EvolutionaryModelTrainer<FocusInstance<DepNode, DependencyTree>> modelTrainer
                 = new EvolutionaryModelTrainer<>(ga);
@@ -189,9 +186,6 @@ public class EvolutionaryFeatureOptimizer {
             log.debug("\n{}", evaluation.toString());
         }
         log.debug("\n\n{}", new Evaluation(evaluations));
-        VerbNetClassifier classifier = new VerbNetClassifier(modelTrainer);
-        classifier.train(instances, new ArrayList<>());
-        classifier.save(new ObjectOutputStream(new FileOutputStream("data/test.bin")));
     }
 
 }

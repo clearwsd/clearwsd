@@ -2,9 +2,6 @@ package edu.colorado.clear.wsd.classifier;
 
 import com.google.common.base.Stopwatch;
 
-import org.apache.commons.lang3.tuple.ImmutablePair;
-import org.apache.commons.lang3.tuple.Pair;
-
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -21,6 +18,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import edu.colorado.clear.wsd.eval.Evaluation;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -238,21 +236,21 @@ public class PaClassifier implements SparseClassifier {
         float[] correctVec = parameters.get(instance.target());
         double correctScore = score(instance, correctVec);
 
-        Pair<Integer, Float> maxIncorrect = getMaxIncorrect(instance, instance.target());
-        float maxScore = maxIncorrect.getRight();
+        ScoredLabel maxIncorrect = getMaxIncorrect(instance, instance.target());
+        float maxScore = maxIncorrect.score;
 
         double loss = Math.max(0, 1 - correctScore + maxScore);
         if (loss > 0) {
-            update(loss, instance, instance.target(), maxIncorrect.getLeft(), count);
+            update(loss, instance, instance.target(), maxIncorrect.label, count);
         }
         return (correctScore < maxScore);
     }
 
-    private Pair<Integer, Float> getMaxIncorrect(SparseVector instance, int correctLabel) {
+    private ScoredLabel getMaxIncorrect(SparseVector instance, int correctLabel) {
         return entryStream()
                 .filter(p -> p.getKey() != correctLabel)
-                .map(p -> new ImmutablePair<>(p.getKey(), score(instance, p.getValue())))
-                .max((p1, p2) -> Float.compare(p1.getRight(), p2.getRight()))
+                .map(p -> new ScoredLabel(p.getKey(), score(instance, p.getValue())))
+                .max((p1, p2) -> Float.compare(p1.score, p2.score))
                 .orElseThrow(() -> new IllegalStateException("No parameters found."));
     }
 
@@ -280,9 +278,9 @@ public class PaClassifier implements SparseClassifier {
 
     private int getMax(SparseVector featureVector) {
         return entryStream()
-                .map(p -> new ImmutablePair<>(p.getKey(), score(featureVector, p.getValue())))
-                .max((p1, p2) -> Float.compare(p1.getRight(), p2.getRight()))
-                .orElseThrow(() -> new IllegalStateException("No parameters found.")).getLeft();
+                .map(p -> new ScoredLabel(p.getKey(), score(featureVector, p.getValue())))
+                .max((p1, p2) -> Float.compare(p1.score, p2.score))
+                .orElseThrow(() -> new IllegalStateException("No parameters found.")).label;
     }
 
     private void averageParameters(int count) {
@@ -309,6 +307,12 @@ public class PaClassifier implements SparseClassifier {
 
     private Stream<Map.Entry<Integer, float[]>> entryStream() {
         return multithread ? parameters.entrySet().parallelStream() : parameters.entrySet().stream();
+    }
+
+    @AllArgsConstructor
+    private static final class ScoredLabel {
+        private final int label;
+        private final float score;
     }
 
 }

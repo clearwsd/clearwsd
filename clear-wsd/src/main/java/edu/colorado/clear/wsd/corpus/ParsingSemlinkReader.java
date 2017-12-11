@@ -1,9 +1,6 @@
 package edu.colorado.clear.wsd.corpus;
 
 import java.io.BufferedReader;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -16,8 +13,6 @@ import java.util.stream.Collectors;
 import edu.colorado.clear.wsd.corpus.VerbNetReader.VerbNetInstanceParser;
 import edu.colorado.clear.wsd.parser.DependencyParser;
 import edu.colorado.clear.wsd.parser.NlpTokenizer;
-import edu.colorado.clear.wsd.parser.StanfordDependencyParser;
-import edu.colorado.clear.wsd.parser.WhitespaceTokenizer;
 import edu.colorado.clear.wsd.type.DepNode;
 import edu.colorado.clear.wsd.type.DependencyTree;
 import edu.colorado.clear.wsd.type.FocusInstance;
@@ -121,13 +116,6 @@ public class ParsingSemlinkReader implements CorpusReader<FocusInstance<DepNode,
             }
         }
         return instances;
-    }
-
-    public static void main(String[] args) throws FileNotFoundException {
-        List<FocusInstance<DepNode, DependencyTree>> focusInstances = new ParsingSemlinkReader(
-                new StanfordDependencyParser(), new WhitespaceTokenizer())
-                .readInstances(new FileInputStream("data/all.txt"));
-        new VerbNetReader().writeInstances(focusInstances, new FileOutputStream("data/all-new.dep"));
     }
 
 }
