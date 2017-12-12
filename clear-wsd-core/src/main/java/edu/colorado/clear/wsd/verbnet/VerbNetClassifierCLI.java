@@ -135,6 +135,8 @@ public abstract class VerbNetClassifierCLI {
         }
     }
 
+    protected abstract DependencyParser parser();
+
     public void run() {
         try {
             checkParameters();     // (1) validate parameters
@@ -285,8 +287,6 @@ public abstract class VerbNetClassifierCLI {
         VerbNetParser parser = new VerbNetParser(getAnnotator(), getParser());
         InteractiveTestLoop.test(parser, Sense.name());
     }
-
-    protected abstract DependencyParser parser();
 
     private DependencyParser getParser() {
         if (parser == null) {
