@@ -6,6 +6,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import lombok.Getter;
+import lombok.Setter;
 import lombok.experimental.Accessors;
 
 /**
@@ -17,6 +18,7 @@ import lombok.experimental.Accessors;
 @Accessors(fluent = true)
 public class BaseNlpInstance implements NlpInstance {
 
+    @Setter
     private int index;
     private Map<String, Object> features;
 

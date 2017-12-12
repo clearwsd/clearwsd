@@ -1,4 +1,4 @@
-package edu.colorado.clear.wsd.corpus;
+package edu.colorado.clear.wsd.corpus.semlink;
 
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -8,6 +8,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import edu.colorado.clear.wsd.corpus.CoNllDepTreeReader;
+import edu.colorado.clear.wsd.corpus.CorpusReader;
 import edu.colorado.clear.wsd.type.DepNode;
 import edu.colorado.clear.wsd.type.DependencyTree;
 import edu.colorado.clear.wsd.type.FocusInstance;
@@ -98,7 +100,7 @@ public class VerbNetReader implements CorpusReader<FocusInstance<DepNode, Depend
     @Getter
     @Setter
     @Accessors(fluent = true)
-    public static class VerbNetInstance {
+    static class VerbNetInstance {
         private String path;
         private int sentence;
         private int token;

@@ -14,6 +14,10 @@ public enum FeatureType {
     Gold,
     Predicate,
     Sense,
-    Metadata
+    Metadata,
+    GoldPos,
+    GoldLemma,
+    AllSenses,
+    Id,
 
 }

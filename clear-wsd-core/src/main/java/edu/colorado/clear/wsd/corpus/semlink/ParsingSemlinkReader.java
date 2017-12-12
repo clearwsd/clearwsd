@@ -1,4 +1,4 @@
-package edu.colorado.clear.wsd.corpus;
+package edu.colorado.clear.wsd.corpus.semlink;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -10,7 +10,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import edu.colorado.clear.wsd.corpus.VerbNetReader.VerbNetInstanceParser;
+import edu.colorado.clear.wsd.corpus.CorpusReader;
+import edu.colorado.clear.wsd.corpus.semlink.VerbNetReader.VerbNetInstanceParser;
 import edu.colorado.clear.wsd.parser.DependencyParser;
 import edu.colorado.clear.wsd.parser.NlpTokenizer;
 import edu.colorado.clear.wsd.type.DepNode;
