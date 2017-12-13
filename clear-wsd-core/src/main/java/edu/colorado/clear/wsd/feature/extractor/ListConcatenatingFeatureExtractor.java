@@ -14,12 +14,13 @@ import edu.colorado.clear.wsd.type.NlpInstance;
  *
  * @author jamesgung
  */
-public class ListConcatenatingFeatureExtractor<T extends NlpInstance> extends NlpFeatureExtractor<T, List<String>> {
+public class ListConcatenatingFeatureExtractor<T extends NlpInstance> implements StringListExtractor<T> {
 
     private static final long serialVersionUID = -8997941881477825340L;
 
     private FeatureExtractor<T, List<String>> baseExtractor;
     private List<FeatureExtractor<T, String>> extractors;
+    private String id;
 
     public ListConcatenatingFeatureExtractor(FeatureExtractor<T, List<String>> baseExtractor,
                                              List<FeatureExtractor<T, String>> extractors) {
@@ -33,6 +34,11 @@ public class ListConcatenatingFeatureExtractor<T extends NlpInstance> extends Nl
     public ListConcatenatingFeatureExtractor(FeatureExtractor<T, List<String>> baseExtractor,
                                              FeatureExtractor<T, String>... extractors) {
         this(baseExtractor, Arrays.asList(extractors));
+    }
+
+    @Override
+    public String id() {
+        return id;
     }
 
     @Override

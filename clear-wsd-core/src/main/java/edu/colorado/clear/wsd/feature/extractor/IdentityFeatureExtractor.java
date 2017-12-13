@@ -5,7 +5,7 @@ package edu.colorado.clear.wsd.feature.extractor;
  *
  * @author jamesgung
  */
-public class IdentityFeatureExtractor<K> implements FeatureExtractor<K, String> {
+public class IdentityFeatureExtractor<K> implements StringExtractor<K> {
 
     public static final String ID = "ID";
 

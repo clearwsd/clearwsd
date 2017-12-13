@@ -9,10 +9,12 @@ import net.sf.extjwnl.data.Synset;
 import net.sf.extjwnl.data.Word;
 import net.sf.extjwnl.dictionary.Dictionary;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 import edu.colorado.clear.wsd.feature.util.PosUtils;
@@ -32,10 +34,10 @@ import lombok.extern.slf4j.Slf4j;
 @Accessors(fluent = true)
 public class ExtJwnlWordNetResource<K extends NlpInstance> implements FeatureResource<K, List<String>> {
 
-    public static final String KEY = "WN";
+    public static final String WN_KEY = "WN";
 
     @Getter
-    private String key = KEY;
+    private String key = WN_KEY;
 
     private Dictionary dict;
 
@@ -103,6 +105,16 @@ public class ExtJwnlWordNetResource<K extends NlpInstance> implements FeatureRes
             return POS.ADVERB;
         } else {
             return null;
+        }
+    }
+
+    public static class WordNetInitializer<K extends NlpInstance> implements Supplier<ExtJwnlWordNetResource<K>>, Serializable {
+
+        private static final long serialVersionUID = -1210563042105427915L;
+
+        @Override
+        public ExtJwnlWordNetResource<K> get() {
+            return new ExtJwnlWordNetResource<>();
         }
     }
 

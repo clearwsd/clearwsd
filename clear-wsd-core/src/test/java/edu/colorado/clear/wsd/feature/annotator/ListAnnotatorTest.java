@@ -2,6 +2,8 @@ package edu.colorado.clear.wsd.feature.annotator;
 
 import org.junit.Test;
 
+import java.io.File;
+import java.net.MalformedURLException;
 import java.util.Collections;
 
 import edu.colorado.clear.wsd.feature.TestInstanceBuilder;
@@ -32,9 +34,9 @@ public class ListAnnotatorTest {
     }
 
     @Test
-    public void testAnnotate() {
+    public void testAnnotate() throws MalformedURLException {
         DefaultTsvResourceInitializer<String> testResource = new DefaultTsvResourceInitializer<>(
-                "testResource", "src/test/resources/test_resource.tsv");
+                "testResource", new File("src/test/resources/test_resource.tsv").toURI().toURL());
         ListAnnotator<DepNode, FocusInstance<DepNode, DependencyTree>> annotator = new ListAnnotator<>(
                 "testResource", new LookupFeatureExtractor<DepNode>(FeatureType.Text.name()));
         annotator.initialize(new DefaultFeatureResourceManager().registerInitializer("testResource", testResource));

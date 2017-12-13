@@ -17,7 +17,7 @@ public class StringListLookupFeatureTest {
 
     @Test
     public void testStringListLookup() {
-        StringListLookupFeature<NlpInstance> listFeature = new StringListLookupFeature<>("test");
+        ListLookupFeatureExtractor<NlpInstance> listFeature = new ListLookupFeatureExtractor<>("test");
         BaseDepNode depNode = new BaseDepNode(0);
         depNode.addFeature("test", Arrays.asList("one", "two"));
         List<String> result = listFeature.extract(depNode);

@@ -23,11 +23,6 @@ import java.util.stream.Collectors;
 import javax.xml.bind.JAXBException;
 
 import edu.colorado.clear.wsd.corpus.CorpusReader;
-import edu.colorado.clear.wsd.corpus.semeval.xml.SemevalCorpus;
-import edu.colorado.clear.wsd.corpus.semeval.xml.SemevalFactory;
-import edu.colorado.clear.wsd.corpus.semeval.xml.SemevalInstance;
-import edu.colorado.clear.wsd.corpus.semeval.xml.SemevalSentence;
-import edu.colorado.clear.wsd.corpus.semeval.xml.SemevalWordForm;
 import edu.colorado.clear.wsd.type.BaseDepNode;
 import edu.colorado.clear.wsd.type.BaseDependencyTree;
 import edu.colorado.clear.wsd.type.DepNode;

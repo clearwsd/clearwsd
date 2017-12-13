@@ -51,6 +51,10 @@ public class DepChildrenContextFactory extends DepContextFactory {
         this(exclude, include, 0);
     }
 
+    public DepChildrenContextFactory(Set<String> include) {
+        this(new HashSet<>(), include, 0);
+    }
+
     public DepChildrenContextFactory(String... include) {
         this(new HashSet<>(), Arrays.stream(include).collect(Collectors.toSet()), 0);
     }

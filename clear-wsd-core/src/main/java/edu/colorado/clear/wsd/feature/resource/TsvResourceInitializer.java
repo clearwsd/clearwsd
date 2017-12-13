@@ -6,8 +6,10 @@ import com.google.common.collect.ListMultimap;
 import com.google.common.collect.Multimap;
 
 import java.io.BufferedReader;
-import java.io.FileInputStream;
+import java.io.File;
 import java.io.InputStreamReader;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.Arrays;
 import java.util.List;
 
@@ -36,18 +38,27 @@ public abstract class TsvResourceInitializer<K> implements StringResourceInitial
     protected FeatureExtractor<K, String> mappingFunction = new IdentityFeatureExtractor<>();
 
     private final String key;
-    private final String path;
+    private final URL path;
 
-    public TsvResourceInitializer(String key, String path) {
+    TsvResourceInitializer(String key, URL path) {
         this.key = key;
         this.path = path;
+    }
+
+    TsvResourceInitializer(String key, String path) {
+        this.key = key;
+        try {
+            this.path = new File(path).toURI().toURL();
+        } catch (MalformedURLException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
     public MultimapResource<K> get() {
         ListMultimap<String, String> multimap = ArrayListMultimap.create();
         MultimapResource<K> resource = new MultimapResource<>(key);
-        try (BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(path)))) {
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(path.openStream()))) {
             String line;
             while ((line = reader.readLine()) != null) {
                 line = line.trim();

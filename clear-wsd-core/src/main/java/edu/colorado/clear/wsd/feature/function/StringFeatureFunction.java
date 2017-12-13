@@ -7,6 +7,7 @@ import edu.colorado.clear.wsd.feature.StringFeature;
 import edu.colorado.clear.wsd.feature.context.NlpContext;
 import edu.colorado.clear.wsd.feature.context.NlpContextFactory;
 import edu.colorado.clear.wsd.feature.extractor.FeatureExtractor;
+import edu.colorado.clear.wsd.feature.extractor.StringExtractor;
 import edu.colorado.clear.wsd.feature.util.FeatureUtils;
 import edu.colorado.clear.wsd.type.NlpInstance;
 import lombok.AllArgsConstructor;
@@ -23,7 +24,7 @@ public class StringFeatureFunction<InputT extends NlpInstance, OutputT extends N
     private static final long serialVersionUID = -5155518913022081531L;
 
     private NlpContextFactory<InputT, OutputT> contextFactory;
-    private List<FeatureExtractor<OutputT, String>> featureExtractors;
+    private List<StringExtractor<OutputT>> featureExtractors;
 
     @Override
     public List<StringFeature> apply(InputT instance) {

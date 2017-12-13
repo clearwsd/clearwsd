@@ -11,18 +11,19 @@ import edu.colorado.clear.wsd.type.NlpInstance;
  *
  * @author jamesgung
  */
-public class LookupFeatureExtractor<T extends NlpInstance> extends NlpFeatureExtractor<T, String> {
+public class LookupFeatureExtractor<T extends NlpInstance> implements StringExtractor<T> {
 
     private static final String DEFAULT_VALUE = "<NONE>";
     private static final long serialVersionUID = -8167041300890840929L;
 
     private List<String> keys;
     private FeatureExtractor<T, String> fallbackExtractor;
+    private String id;
 
     public LookupFeatureExtractor(List<String> keys, FeatureExtractor<T, String> fallbackExtractor) {
         this.keys = keys;
         this.fallbackExtractor = fallbackExtractor;
-        id = String.join(FeatureUtils.KEY_DELIM, keys);
+        this.id = String.join(FeatureUtils.KEY_DELIM, keys);
     }
 
     public LookupFeatureExtractor(List<String> keys) {
@@ -31,6 +32,11 @@ public class LookupFeatureExtractor<T extends NlpInstance> extends NlpFeatureExt
 
     public LookupFeatureExtractor(String key) {
         this(Collections.singletonList(key));
+    }
+
+    @Override
+    public String id() {
+        return id;
     }
 
     @Override

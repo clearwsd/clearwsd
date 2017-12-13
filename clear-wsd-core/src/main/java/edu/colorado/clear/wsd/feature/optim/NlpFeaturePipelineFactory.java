@@ -8,7 +8,8 @@ import java.util.Random;
 import java.util.stream.Collectors;
 
 import edu.colorado.clear.wsd.feature.context.NlpContextFactory;
-import edu.colorado.clear.wsd.feature.extractor.FeatureExtractor;
+import edu.colorado.clear.wsd.feature.extractor.StringExtractor;
+import edu.colorado.clear.wsd.feature.extractor.StringListExtractor;
 import edu.colorado.clear.wsd.feature.function.AggregateFeatureFunction;
 import edu.colorado.clear.wsd.feature.function.BiasFeatureFunction;
 import edu.colorado.clear.wsd.feature.function.FeatureFunction;
@@ -56,14 +57,14 @@ public class NlpFeaturePipelineFactory<I extends NlpInstance, O extends NlpInsta
     }
 
     public NlpFeaturePipelineFactory<I, O> addFeatureFunctionFactory(List<NlpContextFactory<I, O>> contexts,
-                                                                     FeatureExtractor<O, String> extractor,
+                                                                     StringExtractor<O> extractor,
                                                                      boolean optional) {
         factories.add(new SingleFeatureFunctionFactory(contexts, Collections.singletonList(extractor), optional));
         return this;
     }
 
     public NlpFeaturePipelineFactory<I, O> addMultiFeatureFunctionFactory(List<NlpContextFactory<I, O>> contexts,
-                                                                          FeatureExtractor<O, List<String>> extractor,
+                                                                          StringListExtractor<O> extractor,
                                                                           boolean optional) {
         factories.add(new ListFeatureFunctionFactory(contexts, Collections.singletonList(extractor), optional));
         return this;
@@ -73,7 +74,7 @@ public class NlpFeaturePipelineFactory<I extends NlpInstance, O extends NlpInsta
     public class SingleFeatureFunctionFactory implements FeatureFunctionFactory<I> {
 
         private List<NlpContextFactory<I, O>> contexts;
-        private List<FeatureExtractor<O, String>> extractors;
+        private List<StringExtractor<O>> extractors;
         private boolean optional;
 
         @Override
@@ -84,7 +85,7 @@ public class NlpFeaturePipelineFactory<I extends NlpInstance, O extends NlpInsta
                 }
             }
             NlpContextFactory<I, O> contextFactory = contexts.get(random.nextInt(contexts.size()));
-            FeatureExtractor<O, String> extractor = extractors.get(random.nextInt(extractors.size()));
+            StringExtractor<O> extractor = extractors.get(random.nextInt(extractors.size()));
             return new StringFeatureFunction<>(contextFactory, Collections.singletonList(extractor));
         }
     }
@@ -93,7 +94,7 @@ public class NlpFeaturePipelineFactory<I extends NlpInstance, O extends NlpInsta
     public class ListFeatureFunctionFactory implements FeatureFunctionFactory<I> {
 
         private List<NlpContextFactory<I, O>> contexts;
-        private List<FeatureExtractor<O, List<String>>> extractors;
+        private List<StringListExtractor<O>> extractors;
         private boolean optional;
 
         @Override
@@ -104,7 +105,7 @@ public class NlpFeaturePipelineFactory<I extends NlpInstance, O extends NlpInsta
                 }
             }
             NlpContextFactory<I, O> contextFactory = contexts.get(random.nextInt(contexts.size()));
-            FeatureExtractor<O, List<String>> extractor = extractors.get(random.nextInt(extractors.size()));
+            StringListExtractor<O> extractor = extractors.get(random.nextInt(extractors.size()));
             return new MultiStringFeatureFunction<>(contextFactory, Collections.singletonList(extractor));
         }
     }

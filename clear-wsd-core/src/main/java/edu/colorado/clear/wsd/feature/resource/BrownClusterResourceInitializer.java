@@ -3,6 +3,7 @@ package edu.colorado.clear.wsd.feature.resource;
 import com.google.common.collect.Multimap;
 
 import java.io.InputStream;
+import java.net.URL;
 import java.util.Arrays;
 import java.util.List;
 
@@ -20,10 +21,16 @@ import lombok.experimental.Accessors;
 @Accessors(fluent = true)
 public class BrownClusterResourceInitializer<K> extends TsvResourceInitializer<K> {
 
+    public static final String BWC_KEY = "BWC";
+
     private static final long serialVersionUID = -1475047308109219325L;
 
     private List<Integer> subSequences = Arrays.asList(4, 6, 10, 20);
     private int threshold = 1;
+
+    public BrownClusterResourceInitializer(String key, URL path) {
+        super(key, path);
+    }
 
     public BrownClusterResourceInitializer(String key, String path) {
         super(key, path);

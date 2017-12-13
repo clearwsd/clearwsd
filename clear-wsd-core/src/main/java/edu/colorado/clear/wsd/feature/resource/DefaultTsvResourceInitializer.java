@@ -3,6 +3,7 @@ package edu.colorado.clear.wsd.feature.resource;
 import com.google.common.collect.Multimap;
 
 import java.io.InputStream;
+import java.net.URL;
 import java.util.List;
 
 import lombok.experimental.Accessors;
@@ -16,6 +17,10 @@ import lombok.experimental.Accessors;
 public class DefaultTsvResourceInitializer<K> extends TsvResourceInitializer<K> {
 
     private static final long serialVersionUID = -1044802169525334439L;
+
+    public DefaultTsvResourceInitializer(String key, URL path) {
+        super(key, path);
+    }
 
     public DefaultTsvResourceInitializer(String key, String path) {
         super(key, path);

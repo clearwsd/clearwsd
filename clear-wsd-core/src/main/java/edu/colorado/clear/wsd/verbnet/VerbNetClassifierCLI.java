@@ -24,16 +24,14 @@ import java.util.function.Supplier;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-import edu.colorado.clear.wsd.classifier.PaClassifier;
 import edu.colorado.clear.wsd.corpus.CoNllDepTreeReader;
 import edu.colorado.clear.wsd.corpus.CorpusReader;
-import edu.colorado.clear.wsd.corpus.semlink.ParsingSemlinkReader;
 import edu.colorado.clear.wsd.corpus.TextCorpusReader;
+import edu.colorado.clear.wsd.corpus.semlink.ParsingSemlinkReader;
 import edu.colorado.clear.wsd.corpus.semlink.VerbNetReader;
 import edu.colorado.clear.wsd.eval.CrossValidation;
 import edu.colorado.clear.wsd.eval.Evaluation;
 import edu.colorado.clear.wsd.eval.Predictions;
-import edu.colorado.clear.wsd.feature.pipeline.NlpClassifier;
 import edu.colorado.clear.wsd.parser.DependencyParser;
 import edu.colorado.clear.wsd.parser.WhitespaceTokenizer;
 import edu.colorado.clear.wsd.type.DepNode;
@@ -45,7 +43,6 @@ import edu.colorado.clear.wsd.utils.InteractiveTestLoop;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
-import static edu.colorado.clear.wsd.app.experiment.VerbNetExperiment.initializeFeatures;
 import static edu.colorado.clear.wsd.type.FeatureType.Sense;
 import static edu.colorado.clear.wsd.type.FeatureType.Text;
 
@@ -155,8 +152,9 @@ public abstract class VerbNetClassifierCLI {
         depPattern = Pattern.compile("\\" + parseSuffix + "$");
         if (modelPath == null) {
             if (trainPath == null) {
-                throw new IllegalStateException("Must specify a model (e.g. using \"-model path/to/model.bin\"), or provide training data "
-                        + "(e.g. using \"-train path/to/training/data.txt\").");
+                throw new IllegalStateException(
+                        "Must specify a model (e.g. using \"-model path/to/model.bin\"), or provide training data "
+                                + "(e.g. using \"-train path/to/training/data.txt\").");
             }
             modelPath = trainPath + ".bin";
             log.warn("No model path specified, saving to {} instead.", modelPath);
@@ -195,12 +193,7 @@ public abstract class VerbNetClassifierCLI {
         if (validInstances.size() > 0) {
             evaluate(validInstances, validPath);
         }
-        log.info("Saving classifier model to {}", modelPath);
-        try {
-            classifier.save(new ObjectOutputStream(new FileOutputStream(modelPath)));
-        } catch (IOException e) {
-            log.warn("Unable to save model to {}", modelPath, e);
-        }
+        saveClassifier();
     }
 
     private void crossValidate() {
@@ -304,18 +297,29 @@ public abstract class VerbNetClassifierCLI {
     }
 
     private VerbNetClassifier newClassifier() {
-        return new VerbNetClassifier(new NlpClassifier<>(new PaClassifier(), initializeFeatures()),
+        return new VerbNetClassifier(new DefaultVerbNetClassifier(),
                 new VerbNetSenseInventory(), new PredicateDictionary());
     }
 
     private VerbNetClassifier loadClassifier() {
         log.debug("Loading saved classifier model from {}", modelPath);
-        try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(new File(modelPath)))) {
+        try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(modelPath))) {
             return new VerbNetClassifier(ois);
         } catch (FileNotFoundException e) {
             throw new RuntimeException("Unable to locate model at path " + modelPath, e);
         } catch (Exception e) {
             throw new RuntimeException("Unable to load VerbNet classifier model: " + e.getMessage(), e);
+        }
+    }
+
+    private void saveClassifier() {
+        log.debug("Saving trained classifier model to {}", modelPath);
+        try (ObjectOutputStream ois = new ObjectOutputStream(new FileOutputStream(modelPath))) {
+            classifier.save(ois);
+        } catch (FileNotFoundException e) {
+            throw new RuntimeException("Unable to save model to path " + modelPath, e);
+        } catch (Exception e) {
+            throw new RuntimeException("Unable to save VerbNet classifier model: " + e.getMessage(), e);
         }
     }
 

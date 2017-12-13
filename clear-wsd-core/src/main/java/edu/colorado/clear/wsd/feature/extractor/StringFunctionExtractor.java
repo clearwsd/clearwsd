@@ -14,12 +14,13 @@ import static edu.colorado.clear.wsd.feature.util.FeatureUtils.KEY_DELIM;
  *
  * @author jamesgung
  */
-public class StringFunctionExtractor<T extends NlpInstance> extends NlpFeatureExtractor<T, String> {
+public class StringFunctionExtractor<T extends NlpInstance> implements StringExtractor<T> {
 
     private static final long serialVersionUID = -6703070360030390063L;
 
     private FeatureExtractor<T, String> baseExtractor;
     private List<StringFunction> stringFunctions;
+    private String id;
 
     public StringFunctionExtractor(FeatureExtractor<T, String> baseExtractor, List<StringFunction> stringFunctions) {
         this.baseExtractor = baseExtractor;
@@ -31,6 +32,11 @@ public class StringFunctionExtractor<T extends NlpInstance> extends NlpFeatureEx
 
     public StringFunctionExtractor(FeatureExtractor<T, String> baseExtractor, StringFunction stringFunction) {
         this(baseExtractor, Collections.singletonList(stringFunction));
+    }
+
+    @Override
+    public String id() {
+        return id;
     }
 
     @Override
