@@ -49,6 +49,10 @@ public class Features {
         return new ConjunctionFunction<>(first, second);
     }
 
+    public static <T extends NlpInstance> ConjunctionFunction<T> cross(FeatureFunction<T> self) {
+        return new ConjunctionFunction<>(self, self);
+    }
+
     public static <T extends NlpInstance> BiasFeatureFunction<T> bias() {
         return new BiasFeatureFunction<>();
     }

@@ -2,6 +2,7 @@ package edu.colorado.clear.wsd.feature.resource;
 
 import com.google.common.base.Stopwatch;
 
+import net.sf.extjwnl.JWNLException;
 import net.sf.extjwnl.data.IndexWord;
 import net.sf.extjwnl.data.POS;
 import net.sf.extjwnl.data.PointerUtils;
@@ -16,6 +17,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
+
+import javax.annotation.Nullable;
 
 import edu.colorado.clear.wsd.feature.util.PosUtils;
 import edu.colorado.clear.wsd.type.FeatureType;
@@ -39,16 +42,13 @@ public class ExtJwnlWordNetResource<K extends NlpInstance> implements FeatureRes
     @Getter
     private String key = WN_KEY;
 
+    @Getter
     private Dictionary dict;
 
     public ExtJwnlWordNetResource(String inputPath) {
         Stopwatch stopwatch = Stopwatch.createStarted();
         try {
-            if (inputPath != null) {
-                dict = Dictionary.getFileBackedInstance(inputPath);
-            } else {
-                dict = Dictionary.getDefaultResourceInstance();
-            }
+            dict = inputPath == null ? Dictionary.getDefaultResourceInstance() : Dictionary.getFileBackedInstance(inputPath);
             log.debug("Loaded WordNet in {}.", stopwatch.toString());
         } catch (Exception e) {
             log.error("Error loading WordNet dictionary.", e);
@@ -62,6 +62,47 @@ public class ExtJwnlWordNetResource<K extends NlpInstance> implements FeatureRes
     @Override
     public List<String> lookup(K key) {
         return new ArrayList<>(hypernyms(key.feature(FeatureType.Lemma), key.feature(FeatureType.Pos)));
+    }
+
+    /**
+     * Return the most frequent sense of a word/POS combination based on tagged sense counts.
+     *
+     * @param lemma word lemma
+     * @param pos   word part-of-speech
+     * @return most frequent sense
+     */
+    @Nullable
+    public String mostFrequentSense(String lemma, String pos) {
+        POS wnPos = getPos(pos);
+        try {
+            IndexWord indexWord = dict.lookupIndexWord(wnPos, lemma);
+            if (indexWord == null || indexWord.getSenses().size() == 0) {
+                return null;
+            }
+            Synset synset = indexWord.getSenses().get(0);
+            int index = synset.indexOfWord(lemma.replaceAll("_", " "));
+            return synset.getWords().get(index).getSenseKey();
+        } catch (JWNLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public Set<String> senses(String lemma, String pos) {
+        POS wnPos = getPos(pos);
+        try {
+            IndexWord indexWord = dict.lookupIndexWord(wnPos, lemma);
+            if (indexWord == null || indexWord.getSenses().size() == 0) {
+                return new HashSet<>();
+            }
+            Set<String> results = new HashSet<>();
+            for (Synset synset : indexWord.getSenses()) {
+                int index = synset.indexOfWord(lemma.replaceAll("_", " "));
+                results.add(synset.getWords().get(index).getSenseKey());
+            }
+            return results;
+        } catch (JWNLException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     private Set<String> hypernyms(String lemma, String pos) {

@@ -1,6 +1,7 @@
 package edu.colorado.clear.wsd.verbnet;
 
 import com.google.common.base.Preconditions;
+import com.google.common.base.Stopwatch;
 
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.Parameter;
@@ -20,6 +21,9 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
+import java.util.function.BiFunction;
+import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -27,6 +31,8 @@ import java.util.stream.Collectors;
 import edu.colorado.clear.wsd.corpus.CoNllDepTreeReader;
 import edu.colorado.clear.wsd.corpus.CorpusReader;
 import edu.colorado.clear.wsd.corpus.TextCorpusReader;
+import edu.colorado.clear.wsd.corpus.semeval.ParsingSemevalReader;
+import edu.colorado.clear.wsd.corpus.semeval.SemevalReader;
 import edu.colorado.clear.wsd.corpus.semlink.ParsingSemlinkReader;
 import edu.colorado.clear.wsd.corpus.semlink.VerbNetReader;
 import edu.colorado.clear.wsd.eval.CrossValidation;
@@ -40,11 +46,16 @@ import edu.colorado.clear.wsd.type.FeatureType;
 import edu.colorado.clear.wsd.type.FocusInstance;
 import edu.colorado.clear.wsd.type.NlpInstance;
 import edu.colorado.clear.wsd.utils.InteractiveTestLoop;
-import lombok.NoArgsConstructor;
+import edu.colorado.clear.wsd.utils.SenseInventory;
+import edu.colorado.clear.wsd.utils.WordNetSenseInventory;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
+import static edu.colorado.clear.wsd.type.FeatureType.Gold;
 import static edu.colorado.clear.wsd.type.FeatureType.Sense;
 import static edu.colorado.clear.wsd.type.FeatureType.Text;
+import static edu.colorado.clear.wsd.verbnet.VerbNetClassifierCLI.SenseInventoryType.VerbNet;
+import static edu.colorado.clear.wsd.verbnet.VerbNetClassifierCLI.SenseInventoryType.WordNet;
 
 /**
  * Command line interface for training, evaluating and applying a VerbNet classifier.
@@ -52,8 +63,62 @@ import static edu.colorado.clear.wsd.type.FeatureType.Text;
  * @author jamesgung
  */
 @Slf4j
-@NoArgsConstructor
 public abstract class VerbNetClassifierCLI {
+
+    public enum SenseInventoryType {
+        VerbNet(VerbNetSenseInventory::new),
+        WordNet(WordNetSenseInventory::new);
+        private Supplier<SenseInventory> senseInventory;
+
+        SenseInventoryType(Supplier<SenseInventory> senseInventory) {
+            this.senseInventory = senseInventory;
+        }
+
+        public SenseInventory senseInventory() {
+            return senseInventory.get();
+        }
+
+    }
+
+    public enum CorpusType {
+
+        Semeval(ParsingSemevalReader::new, SemevalReader::new, WordNet),
+        Semlink((unused, parser) -> new ParsingSemlinkReader(parser), (unused) -> new VerbNetReader(), VerbNet);
+
+        private BiFunction<String, DependencyParser, CorpusReader<FocusInstance<DepNode, DependencyTree>>> corpusParser;
+        private Function<String, CorpusReader<FocusInstance<DepNode, DependencyTree>>> corpusReader;
+        @Getter
+        private SenseInventoryType defaultInventory;
+
+        CorpusType(BiFunction<String, DependencyParser, CorpusReader<FocusInstance<DepNode, DependencyTree>>> corpusParser,
+                   Function<String, CorpusReader<FocusInstance<DepNode, DependencyTree>>> corpusReader, SenseInventoryType type) {
+            this.corpusParser = corpusParser;
+            this.corpusReader = corpusReader;
+            this.defaultInventory = type;
+        }
+
+        /**
+         * Return a {@link CorpusReader} that parses the input corpus while reading it.
+         *
+         * @param path      key path
+         * @param depParser dependency parser used to parse the input corpus
+         * @return parsing {@link CorpusReader}
+         */
+        public CorpusReader<FocusInstance<DepNode, DependencyTree>> corpusParser(String path, DependencyParser depParser) {
+            return corpusParser.apply(path, depParser);
+        }
+
+        /**
+         * Return a {@link CorpusReader} that reads a pre-parsed corpus, avoiding the need to re-parse.
+         *
+         * @param path key path
+         * @return {@link CorpusReader} for reading a pre-parsed corpus
+         */
+        public CorpusReader<FocusInstance<DepNode, DependencyTree>> corpusReader(String path) {
+            return corpusReader.apply(path);
+        }
+
+    }
 
     private final String helpMessage = VerbNetClassifierCLI.class.getSimpleName()
             + " can be used to train, evaluate, or apply a VerbNet classifier on provided data. \n" +
@@ -108,9 +173,18 @@ public abstract class VerbNetClassifierCLI {
     @Parameter(names = {"--help", "--usage"}, description = "Display usage", help = true)
     private Boolean help = false;
 
+    @Parameter(names = {"-corpus", "-corpusType"}, description = "Training/evaluation corpus type")
+    private CorpusType corpusType = CorpusType.Semlink;
+    @Parameter(names = "-keyExt", description = "Extension for sense key file (only needed for Semeval XML corpora)")
+    private String keyExt = ".gold.key.txt";
+    @Parameter(names = "-dataExt", description = "Extension for training data file (only needed for Semeval XML corpora)")
+    private String dataExt = ".data.xml";
+
+    @Parameter(names = {"-inventory", "-inv"}, description = "Sense inventory")
+    private SenseInventoryType senseInventory;
+
+    private WordSenseClassifier classifier;
     protected DependencyParser parser;
-    private VerbNetClassifier classifier;
-    private List<FocusInstance<DepNode, DependencyTree>> trainInstances;
     private Pattern depPattern;
 
     private JCommander cmd;
@@ -164,12 +238,13 @@ public abstract class VerbNetClassifierCLI {
             cmd.usage();
             System.exit(0);
         }
+        senseInventory = senseInventory == null ? corpusType.getDefaultInventory() : senseInventory;
+        trainPath = validatePath(trainPath);
+        validPath = validatePath(validPath);
+        testPath = validatePath(testPath);
+        inputPath = validatePath(inputPath);
+        outputPath = validatePath(outputPath);
         modelPath = new File(modelPath).getAbsolutePath();
-        trainPath = trainPath == null ? null : new File(trainPath).getAbsolutePath();
-        validPath = validPath == null ? null : new File(validPath).getAbsolutePath();
-        testPath = testPath == null ? null : new File(testPath).getAbsolutePath();
-        inputPath = inputPath == null ? null : new File(inputPath).getAbsolutePath();
-        outputPath = outputPath == null ? null : new File(outputPath).getAbsolutePath();
         File modelFile = new File(modelPath);
         if (modelFile.getParentFile() != null && !modelFile.getParentFile().exists()) {
             if (!modelFile.getParentFile().mkdirs()) {
@@ -178,15 +253,37 @@ public abstract class VerbNetClassifierCLI {
         }
     }
 
+    private String validatePath(String path) {
+        if (path == null) {
+            return null;
+        }
+        if (!reparse) {
+            File depFile = new File(path + parseSuffix);
+            if (depFile.exists()) {
+                return depFile.getAbsolutePath();
+            }
+            return path;
+        }
+        return depPattern.matcher(path).replaceAll("");
+    }
+
+    private String getKeyPath(String dataPath) {
+        return dataPath.replaceAll(dataExt + ".*", "") + keyExt;
+    }
+
+    private boolean parsed(String path) {
+        return depPattern.asPredicate().test(path);
+    }
+
     private void train() {
         if (trainPath == null) {
             return;
         }
-        trainInstances = getParseTrees(trainPath, VerbNetReader::new, () -> new ParsingSemlinkReader(
-                getParser(), new WhitespaceTokenizer()));
-        List<FocusInstance<DepNode, DependencyTree>> validInstances = validPath == null ?
-                new ArrayList<>() : getParseTrees(validPath, VerbNetReader::new, () -> new ParsingSemlinkReader(getParser(),
-                new WhitespaceTokenizer()));
+        List<FocusInstance<DepNode, DependencyTree>> trainInstances = getParseTrees(trainPath, parsed(trainPath)
+                ? corpusType.corpusReader(getKeyPath(trainPath)) : corpusType.corpusParser(getKeyPath(trainPath), getParser()));
+        List<FocusInstance<DepNode, DependencyTree>> validInstances = validPath == null ? new ArrayList<>()
+                : getParseTrees(validPath, parsed(validPath) ? corpusType.corpusReader(getKeyPath(validPath))
+                : corpusType.corpusParser(getKeyPath(validPath), getParser()));
         classifier = newClassifier();
         log.debug("Training classifier on {} instances from corpus at {}", trainInstances.size(), trainPath);
         classifier.train(trainInstances, validInstances);
@@ -206,8 +303,8 @@ public abstract class VerbNetClassifierCLI {
         Preconditions.checkState(trainPer < 1 && trainPer > 0,
                 "Percentage of training data must be between 0 and 1 (got %f). "
                         + "Please set ratio of percentage of training instances per fold (e.g. \"-per 0.8\")", trainPer);
-        trainInstances = getParseTrees(trainPath, VerbNetReader::new, () -> new ParsingSemlinkReader(
-                getParser(), new WhitespaceTokenizer()));
+        List<FocusInstance<DepNode, DependencyTree>> trainInstances = getParseTrees(trainPath, parsed(trainPath)
+                ? corpusType.corpusReader(getKeyPath(trainPath)) : corpusType.corpusParser(getKeyPath(trainPath), getParser()));
         log.info("Performing {}-fold cross validation on {} instances in training corpus at {}", folds,
                 trainInstances.size(), trainPath);
         CrossValidation<FocusInstance<DepNode, DependencyTree>> cv = new CrossValidation<>(seed, i -> i.feature(FeatureType.Gold));
@@ -226,19 +323,25 @@ public abstract class VerbNetClassifierCLI {
         if (classifier == null) {
             classifier = loadClassifier();
         }
-        List<FocusInstance<DepNode, DependencyTree>> testInstances = getParseTrees(testPath, VerbNetReader::new,
-                () -> new ParsingSemlinkReader(getParser(), new WhitespaceTokenizer()));
+        List<FocusInstance<DepNode, DependencyTree>> testInstances = getParseTrees(testPath, parsed(testPath)
+                ? corpusType.corpusReader(getKeyPath(testPath)) : corpusType.corpusParser(getKeyPath(testPath), getParser()));
         evaluate(testInstances, testPath);
     }
 
     private void evaluate(List<FocusInstance<DepNode, DependencyTree>> instances, String path) {
-        log.info("Evaluating VerbNet classifier at {} on {} instances in corpus at {}", modelPath, instances.size(), testPath);
+        log.info("Evaluating VerbNet classifier at {} on {} instances in corpus at {}", modelPath, instances.size(), path);
         Predictions<FocusInstance<DepNode, DependencyTree>> predictions = new Predictions<>(
-                p -> p.sequence().tokens().stream()
-                        .map(t -> t == p.focus() ? "{" + t.feature(Text) + "}" : t.feature(Text))
-                        .collect(Collectors.joining(" ")), p -> p.feature(FeatureType.Gold));
+                instance -> instance.sequence().tokens().stream()
+                        .map(token -> token == instance.focus() ? "{" + token.feature(Text) + "}" : token.feature(Text))
+                        .collect(Collectors.joining(" ")), instance -> instance.feature(FeatureType.Gold));
         for (FocusInstance<DepNode, DependencyTree> instance : instances) {
-            predictions.add(instance, classifier.classify(instance));
+            String prediction = classifier.classify(instance);
+            // multiple acceptable gold senses per word, if available
+            Set<String> allPredictions = instance.feature(FeatureType.AllSenses);
+            if (allPredictions != null && allPredictions.size() > 1 && allPredictions.contains(prediction)) {
+                instance.addFeature(Gold, prediction);
+            }
+            predictions.add(instance, prediction);
         }
         if (outputMisses && predictions.incorrect().size() > 0) {
             String missesFile = new File(path).getAbsolutePath() + ".misses.txt";
@@ -262,7 +365,8 @@ public abstract class VerbNetClassifierCLI {
             log.warn("No output path provided, saving predictions to {}", outputPath);
         }
         VerbNetAnnotator annotator = getAnnotator();
-        List<DependencyTree> instances = getParseTrees(inputPath, CoNllDepTreeReader::new, () -> new TextCorpusReader(getParser()));
+        List<DependencyTree> instances = getParseTrees(inputPath,
+                parsed(inputPath) ? new CoNllDepTreeReader() : new TextCorpusReader(getParser()));
         log.info("Applying VerbNet annotator to {} instances", modelPath, instances.size());
         instances.parallelStream().forEach(annotator::annotate);
         try (FileOutputStream fos = new FileOutputStream(outputPath)) {
@@ -283,7 +387,10 @@ public abstract class VerbNetClassifierCLI {
 
     private DependencyParser getParser() {
         if (parser == null) {
+            log.debug("Initializing parser...");
+            Stopwatch sw = Stopwatch.createStarted();
             parser = parser();
+            log.debug("Initialized parser in {}", sw);
         }
         return parser;
     }
@@ -296,15 +403,15 @@ public abstract class VerbNetClassifierCLI {
                 new DefaultPredicateAnnotator(classifier.predicateDictionary()));
     }
 
-    private VerbNetClassifier newClassifier() {
-        return new VerbNetClassifier(new DefaultVerbNetClassifier(),
-                new VerbNetSenseInventory(), new PredicateDictionary());
+    private WordSenseClassifier newClassifier() {
+        return new WordSenseClassifier(new DefaultVerbNetClassifier(),
+                senseInventory.senseInventory(), new PredicateDictionary());
     }
 
-    private VerbNetClassifier loadClassifier() {
+    private WordSenseClassifier loadClassifier() {
         log.debug("Loading saved classifier model from {}", modelPath);
         try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(modelPath))) {
-            return new VerbNetClassifier(ois);
+            return new WordSenseClassifier(ois);
         } catch (FileNotFoundException e) {
             throw new RuntimeException("Unable to locate model at path " + modelPath, e);
         } catch (Exception e) {
@@ -323,19 +430,8 @@ public abstract class VerbNetClassifierCLI {
         }
     }
 
-    private <T extends NlpInstance> List<T> getParseTrees(String path, Supplier<CorpusReader<T>> parsed,
-                                                          Supplier<CorpusReader<T>> unparsed) {
-        if (!reparse) {
-            if (depPattern.asPredicate().test(path)) {
-                return parseSafe(path, parsed.get(), false);
-            }
-            if (new File(path + parseSuffix).exists()) {
-                path = path + parseSuffix;
-                return parseSafe(path, parsed.get(), false);
-            }
-        }
-        path = depPattern.matcher(path).replaceAll("");
-        return parseSafe(path, unparsed.get(), true);
+    private <T extends NlpInstance> List<T> getParseTrees(String path, CorpusReader<T> reader) {
+        return parseSafe(path, reader, reparse && !parsed(path));
     }
 
     private <T extends NlpInstance> List<T> parseSafe(String inputPath, CorpusReader<T> reader, boolean save) {

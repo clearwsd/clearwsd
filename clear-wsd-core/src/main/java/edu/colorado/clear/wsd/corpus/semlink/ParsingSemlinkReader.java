@@ -14,6 +14,7 @@ import edu.colorado.clear.wsd.corpus.CorpusReader;
 import edu.colorado.clear.wsd.corpus.semlink.VerbNetReader.VerbNetInstanceParser;
 import edu.colorado.clear.wsd.parser.DependencyParser;
 import edu.colorado.clear.wsd.parser.NlpTokenizer;
+import edu.colorado.clear.wsd.parser.WhitespaceTokenizer;
 import edu.colorado.clear.wsd.type.DepNode;
 import edu.colorado.clear.wsd.type.DependencyTree;
 import edu.colorado.clear.wsd.type.FocusInstance;
@@ -43,6 +44,15 @@ public class ParsingSemlinkReader implements CorpusReader<FocusInstance<DepNode,
     public ParsingSemlinkReader(DependencyParser dependencyParser, NlpTokenizer tokenizer) {
         this.dependencyParser = dependencyParser;
         this.tokenizer = tokenizer;
+    }
+
+    /**
+     * Initialize a {@link ParsingSemlinkReader} with a {@link WhitespaceTokenizer}. Assumes instances are pre-tokenized.
+     *
+     * @param dependencyParser dependency parser
+     */
+    public ParsingSemlinkReader(DependencyParser dependencyParser) {
+        this(dependencyParser, new WhitespaceTokenizer());
     }
 
     @Override

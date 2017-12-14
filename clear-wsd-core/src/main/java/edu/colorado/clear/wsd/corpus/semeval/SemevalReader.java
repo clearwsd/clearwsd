@@ -11,7 +11,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -84,10 +83,10 @@ public class SemevalReader implements CorpusReader<FocusInstance<DepNode, Depend
                 }
                 DepNode treeToken = tree.get(token.index());
                 FocusInstance<DepNode, DependencyTree> instance = new FocusInstance<>(instances.size(), treeToken, tree);
-                instance.addFeature(FeatureType.Sense, token.feature(FeatureType.Sense));
+                instance.addFeature(FeatureType.Gold, token.feature(FeatureType.Gold));
+                instance.addFeature(FeatureType.AllSenses, token.feature(FeatureType.AllSenses));
                 treeToken.addFeature(FeatureType.Id, token.feature(FeatureType.Id));
                 treeToken.addFeature(FeatureType.Sense, token.feature(FeatureType.Sense));
-                treeToken.addFeature(FeatureType.AllSenses, token.feature(FeatureType.AllSenses));
                 instances.add(instance);
             }
             ++sentenceIndex;
@@ -123,11 +122,13 @@ public class SemevalReader implements CorpusReader<FocusInstance<DepNode, Depend
             tokens.add(token);
             if (word instanceof SemevalInstance) {
                 SemevalInstance instance = (SemevalInstance) word;
-                Collection<String> senses = keys.get(instance.getId());
+                Set<String> senses = keys.get(instance.getId());
                 String sense = senses.iterator().next();
-                token.addFeature(FeatureType.Sense, sense);
+                token.addFeature(FeatureType.Gold, sense);
+                token.addFeature(FeatureType.AllSenses, senses);
                 token.addFeature(FeatureType.Id, instance.getId());
-                token.addFeature(FeatureType.AllSenses, String.join(" ", senses));
+                token.addFeature(FeatureType.Sense, sense);
+                token.addFeature(FeatureType.Predicate, instance.getLemma());
                 newInstances.add(token);
             }
         }

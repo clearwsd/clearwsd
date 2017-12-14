@@ -23,36 +23,36 @@ import lombok.experimental.Accessors;
 import static edu.colorado.clear.wsd.type.FeatureType.Predicate;
 
 /**
- * VerbNet classifier--restricts predictions to classes provided by a given VerbNet XML specification.
+ * Word sense classifier--restricts predictions to classes provided by a given sense inventory.
  *
  * @author jamesgung
  */
 @Getter
 @Accessors(fluent = true)
 @AllArgsConstructor
-public class VerbNetClassifier implements Classifier<FocusInstance<DepNode, DependencyTree>, String> {
+public class WordSenseClassifier implements Classifier<FocusInstance<DepNode, DependencyTree>, String> {
 
     private static final long serialVersionUID = -7555582268789530929L;
 
     private Classifier<FocusInstance<DepNode, DependencyTree>, String> classifier;
-    private SenseInventory verbIndex;
+    private SenseInventory senseInventory;
     private PredicateDictionary predicateDictionary;
 
-    public VerbNetClassifier(ObjectInputStream is) {
+    public WordSenseClassifier(ObjectInputStream is) {
         load(is);
     }
 
     @Override
     public String classify(FocusInstance<DepNode, DependencyTree> instance) {
         String lemma = instance.focus().feature(Predicate);
-        Set<String> options = verbIndex.senses(instance.focus().feature(Predicate));
+        Set<String> options = senseInventory.senses(instance.focus().feature(Predicate));
         Map<String, Double> scores = classifier.score(instance);
         return scores.entrySet().stream()
                 .filter(e -> options.contains(e.getKey()))
                 .sorted((e1, e2) -> Double.compare(e2.getValue(), e1.getValue()))
                 .map(Map.Entry::getKey)
                 .findFirst() // get highest scoring sense for a given predicate
-                .orElse(verbIndex.defaultSense(lemma)); // or return the default sense for the predicate
+                .orElse(senseInventory.defaultSense(lemma)); // or return the default sense for the predicate
     }
 
     @Override
@@ -65,7 +65,7 @@ public class VerbNetClassifier implements Classifier<FocusInstance<DepNode, Depe
         predicateDictionary.train(true);
         Stream.concat(train.stream(), valid.stream()).forEach(instance -> {
             predicateDictionary.apply(instance.focus());
-            verbIndex.addSense(instance.focus().feature(FeatureType.Lemma), instance.focus().feature(FeatureType.Gold));
+            senseInventory.addSense(instance.focus().feature(FeatureType.Lemma), instance.focus().feature(FeatureType.Gold));
         });
         predicateDictionary.train(false);
         classifier.train(train, valid);
@@ -86,7 +86,7 @@ public class VerbNetClassifier implements Classifier<FocusInstance<DepNode, Depe
         try {
             //noinspection unchecked
             classifier = (Classifier<FocusInstance<DepNode, DependencyTree>, String>) inputStream.readObject();
-            verbIndex = (SenseInventory) inputStream.readObject();
+            senseInventory = (SenseInventory) inputStream.readObject();
             predicateDictionary = (PredicateDictionary) inputStream.readObject();
         } catch (IOException | ClassNotFoundException e) {
             throw new RuntimeException("Unable to load classifier: " + e.getMessage(), e);
@@ -97,7 +97,7 @@ public class VerbNetClassifier implements Classifier<FocusInstance<DepNode, Depe
     public void save(ObjectOutputStream outputStream) {
         try {
             outputStream.writeObject(classifier);
-            outputStream.writeObject(verbIndex);
+            outputStream.writeObject(senseInventory);
             outputStream.writeObject(predicateDictionary);
         } catch (IOException e) {
             throw new RuntimeException("Unable to save classifier: " + e.getMessage(), e);

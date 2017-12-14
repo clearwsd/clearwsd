@@ -28,6 +28,7 @@ import edu.colorado.clear.wsd.feature.annotator.Annotator;
 import edu.colorado.clear.wsd.feature.annotator.DepNodeListAnnotator;
 import edu.colorado.clear.wsd.feature.annotator.ListAnnotator;
 import edu.colorado.clear.wsd.feature.context.DepChildrenContextFactory;
+import edu.colorado.clear.wsd.feature.context.DepContextFactory;
 import edu.colorado.clear.wsd.feature.extractor.Extractors;
 import edu.colorado.clear.wsd.feature.extractor.StringExtractor;
 import edu.colorado.clear.wsd.feature.extractor.StringListExtractor;
@@ -41,7 +42,7 @@ import edu.colorado.clear.wsd.feature.pipeline.NlpClassifier;
 import edu.colorado.clear.wsd.feature.resource.BrownClusterResourceInitializer;
 import edu.colorado.clear.wsd.feature.resource.DefaultFeatureResourceManager;
 import edu.colorado.clear.wsd.feature.resource.DefaultTsvResourceInitializer;
-import edu.colorado.clear.wsd.feature.resource.ExtJwnlWordNetResource;
+import edu.colorado.clear.wsd.feature.resource.ExtJwnlWordNetResource.WordNetInitializer;
 import edu.colorado.clear.wsd.feature.resource.FeatureResourceManager;
 import edu.colorado.clear.wsd.type.DepNode;
 import edu.colorado.clear.wsd.type.DependencyTree;
@@ -165,7 +166,7 @@ public class DefaultVerbNetClassifier implements Classifier<FocusInstance<DepNod
         resources.registerInitializer(BWC_KEY, new BrownClusterResourceInitializer<>(BWC_KEY, getURL(BWC_PATH)));
         resources.registerInitializer(DDN_KEY, new DefaultTsvResourceInitializer<DepNode>(DDN_KEY, getURL(DDN_PATH))
                 .mappingFunction(lemma()));
-        resources.registerInitializer(WN_KEY, new ExtJwnlWordNetResource.WordNetInitializer<>());
+        resources.registerInitializer(WN_KEY, new WordNetInitializer<>());
         return resources;
     }
 
@@ -196,11 +197,10 @@ public class DefaultVerbNetClassifier implements Classifier<FocusInstance<DepNod
         filteredDepExtractors.add(listLookup(DDN_KEY));
         filteredDepExtractors.add(listLookup(WN_KEY));
 
-        DepChildrenContextFactory depContexts = excludingDeps(excludedRels);
-        FeatureFunction<FocusInstance<DepNode, DependencyTree>> posDep = function(depContexts, concat(pos, dep));
+        DepContextFactory depContexts = excludingDeps(excludedRels);
 
         List<FeatureFunction<FocusInstance<DepNode, DependencyTree>>> features = Arrays.asList(
-                cross(posDep, posDep),
+                cross(function(depContexts, concat(pos, dep))),
                 function(window(offsets), Arrays.asList(text, lemma, pos)),
                 function(depContexts, concat(dep, Arrays.asList(lemma, pos))),
                 function(includingDeps(includedRels), filteredDepExtractors),

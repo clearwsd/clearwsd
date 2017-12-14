@@ -48,7 +48,7 @@ public class DefaultFeaturePipeline<I extends NlpInstance> implements FeaturePip
         features.stream().map(feature -> model.featureIndex(feature.toString()))
                 .forEach(builder::addIndex);
 
-        int target = model.labelIndex(instance.feature(FeatureType.Gold));
+        int target = model.labelIndex(labelFunction.apply(instance));
         return new DefaultSparseInstance(instance.index(), target, builder.build());
     }
 
@@ -67,7 +67,7 @@ public class DefaultFeaturePipeline<I extends NlpInstance> implements FeaturePip
             features.stream().map(f -> featureVocab.index(f.toString()))
                     .forEach(builder::addIndex);
 
-            int target = labelVocab.index(instance.feature(FeatureType.Gold));
+            int target = labelVocab.index(labelFunction.apply(instance));
             results.add(new DefaultSparseInstance(instance.index(), target, builder.build()));
         }
 

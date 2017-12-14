@@ -8,6 +8,7 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
 
@@ -154,7 +155,7 @@ public class Evaluation {
         sb.append(heading);
         sb.append(line);
         List<String> outcomes = new ArrayList<>(labels());
-        Collections.sort(outcomes);
+        outcomes.sort(Comparator.comparingInt(o -> goldCounts.count(o)).reversed());
         for (String outcome : outcomes) {
             sb.append(String.format(formatter,
                     outcome,
