@@ -3,8 +3,6 @@ package edu.colorado.clear.wsd.utils;
 import java.io.Serializable;
 import java.util.Set;
 
-import edu.colorado.clear.wsd.feature.resource.ExtJwnlWordNetResource;
-
 /**
  * WordNet-based sense inventory.
  *
@@ -14,22 +12,22 @@ public class WordNetSenseInventory implements SenseInventory, Serializable {
 
     private static final long serialVersionUID = -5075422456841090098L;
 
-    private transient ExtJwnlWordNetResource<?> resource;
+    private transient WordNetFacade wordNet;
 
     @Override
     public Set<String> senses(String lemma) {
-        if (resource == null) {
-            resource = new ExtJwnlWordNetResource<>();
+        if (wordNet == null) {
+            wordNet = new ExtJwnlWordNet();
         }
-        return resource.senses(lemma, "VB");
+        return wordNet.senses(lemma, "VB");
     }
 
     @Override
     public String defaultSense(String lemma) {
-        if (resource == null) {
-            resource = new ExtJwnlWordNetResource<>();
+        if (wordNet == null) {
+            wordNet = new ExtJwnlWordNet();
         }
-        String sense = resource.mostFrequentSense(lemma, "VB");
+        String sense = wordNet.mfs(lemma, "VB");
         return sense == null ? "" : sense;
     }
 

@@ -42,8 +42,8 @@ import edu.colorado.clear.wsd.feature.pipeline.NlpClassifier;
 import edu.colorado.clear.wsd.feature.resource.BrownClusterResourceInitializer;
 import edu.colorado.clear.wsd.feature.resource.DefaultFeatureResourceManager;
 import edu.colorado.clear.wsd.feature.resource.DefaultTsvResourceInitializer;
-import edu.colorado.clear.wsd.feature.resource.ExtJwnlWordNetResource.WordNetInitializer;
 import edu.colorado.clear.wsd.feature.resource.FeatureResourceManager;
+import edu.colorado.clear.wsd.feature.resource.WordNetResource.WordNetInitializer;
 import edu.colorado.clear.wsd.type.DepNode;
 import edu.colorado.clear.wsd.type.DependencyTree;
 import edu.colorado.clear.wsd.type.FeatureType;
@@ -68,7 +68,7 @@ import static edu.colorado.clear.wsd.feature.function.Features.cross;
 import static edu.colorado.clear.wsd.feature.function.Features.function;
 import static edu.colorado.clear.wsd.feature.resource.BrownClusterResourceInitializer.BWC_KEY;
 import static edu.colorado.clear.wsd.feature.resource.DynamicDependencyNeighborsResource.DDN_KEY;
-import static edu.colorado.clear.wsd.feature.resource.ExtJwnlWordNetResource.WN_KEY;
+import static edu.colorado.clear.wsd.feature.resource.WordNetResource.WN_KEY;
 import static edu.colorado.clear.wsd.type.FeatureType.Dep;
 import static edu.colorado.clear.wsd.type.FeatureType.Pos;
 
