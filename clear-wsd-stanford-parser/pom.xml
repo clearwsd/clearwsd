@@ -41,7 +41,7 @@
                 <configuration>
                     <archive>
                         <manifest>
-                            <mainClass>edu.colorado.clear.wsd.verbnet.VerbNetClassifierStanfordCLI</mainClass>
+                            <mainClass>edu.colorado.clear.wsd.app.StanfordWordSenseCLI</mainClass>
                         </manifest>
                     </archive>
                     <descriptorRefs>

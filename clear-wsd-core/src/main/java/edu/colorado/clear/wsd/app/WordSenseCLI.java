@@ -1,4 +1,4 @@
-package edu.colorado.clear.wsd.verbnet;
+package edu.colorado.clear.wsd.app;
 
 import com.google.common.base.Preconditions;
 import com.google.common.base.Stopwatch;
@@ -28,6 +28,9 @@ import java.util.function.Supplier;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+import edu.colorado.clear.wsd.SenseDisambiguatingParser;
+import edu.colorado.clear.wsd.WordSenseAnnotator;
+import edu.colorado.clear.wsd.WordSenseClassifier;
 import edu.colorado.clear.wsd.corpus.CoNllDepTreeReader;
 import edu.colorado.clear.wsd.corpus.CorpusReader;
 import edu.colorado.clear.wsd.corpus.TextCorpusReader;
@@ -45,29 +48,35 @@ import edu.colorado.clear.wsd.type.DependencyTree;
 import edu.colorado.clear.wsd.type.FeatureType;
 import edu.colorado.clear.wsd.type.FocusInstance;
 import edu.colorado.clear.wsd.type.NlpInstance;
+import edu.colorado.clear.wsd.utils.CountingSenseInventory;
 import edu.colorado.clear.wsd.utils.InteractiveTestLoop;
+import edu.colorado.clear.wsd.utils.LemmaDictionary;
 import edu.colorado.clear.wsd.utils.SenseInventory;
 import edu.colorado.clear.wsd.utils.WordNetSenseInventory;
+import edu.colorado.clear.wsd.verbnet.DefaultPredicateAnnotator;
+import edu.colorado.clear.wsd.verbnet.DefaultVerbNetClassifier;
+import edu.colorado.clear.wsd.verbnet.VerbNetSenseInventory;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
+import static edu.colorado.clear.wsd.app.WordSenseCLI.SenseInventoryType.VerbNet;
+import static edu.colorado.clear.wsd.app.WordSenseCLI.SenseInventoryType.WordNet;
 import static edu.colorado.clear.wsd.type.FeatureType.Gold;
 import static edu.colorado.clear.wsd.type.FeatureType.Sense;
 import static edu.colorado.clear.wsd.type.FeatureType.Text;
-import static edu.colorado.clear.wsd.verbnet.VerbNetClassifierCLI.SenseInventoryType.VerbNet;
-import static edu.colorado.clear.wsd.verbnet.VerbNetClassifierCLI.SenseInventoryType.WordNet;
 
 /**
- * Command line interface for training, evaluating and applying a VerbNet classifier.
+ * Command line interface for training, evaluating and applying a word sense classifier.
  *
  * @author jamesgung
  */
 @Slf4j
-public abstract class VerbNetClassifierCLI {
+public abstract class WordSenseCLI {
 
     public enum SenseInventoryType {
         VerbNet(VerbNetSenseInventory::new),
-        WordNet(WordNetSenseInventory::new);
+        WordNet(WordNetSenseInventory::new),
+        Counting(CountingSenseInventory::new);
         private Supplier<SenseInventory> senseInventory;
 
         SenseInventoryType(Supplier<SenseInventory> senseInventory) {
@@ -120,8 +129,8 @@ public abstract class VerbNetClassifierCLI {
 
     }
 
-    private final String helpMessage = VerbNetClassifierCLI.class.getSimpleName()
-            + " can be used to train, evaluate, or apply a VerbNet classifier on provided data. \n" +
+    private final String helpMessage = WordSenseCLI.class.getSimpleName()
+            + " can be used to train, evaluate, or apply a word sense classifier on provided data. \n" +
             " 1. In order to train the classifier, a path to a training data file must be provided, using '-train':" +
             "\n\t-train path/to/training/data.txt\n 2. You can also save a model to a " +
             "specific path with \"-model path/to/saved/model.bin\".\n 3. To evaluate, you must provide a test file:\n" +
@@ -189,7 +198,7 @@ public abstract class VerbNetClassifierCLI {
 
     private JCommander cmd;
 
-    VerbNetClassifierCLI(String[] args) {
+    WordSenseCLI(String[] args) {
         cmd = new JCommander(this);
         cmd.setProgramName(this.getClass().getSimpleName());
         try {
@@ -329,7 +338,7 @@ public abstract class VerbNetClassifierCLI {
     }
 
     private void evaluate(List<FocusInstance<DepNode, DependencyTree>> instances, String path) {
-        log.info("Evaluating VerbNet classifier at {} on {} instances in corpus at {}", modelPath, instances.size(), path);
+        log.info("Evaluating word sense classifier at {} on {} instances in corpus at {}", modelPath, instances.size(), path);
         Predictions<FocusInstance<DepNode, DependencyTree>> predictions = new Predictions<>(
                 instance -> instance.sequence().tokens().stream()
                         .map(token -> token == instance.focus() ? "{" + token.feature(Text) + "}" : token.feature(Text))
@@ -364,10 +373,10 @@ public abstract class VerbNetClassifierCLI {
             outputPath = inputPath + ".vn.txt";
             log.warn("No output path provided, saving predictions to {}", outputPath);
         }
-        VerbNetAnnotator annotator = getAnnotator();
+        WordSenseAnnotator annotator = getAnnotator();
         List<DependencyTree> instances = getParseTrees(inputPath,
                 parsed(inputPath) ? new CoNllDepTreeReader() : new TextCorpusReader(getParser()));
-        log.info("Applying VerbNet annotator to {} instances", modelPath, instances.size());
+        log.info("Applying word sense annotator to {} instances", modelPath, instances.size());
         instances.parallelStream().forEach(annotator::annotate);
         try (FileOutputStream fos = new FileOutputStream(outputPath)) {
             new ParsingSemlinkReader(getParser(), new WhitespaceTokenizer())
@@ -381,7 +390,7 @@ public abstract class VerbNetClassifierCLI {
         if (!itl) {
             return;
         }
-        VerbNetParser parser = new VerbNetParser(getAnnotator(), getParser());
+        DependencyParser parser = new SenseDisambiguatingParser(getAnnotator(), getParser());
         InteractiveTestLoop.test(parser, Sense.name());
     }
 
@@ -395,17 +404,16 @@ public abstract class VerbNetClassifierCLI {
         return parser;
     }
 
-    private VerbNetAnnotator getAnnotator() {
+    private WordSenseAnnotator getAnnotator() {
         if (classifier == null) {
             classifier = loadClassifier();
         }
-        return new VerbNetAnnotator(classifier,
-                new DefaultPredicateAnnotator(classifier.predicateDictionary()));
+        return new WordSenseAnnotator(classifier, new DefaultPredicateAnnotator(classifier.predicateDictionary()));
     }
 
     private WordSenseClassifier newClassifier() {
         return new WordSenseClassifier(new DefaultVerbNetClassifier(),
-                senseInventory.senseInventory(), new PredicateDictionary());
+                senseInventory.senseInventory(), new LemmaDictionary());
     }
 
     private WordSenseClassifier loadClassifier() {
@@ -415,7 +423,7 @@ public abstract class VerbNetClassifierCLI {
         } catch (FileNotFoundException e) {
             throw new RuntimeException("Unable to locate model at path " + modelPath, e);
         } catch (Exception e) {
-            throw new RuntimeException("Unable to load VerbNet classifier model: " + e.getMessage(), e);
+            throw new RuntimeException("Unable to load word sense classifier model: " + e.getMessage(), e);
         }
     }
 
@@ -426,7 +434,7 @@ public abstract class VerbNetClassifierCLI {
         } catch (FileNotFoundException e) {
             throw new RuntimeException("Unable to save model to path " + modelPath, e);
         } catch (Exception e) {
-            throw new RuntimeException("Unable to save VerbNet classifier model: " + e.getMessage(), e);
+            throw new RuntimeException("Unable to save word sense classifier model: " + e.getMessage(), e);
         }
     }
 

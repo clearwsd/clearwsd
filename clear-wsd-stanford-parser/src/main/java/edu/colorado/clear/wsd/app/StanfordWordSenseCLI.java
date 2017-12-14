@@ -1,16 +1,16 @@
-package edu.colorado.clear.wsd.verbnet;
+package edu.colorado.clear.wsd.app;
 
 import edu.colorado.clear.wsd.parser.DependencyParser;
 import edu.colorado.clear.wsd.parser.StanfordDependencyParser;
 
 /**
- * VerbNet classifier CLI with Stanford Parser.
+ * Word sense classifier CLI with Stanford Parser.
  *
  * @author jamesgung
  */
-public class VerbNetClassifierStanfordCLI extends VerbNetClassifierCLI {
+public class StanfordWordSenseCLI extends WordSenseCLI {
 
-    private VerbNetClassifierStanfordCLI(String[] args) {
+    private StanfordWordSenseCLI(String[] args) {
         super(args);
     }
 
@@ -20,7 +20,7 @@ public class VerbNetClassifierStanfordCLI extends VerbNetClassifierCLI {
     }
 
     public static void main(String[] args) {
-        new VerbNetClassifierStanfordCLI(args).run();
+        new StanfordWordSenseCLI(args).run();
     }
 
 }

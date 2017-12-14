@@ -1,4 +1,4 @@
-package edu.colorado.clear.wsd.verbnet;
+package edu.colorado.clear.wsd.utils;
 
 import java.io.Serializable;
 import java.util.HashMap;
@@ -14,7 +14,7 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 
 /**
- * Predicate dictionary. Maps NLP instances onto the corresponding predicate lemma. Necessary, as lemmas at the sense level
+ * Lemma dictionary. Maps NLP instances onto the corresponding predicate lemma. Necessary, as lemmas at the sense level
  * are not always consistent w/ lemmas output by a lemmatizer.
  *
  * @author jamesgung
@@ -22,7 +22,7 @@ import lombok.experimental.Accessors;
 @Getter
 @Setter
 @Accessors(fluent = true)
-public class PredicateDictionary implements Function<NlpInstance, String>, Serializable {
+public class LemmaDictionary implements Function<NlpInstance, String>, Serializable {
 
     private static final long serialVersionUID = 126144127217207499L;
 

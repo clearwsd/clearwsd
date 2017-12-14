@@ -1,4 +1,4 @@
-package edu.colorado.clear.wsd.verbnet;
+package edu.colorado.clear.wsd;
 
 import java.util.List;
 
@@ -7,14 +7,14 @@ import edu.colorado.clear.wsd.type.DependencyTree;
 import lombok.AllArgsConstructor;
 
 /**
- * Parser wrapper that applies VerbNet annotations to inputs.
+ * Parser wrapper that applies word sense annotations via a {@link WordSenseAnnotator} to inputs following parsing.
  *
  * @author jamesgung
  */
 @AllArgsConstructor
-public class VerbNetParser implements DependencyParser {
+public class SenseDisambiguatingParser implements DependencyParser {
 
-    private VerbNetAnnotator annotator;
+    private WordSenseAnnotator annotator;
     private DependencyParser dependencyParser;
 
     @Override

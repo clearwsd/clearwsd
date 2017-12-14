@@ -4,6 +4,7 @@ import edu.colorado.clear.wsd.feature.annotator.Annotator;
 import edu.colorado.clear.wsd.feature.util.PosUtils;
 import edu.colorado.clear.wsd.type.DepNode;
 import edu.colorado.clear.wsd.type.DependencyTree;
+import edu.colorado.clear.wsd.utils.LemmaDictionary;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -22,7 +23,7 @@ public class DefaultPredicateAnnotator implements Annotator<DependencyTree> {
     private static final long serialVersionUID = -2953300591005876159L;
 
     @Getter
-    private final PredicateDictionary dictionary;
+    private final LemmaDictionary dictionary;
 
     @Override
     public DependencyTree annotate(DependencyTree instance) {

@@ -1,4 +1,4 @@
-package edu.colorado.clear.wsd.utils;
+package edu.colorado.clear.wsd.app;
 
 import com.google.common.collect.MinMaxPriorityQueue;
 

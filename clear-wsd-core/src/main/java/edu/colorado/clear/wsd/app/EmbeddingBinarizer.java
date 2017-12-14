@@ -1,4 +1,4 @@
-package edu.colorado.clear.wsd.utils;
+package edu.colorado.clear.wsd.app;
 
 import com.google.common.collect.Multimap;
 
@@ -9,6 +9,7 @@ import com.beust.jcommander.ParameterException;
 import java.io.File;
 import java.util.Map;
 
+import edu.colorado.clear.wsd.utils.EmbeddingIoUtils;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -27,7 +28,7 @@ public class EmbeddingBinarizer {
     @Parameter(names = "-limit", description = "Maximum number of vectors to read")
     private int limit = -1;
 
-    public EmbeddingBinarizer(String... args) {
+    private EmbeddingBinarizer(String... args) {
         JCommander cmd = new JCommander(this);
         cmd.setProgramName(this.getClass().getSimpleName());
         try {

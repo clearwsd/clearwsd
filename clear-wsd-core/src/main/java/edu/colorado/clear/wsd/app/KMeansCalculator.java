@@ -1,4 +1,4 @@
-package edu.colorado.clear.wsd.utils;
+package edu.colorado.clear.wsd.app;
 
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.Parameter;
@@ -7,6 +7,8 @@ import com.beust.jcommander.ParameterException;
 import java.io.File;
 import java.util.List;
 import java.util.Map;
+
+import edu.colorado.clear.wsd.utils.KMeans;
 
 import static edu.colorado.clear.wsd.utils.EmbeddingIoUtils.readVectors;
 

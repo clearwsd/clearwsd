@@ -89,7 +89,7 @@ public class DefaultVerbNetClassifier implements Classifier<FocusInstance<DepNod
 
     private Set<String> clusters = Sets.newHashSet("cluster-100", "cluster-320", "cluster-1000", "cluster-3200",
             "cluster-10000");
-    private Set<String> includedRels = Sets.newHashSet("dobj", "nmod", "xcomp", "advmod");
+    private Set<String> includedRels = Sets.newHashSet("dobj");
     private Set<String> excludedRels = Sets.newHashSet("punct");
     private Set<Integer> offsets = Sets.newHashSet(-2, -1, 0, 1, 2);
 
@@ -203,6 +203,7 @@ public class DefaultVerbNetClassifier implements Classifier<FocusInstance<DepNod
                 cross(function(depContexts, concat(pos, dep))),
                 function(window(offsets), Arrays.asList(text, lemma, pos)),
                 function(depContexts, concat(dep, Arrays.asList(lemma, pos))),
+                function(depContexts, dep),
                 function(includingDeps(includedRels), filteredDepExtractors),
                 function(focus(), clusterExtractors),
                 function(head(), Arrays.asList(dep, lemma, pos)),

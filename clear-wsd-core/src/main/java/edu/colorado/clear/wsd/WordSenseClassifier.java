@@ -1,4 +1,4 @@
-package edu.colorado.clear.wsd.verbnet;
+package edu.colorado.clear.wsd;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -15,6 +15,7 @@ import edu.colorado.clear.wsd.type.DepNode;
 import edu.colorado.clear.wsd.type.DependencyTree;
 import edu.colorado.clear.wsd.type.FeatureType;
 import edu.colorado.clear.wsd.type.FocusInstance;
+import edu.colorado.clear.wsd.utils.LemmaDictionary;
 import edu.colorado.clear.wsd.utils.SenseInventory;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -36,7 +37,7 @@ public class WordSenseClassifier implements Classifier<FocusInstance<DepNode, De
 
     private Classifier<FocusInstance<DepNode, DependencyTree>, String> classifier;
     private SenseInventory senseInventory;
-    private PredicateDictionary predicateDictionary;
+    private LemmaDictionary predicateDictionary;
 
     public WordSenseClassifier(ObjectInputStream is) {
         load(is);
@@ -87,7 +88,7 @@ public class WordSenseClassifier implements Classifier<FocusInstance<DepNode, De
             //noinspection unchecked
             classifier = (Classifier<FocusInstance<DepNode, DependencyTree>, String>) inputStream.readObject();
             senseInventory = (SenseInventory) inputStream.readObject();
-            predicateDictionary = (PredicateDictionary) inputStream.readObject();
+            predicateDictionary = (LemmaDictionary) inputStream.readObject();
         } catch (IOException | ClassNotFoundException e) {
             throw new RuntimeException("Unable to load classifier: " + e.getMessage(), e);
         }
