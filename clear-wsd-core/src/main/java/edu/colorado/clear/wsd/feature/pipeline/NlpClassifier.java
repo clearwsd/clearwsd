@@ -3,23 +3,34 @@ package edu.colorado.clear.wsd.feature.pipeline;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.stream.Collectors;
 
 import edu.colorado.clear.wsd.classifier.Classifier;
+import edu.colorado.clear.wsd.classifier.DefaultSparseInstance;
+import edu.colorado.clear.wsd.classifier.DefaultSparseVector;
+import edu.colorado.clear.wsd.classifier.DummyClassifier;
 import edu.colorado.clear.wsd.classifier.Hyperparameter;
 import edu.colorado.clear.wsd.classifier.SparseClassifier;
 import edu.colorado.clear.wsd.classifier.SparseInstance;
+import edu.colorado.clear.wsd.feature.model.BaseFeatureModel;
+import edu.colorado.clear.wsd.feature.model.BaseVocabulary;
 import edu.colorado.clear.wsd.feature.model.FeatureModel;
+import edu.colorado.clear.wsd.feature.util.VocabularyBuilder;
 import edu.colorado.clear.wsd.type.NlpInstance;
 import lombok.Getter;
 import lombok.experimental.Accessors;
 
 /**
- * NLP classifier.
+ * NLP classifier that includes a {@link FeaturePipeline} used to convert
+ * each input to a {@link SparseInstance} for input to a {@link SparseClassifier}.
+ * If training data only contains one label, trains a dummy classifier that always predicts
+ * that label rather than going through the full training process.
  *
+ * @param <U> input type
  * @author jamesgung
  */
 @Getter
@@ -54,7 +65,12 @@ public class NlpClassifier<U extends NlpInstance> implements Classifier<U, Strin
         List<SparseInstance> validInstances = valid.stream()
                 .map(featurePipeline::process)
                 .collect(Collectors.toList());
-        sparseClassifier.train(trainInstances, validInstances);
+        if (featurePipeline.model().labels().indices().size() >= 2) {
+            sparseClassifier.train(trainInstances, validInstances);
+        } else {
+            featurePipeline = new DummyPipeline<>(featurePipeline.model().labels().value(0));
+            sparseClassifier = new DummyClassifier(0);
+        }
     }
 
     @Override
@@ -86,6 +102,35 @@ public class NlpClassifier<U extends NlpInstance> implements Classifier<U, Strin
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    private static class DummyPipeline<I extends NlpInstance> implements FeaturePipeline<I> {
+
+        private static final long serialVersionUID = -1320433214836264964L;
+
+        private FeatureModel model;
+
+        DummyPipeline(String label) {
+            VocabularyBuilder builder = new VocabularyBuilder();
+            builder.index(label);
+            this.model = new BaseFeatureModel(builder.build(), new BaseVocabulary(new HashMap<>()));
+        }
+
+        @Override
+        public FeatureModel model() {
+            return model;
+        }
+
+        @Override
+        public SparseInstance process(I inputInstance) {
+            return new DefaultSparseInstance(0, 0, new DefaultSparseVector(new int[]{0}, new float[]{1}));
+        }
+
+        @Override
+        public List<SparseInstance> train(List<I> instances) {
+            throw new UnsupportedOperationException();
+        }
+
     }
 
 }
