@@ -27,8 +27,7 @@ public class WordNetSenseInventory implements SenseInventory, Serializable {
         if (wordNet == null) {
             wordNet = new ExtJwnlWordNet();
         }
-        String sense = wordNet.mfs(lemma, "VB");
-        return sense == null ? "" : sense;
+        return wordNet.mfs(lemma, "VB").orElse("");
     }
 
     @Override

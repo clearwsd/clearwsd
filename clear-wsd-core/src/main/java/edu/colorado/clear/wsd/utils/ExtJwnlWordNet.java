@@ -57,15 +57,15 @@ public class ExtJwnlWordNet implements WordNetFacade {
     }
 
     @Override
-    public String mfs(String lemma, String pos) {
-        Optional<IndexWord> indexWord = getIndexWord(lemma, pos);
-        if (!indexWord.isPresent() || indexWord.get().getSenses().size() == 0) {
-            return null;
+    public Optional<String> mfs(String lemma, String pos) {
+        List<Synset> senses = getSynsets(lemma, pos);
+        if (senses.size() == 0) {
+            return Optional.empty();
         }
-        Synset synset = indexWord.get().getSenses().get(0);
+        Synset synset = senses.get(0);
         int index = synset.indexOfWord(getLemmaString(lemma));
         Word word = synset.getWords().get(index);
-        return getSenseKey(word).orElse(null);
+        return getSenseKey(word);
     }
 
     @Override

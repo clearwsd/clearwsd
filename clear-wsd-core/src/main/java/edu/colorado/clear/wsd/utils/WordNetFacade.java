@@ -1,8 +1,7 @@
 package edu.colorado.clear.wsd.utils;
 
+import java.util.Optional;
 import java.util.Set;
-
-import javax.annotation.Nullable;
 
 /**
  * WordNet facade to allow alternative WN implementations to be used during feature extraction.
@@ -18,8 +17,7 @@ public interface WordNetFacade {
      * @param pos   part-of-speech tag
      * @return most frequent sense sense key
      */
-    @Nullable
-    String mfs(String lemma, String pos);
+    Optional<String> mfs(String lemma, String pos);
 
     /**
      * Return all senses for a given lemma/POS combination.
