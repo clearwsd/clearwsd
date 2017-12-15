@@ -42,6 +42,7 @@
     <modules>
         <module>clear-wsd-core</module>
         <module>clear-wsd-stanford-parser</module>
+        <module>clear-wsd-experiments</module>
     </modules>
 
     <dependencies>

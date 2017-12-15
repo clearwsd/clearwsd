@@ -47,7 +47,7 @@
                     <descriptorRefs>
                         <descriptorRef>jar-with-dependencies</descriptorRef>
                     </descriptorRefs>
-                    <finalName>VerbNetClassifierCLI-${project.version}</finalName>
+                    <finalName>WordSenseCLI-${project.version}</finalName>
                     <appendAssemblyId>false</appendAssemblyId>
                 </configuration>
             </plugin>

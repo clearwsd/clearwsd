@@ -91,6 +91,7 @@ public class VerbNetReader implements CorpusReader<FocusInstance<DepNode, Depend
                 VerbNetInstance instance = new VerbNetInstanceParser().parse(headerLine);
                 DepNode focus = result.get(instance.token);
                 focus.addFeature(Gold, instance.label);
+                focus.addFeature(Sense, instance.label);
                 focus.addFeature(Predicate, instance.lemma);
                 result.addFeature(Text, instance.originalText);
             }
