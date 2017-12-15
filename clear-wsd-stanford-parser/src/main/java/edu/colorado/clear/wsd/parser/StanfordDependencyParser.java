@@ -58,13 +58,11 @@ public class StanfordDependencyParser implements DependencyParser {
 
     private TokenizerFactory tokenizer;
     private MaxentTagger posTagger;
-    private Morphology lemmatizer;
     private edu.stanford.nlp.parser.nndep.DependencyParser depParser;
 
     public StanfordDependencyParser(StanfordParserModel model) {
         tokenizer = PTBTokenizer.coreLabelFactory();
         posTagger = new MaxentTagger(MaxentTagger.DEFAULT_JAR_PATH);
-        lemmatizer = new Morphology();
         depParser = loadFromModelFile(model.path, model.language);
     }
 
@@ -116,6 +114,7 @@ public class StanfordDependencyParser implements DependencyParser {
     }
 
     private List<CoreLabel> lemmatize(List<CoreLabel> words) {
+        Morphology lemmatizer = new Morphology();
         for (CoreLabel word : words) {
             word.setLemma(lemmatizer.lemma(word.word(), word.tag()));
         }
