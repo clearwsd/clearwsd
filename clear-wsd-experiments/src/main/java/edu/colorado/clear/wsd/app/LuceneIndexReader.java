@@ -21,8 +21,6 @@ import java.util.Map;
 import java.util.Queue;
 import java.util.stream.Collectors;
 
-import javax.annotation.Nonnull;
-
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -111,7 +109,7 @@ public class LuceneIndexReader {
         }
 
         @Override
-        public int compareTo(@Nonnull FieldList object) {
+        public int compareTo(FieldList object) {
             return Integer.compare(object.count, count);
         }
     }
@@ -123,7 +121,7 @@ public class LuceneIndexReader {
         int count;
 
         @Override
-        public int compareTo(@Nonnull Entry other) {
+        public int compareTo(Entry other) {
             return Integer.compare(other.count, count);
         }
     }
