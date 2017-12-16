@@ -258,19 +258,15 @@ public class VerbSenseArgumentCounter {
         if (toParse.size() > 0) {
             log.debug("Found {} files ending in {} at {}", toParse.size(), rawExt, corpusPath);
             TextCorpusReader reader = new TextCorpusReader(new StanfordDependencyParser());
-            toParse.forEach(
+            toParse.parallelStream().forEach(
                     file -> {
                         if (!parsed.contains(file.getPath())) {
-                            try (FileInputStream inputStream = new FileInputStream(file)) {
+                            try (FileInputStream inputStream = new FileInputStream(file);
+                                 OutputStream outputStream = new GZIPOutputStream(
+                                         new FileOutputStream(file.getPath() + corpusExt))) {
                                 // read instances
-                                log.debug("Parsing file {}", file);
-                                List<DepTree> dependencyTrees = reader.readInstances(inputStream);
-                                // write instances
-                                log.debug("Saving parse trees to {}", file.getPath() + corpusExt);
-                                try (OutputStream outputStream = new GZIPOutputStream(
-                                        new FileOutputStream(file.getPath() + corpusExt))) {
-                                    corpusReader.writeInstances(dependencyTrees, outputStream);
-                                }
+                                log.debug("Parsing file {} and saving trees to {}", file, file.getPath() + corpusExt);
+                                reader.parseAndWrite(inputStream, outputStream, 1000);
                                 parsed.add(file.getPath());
                             } catch (IOException e) {
                                 log.warn("Unable to process file {}", file, e);

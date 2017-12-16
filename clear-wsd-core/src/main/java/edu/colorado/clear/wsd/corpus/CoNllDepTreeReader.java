@@ -125,12 +125,22 @@ public class CoNllDepTreeReader implements CorpusReader<DepTree> {
      */
     public static void writeDependencyTrees(List<DepTree> trees, OutputStream outputStream) {
         try (PrintWriter writer = new PrintWriter(outputStream)) {
-            for (DepTree tree : trees) {
-                writer.println(treeToString(tree));
-                writer.println();
-                writer.flush();
-            }
+            writeDependencyTrees(trees, writer);
         }
+    }
+
+    /**
+     * Writes a list of {@link DepTree DepTrees} with a given {@link PrintWriter} in CoNLL-format without closing.
+     *
+     * @param trees  dependency trees
+     * @param writer writer
+     */
+    public static void writeDependencyTrees(List<DepTree> trees, PrintWriter writer) {
+        for (DepTree tree : trees) {
+            writer.println(treeToString(tree));
+            writer.println();
+        }
+        writer.flush();
     }
 
     /**
