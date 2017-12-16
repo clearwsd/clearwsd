@@ -9,8 +9,12 @@ import java.util.List;
 import java.util.Properties;
 import java.util.stream.Collectors;
 
+import edu.colorado.clear.type.DepNode;
+import edu.colorado.clear.type.DepTree;
+import edu.colorado.clear.type.FeatureType;
+import edu.colorado.clear.type.NlpFocus;
 import edu.colorado.clear.wsd.classifier.PaClassifier;
-import edu.colorado.clear.wsd.corpus.VerbNetReader;
+import edu.colorado.clear.wsd.corpus.semlink.VerbNetReader;
 import edu.colorado.clear.wsd.eval.CrossValidation;
 import edu.colorado.clear.wsd.eval.Evaluation;
 import edu.colorado.clear.wsd.feature.annotator.AggregateAnnotator;
@@ -18,9 +22,10 @@ import edu.colorado.clear.wsd.feature.context.NlpContextFactory;
 import edu.colorado.clear.wsd.feature.context.RootPathContextFactory;
 import edu.colorado.clear.wsd.feature.extractor.ConcatenatingFeatureExtractor;
 import edu.colorado.clear.wsd.feature.extractor.ListConcatenatingFeatureExtractor;
+import edu.colorado.clear.wsd.feature.extractor.ListLookupFeatureExtractor;
 import edu.colorado.clear.wsd.feature.extractor.LookupFeatureExtractor;
-import edu.colorado.clear.wsd.feature.extractor.NlpFeatureExtractor;
-import edu.colorado.clear.wsd.feature.extractor.StringListLookupFeature;
+import edu.colorado.clear.wsd.feature.extractor.StringExtractor;
+import edu.colorado.clear.wsd.feature.extractor.StringListExtractor;
 import edu.colorado.clear.wsd.feature.function.FeatureFunction;
 import edu.colorado.clear.wsd.feature.function.MultiStringFeatureFunction;
 import edu.colorado.clear.wsd.feature.function.StringFeatureFunction;
@@ -33,17 +38,13 @@ import edu.colorado.clear.wsd.feature.optim.ga.Genotype;
 import edu.colorado.clear.wsd.feature.optim.ga.NlpClassifierGenotype;
 import edu.colorado.clear.wsd.feature.optim.ga.OptionGene;
 import edu.colorado.clear.wsd.feature.pipeline.NlpClassifier;
-import edu.colorado.clear.wsd.type.DepNode;
-import edu.colorado.clear.wsd.type.DependencyTree;
-import edu.colorado.clear.wsd.type.FeatureType;
-import edu.colorado.clear.wsd.type.FocusInstance;
 import lombok.extern.slf4j.Slf4j;
 
-import static edu.colorado.clear.wsd.app.VerbNetClassifierTrainer.resourceManager;
 import static edu.colorado.clear.wsd.app.VerbNetClassifierUtils.BROWN;
 import static edu.colorado.clear.wsd.app.VerbNetClassifierUtils.CLUSTERS;
 import static edu.colorado.clear.wsd.app.VerbNetClassifierUtils.collocations;
 import static edu.colorado.clear.wsd.app.VerbNetClassifierUtils.filteredContexts;
+import static edu.colorado.clear.wsd.app.VerbNetClassifierUtils.resourceManager;
 import static edu.colorado.clear.wsd.app.VerbNetClassifierUtils.windowUnigrams;
 
 /**
@@ -52,27 +53,27 @@ import static edu.colorado.clear.wsd.app.VerbNetClassifierUtils.windowUnigrams;
 @Slf4j
 public class EvolutionaryFeatureOptimizer {
 
-    private static OptionGene<FeatureFunction<FocusInstance<DepNode, DependencyTree>>> gene(
-            List<FeatureFunction<FocusInstance<DepNode, DependencyTree>>> featureFunctions,
+    private static OptionGene<FeatureFunction<NlpFocus<DepNode, DepTree>>> gene(
+            List<FeatureFunction<NlpFocus<DepNode, DepTree>>> featureFunctions,
             GeneticAlgorithm ga) {
         return new OptionGene<>(featureFunctions, ga.random(), ga.activationProbability());
     }
 
-    private static List<FeatureFunction<FocusInstance<DepNode, DependencyTree>>> getFeatureFunctions(
-            List<NlpContextFactory<FocusInstance<DepNode, DependencyTree>, DepNode>> contexts,
-            NlpFeatureExtractor<DepNode, String> extractor) {
-        List<FeatureFunction<FocusInstance<DepNode, DependencyTree>>> results = new ArrayList<>();
-        for (NlpContextFactory<FocusInstance<DepNode, DependencyTree>, DepNode> factory : contexts) {
+    private static List<FeatureFunction<NlpFocus<DepNode, DepTree>>> getFeatureFunctions(
+            List<NlpContextFactory<NlpFocus<DepNode, DepTree>, DepNode>> contexts,
+            StringExtractor<DepNode> extractor) {
+        List<FeatureFunction<NlpFocus<DepNode, DepTree>>> results = new ArrayList<>();
+        for (NlpContextFactory<NlpFocus<DepNode, DepTree>, DepNode> factory : contexts) {
             results.add(new StringFeatureFunction<>(factory, Collections.singletonList(extractor)));
         }
         return results;
     }
 
-    private static List<FeatureFunction<FocusInstance<DepNode, DependencyTree>>> getListFeatureFunctions(
-            List<NlpContextFactory<FocusInstance<DepNode, DependencyTree>, DepNode>> contexts,
-            NlpFeatureExtractor<DepNode, List<String>> extractor) {
-        List<FeatureFunction<FocusInstance<DepNode, DependencyTree>>> results = new ArrayList<>();
-        for (NlpContextFactory<FocusInstance<DepNode, DependencyTree>, DepNode> factory : contexts) {
+    private static List<FeatureFunction<NlpFocus<DepNode, DepTree>>> getListFeatureFunctions(
+            List<NlpContextFactory<NlpFocus<DepNode, DepTree>, DepNode>> contexts,
+            StringListExtractor<DepNode> extractor) {
+        List<FeatureFunction<NlpFocus<DepNode, DepTree>>> results = new ArrayList<>();
+        for (NlpContextFactory<NlpFocus<DepNode, DepTree>, DepNode> factory : contexts) {
             results.add(new MultiStringFeatureFunction<>(factory, Collections.singletonList(extractor)));
         }
         return results;
@@ -93,39 +94,39 @@ public class EvolutionaryFeatureOptimizer {
         return new DefaultChromosome<>(genes, ga.random());
     }
 
-    private static Chromosome<OptionGene<FeatureFunction<FocusInstance<DepNode, DependencyTree>>>> chromosome(GeneticAlgorithm ga) {
+    private static Chromosome<OptionGene<FeatureFunction<NlpFocus<DepNode, DepTree>>>> chromosome(GeneticAlgorithm ga) {
 
-        List<OptionGene<FeatureFunction<FocusInstance<DepNode, DependencyTree>>>> genes = new ArrayList<>();
-        List<NlpContextFactory<FocusInstance<DepNode, DependencyTree>, DepNode>> windowUnigrams = windowUnigrams();
-        List<NlpContextFactory<FocusInstance<DepNode, DependencyTree>, DepNode>> windowBigrams = collocations();
-        List<NlpContextFactory<FocusInstance<DepNode, DependencyTree>, DepNode>> depContexts = filteredContexts(0);
-        List<NlpContextFactory<FocusInstance<DepNode, DependencyTree>, DepNode>> childModContexts = filteredContexts(1);
-        List<NlpContextFactory<FocusInstance<DepNode, DependencyTree>, DepNode>> childSkipModContexts = filteredContexts(2);
+        List<OptionGene<FeatureFunction<NlpFocus<DepNode, DepTree>>>> genes = new ArrayList<>();
+        List<NlpContextFactory<NlpFocus<DepNode, DepTree>, DepNode>> windowUnigrams = windowUnigrams();
+        List<NlpContextFactory<NlpFocus<DepNode, DepTree>, DepNode>> windowBigrams = collocations();
+        List<NlpContextFactory<NlpFocus<DepNode, DepTree>, DepNode>> depContexts = filteredContexts(0);
+        List<NlpContextFactory<NlpFocus<DepNode, DepTree>, DepNode>> childModContexts = filteredContexts(1);
+        List<NlpContextFactory<NlpFocus<DepNode, DepTree>, DepNode>> childSkipModContexts = filteredContexts(2);
 
-        List<NlpContextFactory<FocusInstance<DepNode, DependencyTree>, DepNode>> rootPath = Collections.singletonList(
+        List<NlpContextFactory<NlpFocus<DepNode, DepTree>, DepNode>> rootPath = Collections.singletonList(
                 new RootPathContextFactory());
 
-        NlpFeatureExtractor<DepNode, String> text = new LookupFeatureExtractor<>(FeatureType.Text.name());
-        NlpFeatureExtractor<DepNode, String> pos = new LookupFeatureExtractor<>(FeatureType.Pos.name());
-        NlpFeatureExtractor<DepNode, String> lemma = new LookupFeatureExtractor<>(FeatureType.Lemma.name());
-        NlpFeatureExtractor<DepNode, String> dep = new LookupFeatureExtractor<>(FeatureType.Dep.name());
+        StringExtractor<DepNode> text = new LookupFeatureExtractor<>(FeatureType.Text.name());
+        StringExtractor<DepNode> pos = new LookupFeatureExtractor<>(FeatureType.Pos.name());
+        StringExtractor<DepNode> lemma = new LookupFeatureExtractor<>(FeatureType.Lemma.name());
+        StringExtractor<DepNode> dep = new LookupFeatureExtractor<>(FeatureType.Dep.name());
 
-        NlpFeatureExtractor<DepNode, String> textDep = new ConcatenatingFeatureExtractor<>(text, dep);
-        NlpFeatureExtractor<DepNode, String> posDep = new ConcatenatingFeatureExtractor<>(pos, dep);
-        NlpFeatureExtractor<DepNode, String> lemmaDep = new ConcatenatingFeatureExtractor<>(lemma, dep);
+        StringExtractor<DepNode> textDep = new ConcatenatingFeatureExtractor<>(text, dep);
+        StringExtractor<DepNode> posDep = new ConcatenatingFeatureExtractor<>(pos, dep);
+        StringExtractor<DepNode> lemmaDep = new ConcatenatingFeatureExtractor<>(lemma, dep);
 
-        NlpFeatureExtractor<DepNode, List<String>> brown = new ListConcatenatingFeatureExtractor<>(
-                new StringListLookupFeature<>(BROWN), dep);
-        NlpFeatureExtractor<DepNode, List<String>> cluster100 = new ListConcatenatingFeatureExtractor<>(
-                new StringListLookupFeature<>(CLUSTERS.get(0)), dep);
-        NlpFeatureExtractor<DepNode, List<String>> cluster320 = new ListConcatenatingFeatureExtractor<>(
-                new StringListLookupFeature<>(CLUSTERS.get(1)), dep);
-        NlpFeatureExtractor<DepNode, List<String>> cluster1000 = new ListConcatenatingFeatureExtractor<>(
-                new StringListLookupFeature<>(CLUSTERS.get(2)), dep);
-        NlpFeatureExtractor<DepNode, List<String>> cluster3200 = new ListConcatenatingFeatureExtractor<>(
-                new StringListLookupFeature<>(CLUSTERS.get(3)), dep);
-        NlpFeatureExtractor<DepNode, List<String>> cluster10000 = new ListConcatenatingFeatureExtractor<>(
-                new StringListLookupFeature<>(CLUSTERS.get(4)), dep);
+        StringListExtractor<DepNode> brown = new ListConcatenatingFeatureExtractor<>(
+                new ListLookupFeatureExtractor<>(BROWN), dep);
+        StringListExtractor<DepNode> cluster100 = new ListConcatenatingFeatureExtractor<>(
+                new ListLookupFeatureExtractor<>(CLUSTERS.get(0)), dep);
+        StringListExtractor<DepNode> cluster320 = new ListConcatenatingFeatureExtractor<>(
+                new ListLookupFeatureExtractor<>(CLUSTERS.get(1)), dep);
+        StringListExtractor<DepNode> cluster1000 = new ListConcatenatingFeatureExtractor<>(
+                new ListLookupFeatureExtractor<>(CLUSTERS.get(2)), dep);
+        StringListExtractor<DepNode> cluster3200 = new ListConcatenatingFeatureExtractor<>(
+                new ListLookupFeatureExtractor<>(CLUSTERS.get(3)), dep);
+        StringListExtractor<DepNode> cluster10000 = new ListConcatenatingFeatureExtractor<>(
+                new ListLookupFeatureExtractor<>(CLUSTERS.get(4)), dep);
 
         genes.add(gene(getFeatureFunctions(windowUnigrams, text), ga));
         genes.add(gene(getFeatureFunctions(windowUnigrams, pos), ga));
@@ -161,25 +162,25 @@ public class EvolutionaryFeatureOptimizer {
     }
 
     public static void main(String[] args) throws IOException {
-        List<FocusInstance<DepNode, DependencyTree>> instances
+        List<NlpFocus<DepNode, DepTree>> instances
                 = new VerbNetReader().readInstances(new FileInputStream(args[1]));
-        AggregateAnnotator<FocusInstance<DepNode, DependencyTree>> annotator
+        AggregateAnnotator<NlpFocus<DepNode, DepTree>> annotator
                 = new AggregateAnnotator<>(VerbNetClassifierUtils.annotators());
         annotator.initialize(resourceManager());
         instances.forEach(annotator::annotate);
 
-        CrossValidation<FocusInstance<DepNode, DependencyTree>> cv = new CrossValidation<>(
-                (FocusInstance<DepNode, DependencyTree> i) -> i.feature(FeatureType.Gold));
-        List<CrossValidation.Fold<FocusInstance<DepNode, DependencyTree>>> folds = cv.createFolds(instances, 5);
+        CrossValidation<NlpFocus<DepNode, DepTree>> cv = new CrossValidation<>(
+                (NlpFocus<DepNode, DepTree> i) -> i.feature(FeatureType.Gold));
+        List<CrossValidation.Fold<NlpFocus<DepNode, DepTree>>> folds = cv.createFolds(instances, 5);
 
-        CrossValidatingFitnessFunction<FocusInstance<DepNode, DependencyTree>> fitness
+        CrossValidatingFitnessFunction<NlpFocus<DepNode, DepTree>> fitness
                 = new CrossValidatingFitnessFunction<>(cv);
 
-        GeneticAlgorithm<NlpClassifier<FocusInstance<DepNode, DependencyTree>>> ga = new GeneticAlgorithm<>(0, fitness);
-        Genotype<NlpClassifier<FocusInstance<DepNode, DependencyTree>>> genotype =
+        GeneticAlgorithm<NlpClassifier<NlpFocus<DepNode, DepTree>>> ga = new GeneticAlgorithm<>(0, fitness);
+        Genotype<NlpClassifier<NlpFocus<DepNode, DepTree>>> genotype =
                 new NlpClassifierGenotype<>(chromosome(ga), hyperparams(ga), PaClassifier::new);
         ga.prototype(genotype);
-        EvolutionaryModelTrainer<FocusInstance<DepNode, DependencyTree>> modelTrainer
+        EvolutionaryModelTrainer<NlpFocus<DepNode, DepTree>> modelTrainer
                 = new EvolutionaryModelTrainer<>(ga);
         List<Evaluation> evaluations = cv.crossValidate(modelTrainer, folds);
         for (Evaluation evaluation : evaluations) {
