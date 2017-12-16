@@ -18,6 +18,10 @@ import java.util.Set;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
+import edu.colorado.clear.type.DepNode;
+import edu.colorado.clear.type.DepTree;
+import edu.colorado.clear.type.FeatureType;
+import edu.colorado.clear.type.NlpFocus;
 import edu.colorado.clear.wsd.classifier.Classifier;
 import edu.colorado.clear.wsd.classifier.Hyperparameter;
 import edu.colorado.clear.wsd.classifier.MultiClassifier;
@@ -44,12 +48,10 @@ import edu.colorado.clear.wsd.feature.resource.DefaultFeatureResourceManager;
 import edu.colorado.clear.wsd.feature.resource.DefaultTsvResourceInitializer;
 import edu.colorado.clear.wsd.feature.resource.FeatureResourceManager;
 import edu.colorado.clear.wsd.feature.resource.WordNetResource.WordNetInitializer;
-import edu.colorado.clear.wsd.type.DepNode;
-import edu.colorado.clear.wsd.type.DepTree;
-import edu.colorado.clear.wsd.type.FeatureType;
-import edu.colorado.clear.wsd.type.NlpFocus;
 import lombok.extern.slf4j.Slf4j;
 
+import static edu.colorado.clear.type.FeatureType.Dep;
+import static edu.colorado.clear.type.FeatureType.Pos;
 import static edu.colorado.clear.wsd.feature.context.Contexts.excludingDeps;
 import static edu.colorado.clear.wsd.feature.context.Contexts.focus;
 import static edu.colorado.clear.wsd.feature.context.Contexts.head;
@@ -69,8 +71,6 @@ import static edu.colorado.clear.wsd.feature.function.Features.function;
 import static edu.colorado.clear.wsd.feature.resource.BrownClusterResourceInitializer.BWC_KEY;
 import static edu.colorado.clear.wsd.feature.resource.DynamicDependencyNeighborsResource.DDN_KEY;
 import static edu.colorado.clear.wsd.feature.resource.WordNetResource.WN_KEY;
-import static edu.colorado.clear.wsd.type.FeatureType.Dep;
-import static edu.colorado.clear.wsd.type.FeatureType.Pos;
 
 /**
  * Default VerbNet classifier.

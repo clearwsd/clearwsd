@@ -5,8 +5,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
 
-import edu.colorado.clear.wsd.type.FeatureType;
-import edu.colorado.clear.wsd.type.NlpInstance;
+import edu.colorado.clear.type.FeatureType;
+import edu.colorado.clear.type.NlpInstance;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;

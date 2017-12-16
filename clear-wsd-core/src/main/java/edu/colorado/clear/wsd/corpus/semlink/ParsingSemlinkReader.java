@@ -10,23 +10,23 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import edu.colorado.clear.parser.NlpParser;
+import edu.colorado.clear.parser.NlpTokenizer;
+import edu.colorado.clear.type.DepNode;
+import edu.colorado.clear.type.DepTree;
+import edu.colorado.clear.type.NlpFocus;
 import edu.colorado.clear.wsd.corpus.CorpusReader;
 import edu.colorado.clear.wsd.corpus.semlink.VerbNetReader.VerbNetInstanceParser;
-import edu.colorado.clear.wsd.parser.DependencyParser;
-import edu.colorado.clear.wsd.parser.NlpTokenizer;
 import edu.colorado.clear.wsd.parser.WhitespaceTokenizer;
 import edu.colorado.clear.wsd.type.DefaultNlpFocus;
-import edu.colorado.clear.wsd.type.DepNode;
-import edu.colorado.clear.wsd.type.DepTree;
-import edu.colorado.clear.wsd.type.NlpFocus;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 
-import static edu.colorado.clear.wsd.type.FeatureType.Gold;
-import static edu.colorado.clear.wsd.type.FeatureType.Lemma;
-import static edu.colorado.clear.wsd.type.FeatureType.Metadata;
-import static edu.colorado.clear.wsd.type.FeatureType.Predicate;
-import static edu.colorado.clear.wsd.type.FeatureType.Text;
+import static edu.colorado.clear.type.FeatureType.Gold;
+import static edu.colorado.clear.type.FeatureType.Lemma;
+import static edu.colorado.clear.type.FeatureType.Metadata;
+import static edu.colorado.clear.type.FeatureType.Predicate;
+import static edu.colorado.clear.type.FeatureType.Text;
 
 /**
  * Corpus reader that reads and parses SemLink-style annotations.
@@ -36,13 +36,13 @@ import static edu.colorado.clear.wsd.type.FeatureType.Text;
 @Slf4j
 public class ParsingSemlinkReader implements CorpusReader<NlpFocus<DepNode, DepTree>> {
 
-    private DependencyParser dependencyParser;
+    private NlpParser dependencyParser;
     private NlpTokenizer tokenizer;
 
     @Setter
     private boolean writeSemlink = false;
 
-    public ParsingSemlinkReader(DependencyParser dependencyParser, NlpTokenizer tokenizer) {
+    public ParsingSemlinkReader(NlpParser dependencyParser, NlpTokenizer tokenizer) {
         this.dependencyParser = dependencyParser;
         this.tokenizer = tokenizer;
     }
@@ -52,7 +52,7 @@ public class ParsingSemlinkReader implements CorpusReader<NlpFocus<DepNode, DepT
      *
      * @param dependencyParser dependency parser
      */
-    public ParsingSemlinkReader(DependencyParser dependencyParser) {
+    public ParsingSemlinkReader(NlpParser dependencyParser) {
         this(dependencyParser, new WhitespaceTokenizer());
     }
 
@@ -121,7 +121,7 @@ public class ParsingSemlinkReader implements CorpusReader<NlpFocus<DepNode, DepT
     public static List<NlpFocus<DepNode, DepTree>> getFocusInstances(List<DepTree> dependencyTrees) {
         List<NlpFocus<DepNode, DepTree>> instances = new ArrayList<>();
         for (DepTree dependencyTree : dependencyTrees) {
-            for (DepNode depNode : dependencyTree.tokens()) {
+            for (DepNode depNode : dependencyTree) {
                 if (depNode.feature(Predicate) != null) {
                     instances.add(new DefaultNlpFocus<>(instances.size(), depNode, dependencyTree));
                 }

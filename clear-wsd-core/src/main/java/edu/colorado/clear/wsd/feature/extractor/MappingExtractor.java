@@ -2,7 +2,7 @@ package edu.colorado.clear.wsd.feature.extractor;
 
 import java.util.Map;
 
-import edu.colorado.clear.wsd.type.NlpInstance;
+import edu.colorado.clear.type.NlpInstance;
 
 /**
  * Extractor that maps the values output by a base extractor into pre-defined categories.

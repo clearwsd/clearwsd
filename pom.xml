@@ -40,6 +40,7 @@
     </developers>
 
     <modules>
+        <module>clear-wsd-api</module>
         <module>clear-wsd-core</module>
         <module>clear-wsd-stanford-parser</module>
         <module>clear-wsd-experiments</module>
@@ -77,6 +78,11 @@
 
     <dependencyManagement>
         <dependencies>
+            <dependency>
+                <groupId>edu.colorado.clear</groupId>
+                <artifactId>clear-wsd-api</artifactId>
+                <version>${project.version}</version>
+            </dependency>
             <dependency>
                 <groupId>edu.colorado.clear</groupId>
                 <artifactId>clear-wsd-core</artifactId>

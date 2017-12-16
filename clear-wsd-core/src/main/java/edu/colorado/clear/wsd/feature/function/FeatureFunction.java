@@ -3,8 +3,8 @@ package edu.colorado.clear.wsd.feature.function;
 import java.io.Serializable;
 import java.util.List;
 
+import edu.colorado.clear.type.NlpInstance;
 import edu.colorado.clear.wsd.feature.StringFeature;
-import edu.colorado.clear.wsd.type.NlpInstance;
 
 /**
  * Feature function that produces a list of features given a context and an extractor.

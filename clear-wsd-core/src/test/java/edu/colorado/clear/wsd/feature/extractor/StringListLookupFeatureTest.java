@@ -5,8 +5,8 @@ import org.junit.Test;
 import java.util.Arrays;
 import java.util.List;
 
+import edu.colorado.clear.type.NlpInstance;
 import edu.colorado.clear.wsd.type.DefaultDepNode;
-import edu.colorado.clear.wsd.type.NlpInstance;
 
 import static junit.framework.TestCase.assertEquals;
 

@@ -21,14 +21,14 @@ import java.util.stream.Collectors;
 
 import javax.xml.bind.JAXBException;
 
+import edu.colorado.clear.type.DepNode;
+import edu.colorado.clear.type.DepTree;
+import edu.colorado.clear.type.FeatureType;
+import edu.colorado.clear.type.NlpFocus;
 import edu.colorado.clear.wsd.corpus.CorpusReader;
 import edu.colorado.clear.wsd.type.DefaultDepNode;
 import edu.colorado.clear.wsd.type.DefaultDepTree;
 import edu.colorado.clear.wsd.type.DefaultNlpFocus;
-import edu.colorado.clear.wsd.type.DepNode;
-import edu.colorado.clear.wsd.type.DepTree;
-import edu.colorado.clear.wsd.type.FeatureType;
-import edu.colorado.clear.wsd.type.NlpFocus;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
@@ -72,7 +72,7 @@ public class SemevalReader implements CorpusReader<NlpFocus<DepNode, DepTree>> {
             InstanceParsePair<DepNode> instancePair = addInstances(sentenceIndex, semevalSentence);
             DepTree tree = processSentence(instancePair.getTree());
             Iterator<DepNode> tokenIterator = instancePair.getTree().tokens().iterator();
-            for (DepNode token : tree.tokens()) {
+            for (DepNode token : tree) {
                 DepNode original = tokenIterator.next();
                 token.addFeature(FeatureType.GoldLemma, original.feature(FeatureType.GoldLemma));
                 token.addFeature(FeatureType.GoldPos, original.feature(FeatureType.GoldPos));
@@ -166,7 +166,7 @@ public class SemevalReader implements CorpusReader<NlpFocus<DepNode, DepTree>> {
                                 instance.setId(focusNode.feature(FeatureType.Id));
                                 return instance;
                             }));
-            for (DepNode depNode : tree.tokens()) {
+            for (DepNode depNode : tree) {
                 SemevalWordForm instance = instanceMap.get(depNode.index());
                 if (instance == null) {
                     instance = new SemevalWordForm(depNode.feature(FeatureType.Text));

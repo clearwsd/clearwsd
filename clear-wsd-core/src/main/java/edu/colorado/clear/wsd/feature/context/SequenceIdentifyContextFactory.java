@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import edu.colorado.clear.wsd.type.NlpInstance;
-import edu.colorado.clear.wsd.type.NlpSequence;
+import edu.colorado.clear.type.NlpInstance;
+import edu.colorado.clear.type.NlpSequence;
 
 /**
  * Context factory that returns the whole sequence of input tokens as a single context.

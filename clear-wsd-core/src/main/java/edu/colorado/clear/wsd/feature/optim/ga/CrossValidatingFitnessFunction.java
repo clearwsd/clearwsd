@@ -5,11 +5,11 @@ import com.google.common.base.Preconditions;
 import java.util.List;
 import java.util.function.Function;
 
+import edu.colorado.clear.type.NlpInstance;
 import edu.colorado.clear.wsd.eval.CrossValidation;
 import edu.colorado.clear.wsd.eval.CrossValidation.Fold;
 import edu.colorado.clear.wsd.eval.Evaluation;
 import edu.colorado.clear.wsd.feature.pipeline.NlpClassifier;
-import edu.colorado.clear.wsd.type.NlpInstance;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;

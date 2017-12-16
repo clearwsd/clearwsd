@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
 
+import edu.colorado.clear.type.FeatureType;
+import edu.colorado.clear.type.NlpInstance;
 import edu.colorado.clear.wsd.classifier.DefaultSparseInstance;
 import edu.colorado.clear.wsd.classifier.SparseInstance;
 import edu.colorado.clear.wsd.classifier.SparseVectorBuilder;
@@ -13,8 +15,6 @@ import edu.colorado.clear.wsd.feature.function.FeatureFunction;
 import edu.colorado.clear.wsd.feature.model.BaseFeatureModel;
 import edu.colorado.clear.wsd.feature.model.FeatureModel;
 import edu.colorado.clear.wsd.feature.util.VocabularyBuilder;
-import edu.colorado.clear.wsd.type.FeatureType;
-import edu.colorado.clear.wsd.type.NlpInstance;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;

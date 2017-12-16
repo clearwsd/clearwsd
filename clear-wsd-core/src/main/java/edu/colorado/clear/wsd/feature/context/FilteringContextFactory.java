@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import edu.colorado.clear.wsd.type.NlpInstance;
+import edu.colorado.clear.type.NlpInstance;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;

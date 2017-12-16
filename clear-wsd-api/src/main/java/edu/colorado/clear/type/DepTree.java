@@ -1,4 +1,4 @@
-package edu.colorado.clear.wsd.type;
+package edu.colorado.clear.type;
 
 /**
  * Syntactic dependency tree data structure used in feature extraction.

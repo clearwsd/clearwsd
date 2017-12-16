@@ -5,8 +5,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import edu.colorado.clear.type.NlpInstance;
 import edu.colorado.clear.wsd.feature.util.FeatureUtils;
-import edu.colorado.clear.wsd.type.NlpInstance;
 
 /**
  * Feature extractor concatenating the results of multiple different extractors, the base extractor extracting multiple strings as

@@ -4,6 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import edu.colorado.clear.type.DepNode;
+import edu.colorado.clear.type.FeatureType;
+import edu.colorado.clear.type.NlpInstance;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;

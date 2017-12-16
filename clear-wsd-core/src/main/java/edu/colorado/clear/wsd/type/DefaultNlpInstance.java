@@ -5,6 +5,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import edu.colorado.clear.type.FeatureType;
+import edu.colorado.clear.type.NlpInstance;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;

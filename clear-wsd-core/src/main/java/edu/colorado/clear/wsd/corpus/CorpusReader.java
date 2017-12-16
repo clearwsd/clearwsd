@@ -4,7 +4,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.List;
 
-import edu.colorado.clear.wsd.type.NlpInstance;
+import edu.colorado.clear.type.NlpInstance;
 
 /**
  * Corpus reader/writer.

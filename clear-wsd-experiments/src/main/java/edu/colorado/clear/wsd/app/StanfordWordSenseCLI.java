@@ -1,6 +1,6 @@
 package edu.colorado.clear.wsd.app;
 
-import edu.colorado.clear.wsd.parser.DependencyParser;
+import edu.colorado.clear.parser.NlpParser;
 import edu.colorado.clear.wsd.parser.StanfordDependencyParser;
 
 /**
@@ -15,7 +15,7 @@ public class StanfordWordSenseCLI extends WordSenseCLI {
     }
 
     @Override
-    protected DependencyParser parser() {
+    protected NlpParser parser() {
         return new StanfordDependencyParser();
     }
 

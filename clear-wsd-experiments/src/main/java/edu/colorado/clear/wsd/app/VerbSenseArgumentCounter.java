@@ -39,6 +39,9 @@ import java.util.stream.Collectors;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
+import edu.colorado.clear.type.DepNode;
+import edu.colorado.clear.type.DepTree;
+import edu.colorado.clear.type.FeatureType;
 import edu.colorado.clear.wsd.WordSenseAnnotator;
 import edu.colorado.clear.wsd.WordSenseClassifier;
 import edu.colorado.clear.wsd.corpus.CorpusReader;
@@ -46,9 +49,6 @@ import edu.colorado.clear.wsd.corpus.TextCorpusReader;
 import edu.colorado.clear.wsd.corpus.semlink.VerbNetReader;
 import edu.colorado.clear.wsd.feature.annotator.Annotator;
 import edu.colorado.clear.wsd.parser.StanfordDependencyParser;
-import edu.colorado.clear.wsd.type.DepNode;
-import edu.colorado.clear.wsd.type.DepTree;
-import edu.colorado.clear.wsd.type.FeatureType;
 import edu.colorado.clear.wsd.verbnet.DefaultPredicateAnnotator;
 import edu.stanford.nlp.util.Comparators;
 import lombok.AllArgsConstructor;
@@ -312,7 +312,7 @@ public class VerbSenseArgumentCounter {
      * @param tree dependency tree
      */
     private void process(DepTree tree) {
-        for (DepNode depNode : tree.tokens()) {
+        for (DepNode depNode : tree) {
             String sense = depNode.feature(FeatureType.Sense);
             if (null == sense || sense.isEmpty()) {
                 continue;

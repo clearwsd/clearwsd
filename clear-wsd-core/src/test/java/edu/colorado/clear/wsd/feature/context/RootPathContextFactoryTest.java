@@ -4,10 +4,10 @@ import org.junit.Test;
 
 import java.util.List;
 
+import edu.colorado.clear.type.DepNode;
+import edu.colorado.clear.type.DepTree;
+import edu.colorado.clear.type.NlpFocus;
 import edu.colorado.clear.wsd.feature.TestInstanceBuilder;
-import edu.colorado.clear.wsd.type.DepNode;
-import edu.colorado.clear.wsd.type.DepTree;
-import edu.colorado.clear.wsd.type.NlpFocus;
 
 import static junit.framework.TestCase.assertEquals;
 

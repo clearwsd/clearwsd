@@ -7,8 +7,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.function.Supplier;
 
-import edu.colorado.clear.wsd.type.FeatureType;
-import edu.colorado.clear.wsd.type.NlpInstance;
+import edu.colorado.clear.type.FeatureType;
+import edu.colorado.clear.type.NlpInstance;
 import edu.colorado.clear.wsd.utils.ExtJwnlWordNet;
 import edu.colorado.clear.wsd.utils.WordNetFacade;
 import lombok.Getter;

@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import edu.colorado.clear.type.NlpInstance;
 import edu.colorado.clear.wsd.feature.util.FeatureUtils;
-import edu.colorado.clear.wsd.type.NlpInstance;
 
 /**
  * Feature extractor that looks up the values corresponding to an associated key or keys.

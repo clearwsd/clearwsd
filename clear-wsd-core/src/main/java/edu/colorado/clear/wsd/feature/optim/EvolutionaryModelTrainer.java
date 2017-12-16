@@ -7,12 +7,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
+import edu.colorado.clear.type.NlpInstance;
 import edu.colorado.clear.wsd.classifier.Classifier;
 import edu.colorado.clear.wsd.classifier.Hyperparameter;
 import edu.colorado.clear.wsd.feature.optim.ga.CrossValidatingFitnessFunction;
 import edu.colorado.clear.wsd.feature.optim.ga.GeneticAlgorithm;
 import edu.colorado.clear.wsd.feature.pipeline.NlpClassifier;
-import edu.colorado.clear.wsd.type.NlpInstance;
 import lombok.Getter;
 import lombok.experimental.Accessors;
 import lombok.extern.slf4j.Slf4j;

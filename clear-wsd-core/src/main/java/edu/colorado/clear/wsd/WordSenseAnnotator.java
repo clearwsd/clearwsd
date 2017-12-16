@@ -1,12 +1,12 @@
 package edu.colorado.clear.wsd;
 
+import edu.colorado.clear.type.DepNode;
+import edu.colorado.clear.type.DepTree;
+import edu.colorado.clear.type.FeatureType;
+import edu.colorado.clear.type.NlpFocus;
 import edu.colorado.clear.wsd.classifier.Classifier;
 import edu.colorado.clear.wsd.feature.annotator.Annotator;
 import edu.colorado.clear.wsd.type.DefaultNlpFocus;
-import edu.colorado.clear.wsd.type.DepNode;
-import edu.colorado.clear.wsd.type.DepTree;
-import edu.colorado.clear.wsd.type.FeatureType;
-import edu.colorado.clear.wsd.type.NlpFocus;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -48,7 +48,7 @@ public class WordSenseAnnotator implements Annotator<DepTree> {
         // apply annotator
         instance = targetAnnotator.annotate(instance);
         // classify each resulting instance
-        for (DepNode token : instance.tokens()) {
+        for (DepNode token : instance) {
             String predicate = token.feature(FeatureType.Predicate);
             if (predicate != null) {
                 NlpFocus<DepNode, DepTree> input = new DefaultNlpFocus<>(token.index(), token, instance);

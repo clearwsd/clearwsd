@@ -1,4 +1,4 @@
-package edu.colorado.clear.wsd.type;
+package edu.colorado.clear.type;
 
 import java.util.Map;
 

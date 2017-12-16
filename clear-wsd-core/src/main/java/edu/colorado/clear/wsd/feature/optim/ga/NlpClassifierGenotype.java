@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Properties;
 import java.util.stream.Collectors;
 
+import edu.colorado.clear.type.NlpInstance;
 import edu.colorado.clear.wsd.classifier.ClassifierFactory;
 import edu.colorado.clear.wsd.classifier.SparseClassifier;
 import edu.colorado.clear.wsd.feature.function.AggregateFeatureFunction;
@@ -13,7 +14,6 @@ import edu.colorado.clear.wsd.feature.function.FeatureFunction;
 import edu.colorado.clear.wsd.feature.pipeline.DefaultFeaturePipeline;
 import edu.colorado.clear.wsd.feature.pipeline.FeaturePipeline;
 import edu.colorado.clear.wsd.feature.pipeline.NlpClassifier;
-import edu.colorado.clear.wsd.type.NlpInstance;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;

@@ -2,8 +2,8 @@ package edu.colorado.clear.wsd;
 
 import java.util.List;
 
-import edu.colorado.clear.wsd.parser.DependencyParser;
-import edu.colorado.clear.wsd.type.DepTree;
+import edu.colorado.clear.parser.NlpParser;
+import edu.colorado.clear.type.DepTree;
 import lombok.AllArgsConstructor;
 
 /**
@@ -12,10 +12,10 @@ import lombok.AllArgsConstructor;
  * @author jamesgung
  */
 @AllArgsConstructor
-public class SenseDisambiguatingParser implements DependencyParser {
+public class SenseDisambiguatingParser implements NlpParser {
 
     private WordSenseAnnotator annotator;
-    private DependencyParser dependencyParser;
+    private NlpParser dependencyParser;
 
     @Override
     public DepTree parse(List<String> tokens) {

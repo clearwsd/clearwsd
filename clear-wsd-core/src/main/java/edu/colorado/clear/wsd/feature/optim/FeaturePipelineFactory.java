@@ -1,7 +1,7 @@
 package edu.colorado.clear.wsd.feature.optim;
 
+import edu.colorado.clear.type.NlpInstance;
 import edu.colorado.clear.wsd.feature.pipeline.FeaturePipeline;
-import edu.colorado.clear.wsd.type.NlpInstance;
 
 /**
  * Feature pipeline generator.

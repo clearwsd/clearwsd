@@ -4,13 +4,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import edu.colorado.clear.type.DepNode;
+import edu.colorado.clear.type.DepTree;
+import edu.colorado.clear.type.FeatureType;
+import edu.colorado.clear.type.NlpFocus;
 import edu.colorado.clear.wsd.type.DefaultDepNode;
 import edu.colorado.clear.wsd.type.DefaultDepTree;
 import edu.colorado.clear.wsd.type.DefaultNlpFocus;
-import edu.colorado.clear.wsd.type.DepNode;
-import edu.colorado.clear.wsd.type.DepTree;
-import edu.colorado.clear.wsd.type.FeatureType;
-import edu.colorado.clear.wsd.type.NlpFocus;
 
 /**
  * Builder for dependency tree focus instances.

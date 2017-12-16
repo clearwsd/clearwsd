@@ -12,10 +12,10 @@ import java.util.function.Supplier;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+import edu.colorado.clear.type.DepNode;
+import edu.colorado.clear.type.FeatureType;
 import edu.colorado.clear.wsd.feature.util.LuceneWrapper;
 import edu.colorado.clear.wsd.feature.util.PosUtils;
-import edu.colorado.clear.wsd.type.DepNode;
-import edu.colorado.clear.wsd.type.FeatureType;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 

@@ -2,10 +2,10 @@ package edu.colorado.clear.wsd.corpus.semeval;
 
 import java.util.stream.Collectors;
 
-import edu.colorado.clear.wsd.parser.DependencyParser;
+import edu.colorado.clear.parser.NlpParser;
+import edu.colorado.clear.type.DepTree;
+import edu.colorado.clear.type.FeatureType;
 import edu.colorado.clear.wsd.type.DefaultDepTree;
-import edu.colorado.clear.wsd.type.DepTree;
-import edu.colorado.clear.wsd.type.FeatureType;
 
 /**
  * Semeval XML reader.
@@ -14,9 +14,9 @@ import edu.colorado.clear.wsd.type.FeatureType;
  */
 public class ParsingSemevalReader extends SemevalReader {
 
-    private DependencyParser parser;
+    private NlpParser parser;
 
-    public ParsingSemevalReader(String keyPath, DependencyParser parser) {
+    public ParsingSemevalReader(String keyPath, NlpParser parser) {
         super(keyPath);
         this.parser = parser;
     }

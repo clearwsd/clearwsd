@@ -1,4 +1,4 @@
-package edu.colorado.clear.wsd.type;
+package edu.colorado.clear.type;
 
 /**
  * Core features used for feature extraction and annotation.

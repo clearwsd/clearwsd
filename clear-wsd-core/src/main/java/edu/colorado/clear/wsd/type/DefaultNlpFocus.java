@@ -5,6 +5,9 @@ import java.util.List;
 
 import javax.annotation.Nonnull;
 
+import edu.colorado.clear.type.NlpFocus;
+import edu.colorado.clear.type.NlpInstance;
+import edu.colorado.clear.type.NlpSequence;
 import lombok.Getter;
 import lombok.experimental.Accessors;
 

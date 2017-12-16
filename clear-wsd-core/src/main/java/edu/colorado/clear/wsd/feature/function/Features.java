@@ -4,11 +4,11 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import edu.colorado.clear.type.NlpInstance;
 import edu.colorado.clear.wsd.feature.context.NlpContextFactory;
 import edu.colorado.clear.wsd.feature.extractor.FeatureExtractor;
 import edu.colorado.clear.wsd.feature.extractor.StringExtractor;
 import edu.colorado.clear.wsd.feature.extractor.StringListExtractor;
-import edu.colorado.clear.wsd.type.NlpInstance;
 
 /**
  * Feature function utilities.

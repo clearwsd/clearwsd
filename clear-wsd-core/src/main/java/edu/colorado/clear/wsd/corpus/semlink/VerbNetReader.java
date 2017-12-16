@@ -8,22 +8,22 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import edu.colorado.clear.type.DepNode;
+import edu.colorado.clear.type.DepTree;
+import edu.colorado.clear.type.NlpFocus;
 import edu.colorado.clear.wsd.corpus.CoNllDepTreeReader;
 import edu.colorado.clear.wsd.corpus.CorpusReader;
 import edu.colorado.clear.wsd.type.DefaultNlpFocus;
-import edu.colorado.clear.wsd.type.DepNode;
-import edu.colorado.clear.wsd.type.DepTree;
-import edu.colorado.clear.wsd.type.NlpFocus;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
+import static edu.colorado.clear.type.FeatureType.Gold;
+import static edu.colorado.clear.type.FeatureType.Metadata;
+import static edu.colorado.clear.type.FeatureType.Predicate;
+import static edu.colorado.clear.type.FeatureType.Sense;
+import static edu.colorado.clear.type.FeatureType.Text;
 import static edu.colorado.clear.wsd.corpus.CoNllDepTreeReader.treeToString;
-import static edu.colorado.clear.wsd.type.FeatureType.Gold;
-import static edu.colorado.clear.wsd.type.FeatureType.Metadata;
-import static edu.colorado.clear.wsd.type.FeatureType.Predicate;
-import static edu.colorado.clear.wsd.type.FeatureType.Sense;
-import static edu.colorado.clear.wsd.type.FeatureType.Text;
 
 /**
  * VerbNet (parsed) corpus reader.

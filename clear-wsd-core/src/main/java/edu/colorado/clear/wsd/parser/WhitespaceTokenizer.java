@@ -3,6 +3,8 @@ package edu.colorado.clear.wsd.parser;
 import java.util.Arrays;
 import java.util.List;
 
+import edu.colorado.clear.parser.NlpTokenizer;
+
 /**
  * Whitespace tokenizer implementation used mostly for pre-tokenized/space-separated/formatted text, not intended for actual use in
  * a natural language setting. Tokens are split on whitespace, and sentences are split on newlines.

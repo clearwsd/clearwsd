@@ -1,8 +1,8 @@
-package edu.colorado.clear.wsd.parser;
+package edu.colorado.clear.parser;
 
 import java.util.List;
 
-import edu.colorado.clear.wsd.type.DepTree;
+import edu.colorado.clear.type.DepTree;
 
 /**
  * Syntactic dependency parser, used to produce {@link DepTree DepTrees} from raw text. Extends from {@link NlpTokenizer} to ensure
@@ -10,7 +10,7 @@ import edu.colorado.clear.wsd.type.DepTree;
  *
  * @author jamesgung
  */
-public interface DependencyParser extends NlpTokenizer {
+public interface NlpParser extends NlpTokenizer {
 
     /**
      * Parse a single tokenized sentence, producing an {@link DepTree}.

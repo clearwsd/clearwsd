@@ -3,13 +3,13 @@ package edu.colorado.clear.wsd.feature.function;
 import java.util.ArrayList;
 import java.util.List;
 
+import edu.colorado.clear.type.NlpInstance;
 import edu.colorado.clear.wsd.feature.StringFeature;
 import edu.colorado.clear.wsd.feature.context.NlpContext;
 import edu.colorado.clear.wsd.feature.context.NlpContextFactory;
 import edu.colorado.clear.wsd.feature.extractor.FeatureExtractor;
 import edu.colorado.clear.wsd.feature.extractor.StringExtractor;
 import edu.colorado.clear.wsd.feature.util.FeatureUtils;
-import edu.colorado.clear.wsd.type.NlpInstance;
 import lombok.AllArgsConstructor;
 
 /**

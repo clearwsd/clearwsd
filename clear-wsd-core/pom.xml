@@ -23,6 +23,11 @@
 
     <dependencies>
         <dependency>
+            <groupId>edu.colorado.clear</groupId>
+            <artifactId>clear-wsd-api</artifactId>
+        </dependency>
+
+        <dependency>
             <groupId>de.bwaldvogel</groupId>
             <artifactId>liblinear</artifactId>
             <version>${liblinear.version}</version>

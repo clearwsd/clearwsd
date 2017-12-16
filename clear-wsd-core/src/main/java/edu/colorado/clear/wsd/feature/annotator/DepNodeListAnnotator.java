@@ -1,10 +1,10 @@
 package edu.colorado.clear.wsd.feature.annotator;
 
+import edu.colorado.clear.type.NlpInstance;
+import edu.colorado.clear.type.NlpSequence;
 import edu.colorado.clear.wsd.feature.context.NlpContext;
 import edu.colorado.clear.wsd.feature.context.NlpContextFactory;
 import edu.colorado.clear.wsd.feature.context.SequenceIdentifyContextFactory;
-import edu.colorado.clear.wsd.type.NlpInstance;
-import edu.colorado.clear.wsd.type.NlpSequence;
 
 /**
  * Annotates tokens in a sequence with lists.

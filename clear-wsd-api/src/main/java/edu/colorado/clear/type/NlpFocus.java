@@ -1,4 +1,4 @@
-package edu.colorado.clear.wsd.type;
+package edu.colorado.clear.type;
 
 /**
  * NLP focus/sequence pair, such as for classification of a word ({@link NlpInstance}) within a sentence ({@link NlpSequence} of

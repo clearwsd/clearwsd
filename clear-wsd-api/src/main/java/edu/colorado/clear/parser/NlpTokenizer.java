@@ -1,4 +1,4 @@
-package edu.colorado.clear.wsd.parser;
+package edu.colorado.clear.parser;
 
 import java.util.List;
 

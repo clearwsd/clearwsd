@@ -2,8 +2,8 @@ package edu.colorado.clear.wsd.feature.annotator;
 
 import java.util.List;
 
+import edu.colorado.clear.type.NlpInstance;
 import edu.colorado.clear.wsd.feature.resource.FeatureResourceManager;
-import edu.colorado.clear.wsd.type.NlpInstance;
 import lombok.AllArgsConstructor;
 
 /**

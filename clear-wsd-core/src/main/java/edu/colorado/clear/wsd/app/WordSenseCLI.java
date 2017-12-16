@@ -28,6 +28,12 @@ import java.util.function.Supplier;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+import edu.colorado.clear.parser.NlpParser;
+import edu.colorado.clear.type.DepNode;
+import edu.colorado.clear.type.DepTree;
+import edu.colorado.clear.type.FeatureType;
+import edu.colorado.clear.type.NlpFocus;
+import edu.colorado.clear.type.NlpInstance;
 import edu.colorado.clear.wsd.SenseDisambiguatingParser;
 import edu.colorado.clear.wsd.WordSenseAnnotator;
 import edu.colorado.clear.wsd.WordSenseClassifier;
@@ -41,13 +47,7 @@ import edu.colorado.clear.wsd.corpus.semlink.VerbNetReader;
 import edu.colorado.clear.wsd.eval.CrossValidation;
 import edu.colorado.clear.wsd.eval.Evaluation;
 import edu.colorado.clear.wsd.eval.Predictions;
-import edu.colorado.clear.wsd.parser.DependencyParser;
 import edu.colorado.clear.wsd.parser.WhitespaceTokenizer;
-import edu.colorado.clear.wsd.type.DepNode;
-import edu.colorado.clear.wsd.type.DepTree;
-import edu.colorado.clear.wsd.type.FeatureType;
-import edu.colorado.clear.wsd.type.NlpFocus;
-import edu.colorado.clear.wsd.type.NlpInstance;
 import edu.colorado.clear.wsd.utils.CountingSenseInventory;
 import edu.colorado.clear.wsd.utils.InteractiveTestLoop;
 import edu.colorado.clear.wsd.utils.LemmaDictionary;
@@ -59,11 +59,11 @@ import edu.colorado.clear.wsd.verbnet.VerbNetSenseInventory;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
+import static edu.colorado.clear.type.FeatureType.Gold;
+import static edu.colorado.clear.type.FeatureType.Sense;
+import static edu.colorado.clear.type.FeatureType.Text;
 import static edu.colorado.clear.wsd.app.WordSenseCLI.SenseInventoryType.VerbNet;
 import static edu.colorado.clear.wsd.app.WordSenseCLI.SenseInventoryType.WordNet;
-import static edu.colorado.clear.wsd.type.FeatureType.Gold;
-import static edu.colorado.clear.wsd.type.FeatureType.Sense;
-import static edu.colorado.clear.wsd.type.FeatureType.Text;
 
 /**
  * Command line interface for training, evaluating and applying a word sense classifier.
@@ -94,12 +94,12 @@ public abstract class WordSenseCLI {
         Semeval(ParsingSemevalReader::new, SemevalReader::new, WordNet),
         Semlink((unused, parser) -> new ParsingSemlinkReader(parser), (unused) -> new VerbNetReader(), VerbNet);
 
-        private BiFunction<String, DependencyParser, CorpusReader<NlpFocus<DepNode, DepTree>>> corpusParser;
+        private BiFunction<String, NlpParser, CorpusReader<NlpFocus<DepNode, DepTree>>> corpusParser;
         private Function<String, CorpusReader<NlpFocus<DepNode, DepTree>>> corpusReader;
         @Getter
         private SenseInventoryType defaultInventory;
 
-        CorpusType(BiFunction<String, DependencyParser, CorpusReader<NlpFocus<DepNode, DepTree>>> corpusParser,
+        CorpusType(BiFunction<String, NlpParser, CorpusReader<NlpFocus<DepNode, DepTree>>> corpusParser,
                    Function<String, CorpusReader<NlpFocus<DepNode, DepTree>>> corpusReader, SenseInventoryType type) {
             this.corpusParser = corpusParser;
             this.corpusReader = corpusReader;
@@ -113,7 +113,7 @@ public abstract class WordSenseCLI {
          * @param depParser dependency parser used to parse the input corpus
          * @return parsing {@link CorpusReader}
          */
-        public CorpusReader<NlpFocus<DepNode, DepTree>> corpusParser(String path, DependencyParser depParser) {
+        public CorpusReader<NlpFocus<DepNode, DepTree>> corpusParser(String path, NlpParser depParser) {
             return corpusParser.apply(path, depParser);
         }
 
@@ -193,7 +193,7 @@ public abstract class WordSenseCLI {
     private SenseInventoryType senseInventory;
 
     private WordSenseClassifier classifier;
-    protected DependencyParser parser;
+    protected NlpParser parser;
     private Pattern depPattern;
 
     private JCommander cmd;
@@ -215,7 +215,7 @@ public abstract class WordSenseCLI {
         }
     }
 
-    protected abstract DependencyParser parser();
+    protected abstract NlpParser parser();
 
     public void run() {
         try {
@@ -390,11 +390,11 @@ public abstract class WordSenseCLI {
         if (!itl) {
             return;
         }
-        DependencyParser parser = new SenseDisambiguatingParser(getAnnotator(), getParser());
+        NlpParser parser = new SenseDisambiguatingParser(getAnnotator(), getParser());
         InteractiveTestLoop.test(parser, Sense.name());
     }
 
-    private DependencyParser getParser() {
+    private NlpParser getParser() {
         if (parser == null) {
             log.debug("Initializing parser...");
             Stopwatch sw = Stopwatch.createStarted();

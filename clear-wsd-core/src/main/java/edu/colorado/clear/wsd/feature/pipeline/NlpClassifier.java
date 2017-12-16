@@ -9,6 +9,7 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.stream.Collectors;
 
+import edu.colorado.clear.type.NlpInstance;
 import edu.colorado.clear.wsd.classifier.Classifier;
 import edu.colorado.clear.wsd.classifier.DefaultSparseInstance;
 import edu.colorado.clear.wsd.classifier.DefaultSparseVector;
@@ -20,7 +21,6 @@ import edu.colorado.clear.wsd.feature.model.BaseFeatureModel;
 import edu.colorado.clear.wsd.feature.model.BaseVocabulary;
 import edu.colorado.clear.wsd.feature.model.FeatureModel;
 import edu.colorado.clear.wsd.feature.util.VocabularyBuilder;
-import edu.colorado.clear.wsd.type.NlpInstance;
 import lombok.Getter;
 import lombok.experimental.Accessors;
 

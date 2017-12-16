@@ -3,8 +3,8 @@ package edu.colorado.clear.wsd.feature.extractor;
 import java.util.Collections;
 import java.util.List;
 
+import edu.colorado.clear.type.NlpInstance;
 import edu.colorado.clear.wsd.feature.util.FeatureUtils;
-import edu.colorado.clear.wsd.type.NlpInstance;
 
 /**
  * Feature extractor that looks up an associated key or keys, optionally falling back to another extractor if nothing is found.

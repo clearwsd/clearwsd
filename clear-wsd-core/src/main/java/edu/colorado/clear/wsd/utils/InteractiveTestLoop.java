@@ -8,9 +8,9 @@ import java.util.Scanner;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import edu.colorado.clear.wsd.parser.DependencyParser;
-import edu.colorado.clear.wsd.type.DepTree;
-import edu.colorado.clear.wsd.type.FeatureType;
+import edu.colorado.clear.parser.NlpParser;
+import edu.colorado.clear.type.DepTree;
+import edu.colorado.clear.type.FeatureType;
 import lombok.AllArgsConstructor;
 
 /**
@@ -25,7 +25,7 @@ public class InteractiveTestLoop {
      *
      * @param dependencyParser dependency parser
      */
-    public static void test(DependencyParser dependencyParser, Function<DepTree, String> formatter) {
+    public static void test(NlpParser dependencyParser, Function<DepTree, String> formatter) {
         Scanner scanner = new Scanner(System.in);
         System.out.println("Enter test input (\"EXIT\" to quit).");
         try {
@@ -46,15 +46,15 @@ public class InteractiveTestLoop {
         }
     }
 
-    public static void test(DependencyParser parser) {
+    public static void test(NlpParser parser) {
         test(parser, new CoNllFormatter());
     }
 
-    public static void test(DependencyParser dependencyParser, String key) {
+    public static void test(NlpParser dependencyParser, String key) {
         test(dependencyParser, new InlineFormatter(key));
     }
 
-    public static void test(DependencyParser dependencyParser, List<String> keys) {
+    public static void test(NlpParser dependencyParser, List<String> keys) {
         test(dependencyParser, new InlineFormatter(keys));
     }
 

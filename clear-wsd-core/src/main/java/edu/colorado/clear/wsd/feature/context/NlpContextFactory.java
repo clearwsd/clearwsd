@@ -3,7 +3,7 @@ package edu.colorado.clear.wsd.feature.context;
 import java.io.Serializable;
 import java.util.List;
 
-import edu.colorado.clear.wsd.type.NlpInstance;
+import edu.colorado.clear.type.NlpInstance;
 
 /**
  * Context factory used to extract instances for feature extraction for arbitrary NLP tasks.

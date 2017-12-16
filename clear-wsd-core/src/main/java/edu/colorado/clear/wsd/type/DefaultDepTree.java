@@ -2,6 +2,8 @@ package edu.colorado.clear.wsd.type;
 
 import java.util.List;
 
+import edu.colorado.clear.type.DepNode;
+import edu.colorado.clear.type.DepTree;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;

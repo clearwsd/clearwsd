@@ -3,7 +3,7 @@ package edu.colorado.clear.wsd.feature.context;
 import java.util.Collections;
 import java.util.List;
 
-import edu.colorado.clear.wsd.type.NlpInstance;
+import edu.colorado.clear.type.NlpInstance;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.experimental.Accessors;

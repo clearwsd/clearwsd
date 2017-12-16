@@ -6,6 +6,8 @@ import java.util.stream.Collectors;
 
 import javax.annotation.Nonnull;
 
+import edu.colorado.clear.type.NlpInstance;
+import edu.colorado.clear.type.NlpSequence;
 import lombok.Getter;
 import lombok.experimental.Accessors;
 

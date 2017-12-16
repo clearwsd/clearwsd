@@ -14,11 +14,11 @@ import java.util.Map;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+import edu.colorado.clear.type.DepNode;
+import edu.colorado.clear.type.DepTree;
+import edu.colorado.clear.type.FeatureType;
 import edu.colorado.clear.wsd.type.DefaultDepNode;
 import edu.colorado.clear.wsd.type.DefaultDepTree;
-import edu.colorado.clear.wsd.type.DepNode;
-import edu.colorado.clear.wsd.type.DepTree;
-import edu.colorado.clear.wsd.type.FeatureType;
 
 /**
  * CoNLL-U-style dependency tree corpus reader.
@@ -141,7 +141,7 @@ public class CoNllDepTreeReader implements CorpusReader<DepTree> {
      */
     public static String treeToString(DepTree tree, String... extra) {
         List<String> lines = new ArrayList<>();
-        for (DepNode depNode : tree.tokens()) {
+        for (DepNode depNode : tree) {
             List<String> fields = new ArrayList<>();
             fields.add(Integer.toString(depNode.index()));
             fields.add(depNode.feature(FeatureType.Text));

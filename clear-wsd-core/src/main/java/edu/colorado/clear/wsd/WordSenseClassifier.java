@@ -9,19 +9,19 @@ import java.util.Properties;
 import java.util.Set;
 import java.util.stream.Stream;
 
+import edu.colorado.clear.type.DepNode;
+import edu.colorado.clear.type.DepTree;
+import edu.colorado.clear.type.FeatureType;
+import edu.colorado.clear.type.NlpFocus;
 import edu.colorado.clear.wsd.classifier.Classifier;
 import edu.colorado.clear.wsd.classifier.Hyperparameter;
-import edu.colorado.clear.wsd.type.DepNode;
-import edu.colorado.clear.wsd.type.DepTree;
-import edu.colorado.clear.wsd.type.FeatureType;
-import edu.colorado.clear.wsd.type.NlpFocus;
 import edu.colorado.clear.wsd.utils.LemmaDictionary;
 import edu.colorado.clear.wsd.utils.SenseInventory;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.experimental.Accessors;
 
-import static edu.colorado.clear.wsd.type.FeatureType.Predicate;
+import static edu.colorado.clear.type.FeatureType.Predicate;
 
 /**
  * Word sense classifier--restricts predictions to classes provided by a given sense inventory.

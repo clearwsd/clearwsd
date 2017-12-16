@@ -1,6 +1,5 @@
 package edu.colorado.clear.wsd.parser;
 
-import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -9,20 +8,17 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.stream.Collectors;
 
+import edu.colorado.clear.parser.NlpParser;
+import edu.colorado.clear.parser.NlpTokenizer;
+import edu.colorado.clear.type.DepNode;
+import edu.colorado.clear.type.DepTree;
+import edu.colorado.clear.type.FeatureType;
 import edu.colorado.clear.wsd.type.DefaultDepNode;
 import edu.colorado.clear.wsd.type.DefaultDepTree;
-import edu.colorado.clear.wsd.type.DepNode;
-import edu.colorado.clear.wsd.type.DepTree;
-import edu.colorado.clear.wsd.type.FeatureType;
 import edu.stanford.nlp.international.Language;
 import edu.stanford.nlp.ling.CoreLabel;
-import edu.stanford.nlp.ling.HasWord;
-import edu.stanford.nlp.ling.SentenceUtils;
-import edu.stanford.nlp.process.DocumentPreprocessor;
+import edu.stanford.nlp.parser.nndep.DependencyParser;
 import edu.stanford.nlp.process.Morphology;
-import edu.stanford.nlp.process.PTBTokenizer;
-import edu.stanford.nlp.process.Tokenizer;
-import edu.stanford.nlp.process.TokenizerFactory;
 import edu.stanford.nlp.tagger.maxent.MaxentTagger;
 import edu.stanford.nlp.trees.GrammaticalStructure;
 import edu.stanford.nlp.trees.TypedDependency;
@@ -32,11 +28,12 @@ import static edu.stanford.nlp.parser.nndep.DependencyParser.DEFAULT_MODEL;
 import static edu.stanford.nlp.parser.nndep.DependencyParser.loadFromModelFile;
 
 /**
- * Dependency parser implementation wrapping the Stanford parser.
+ * Dependency parser implementation wrapping the Stanford parser. Applies part-of-speech annotation and performs lemmatization
+ * during parsing, adding {@link FeatureType#Pos} and {@link FeatureType#Lemma} features. Components are threadsafe.
  *
  * @author jamesgung
  */
-public class StanfordDependencyParser implements DependencyParser {
+public class StanfordDependencyParser implements NlpParser {
 
     public enum StanfordParserModel {
         UD(DEFAULT_MODEL, Language.UniversalEnglish.name()),
@@ -54,40 +51,49 @@ public class StanfordDependencyParser implements DependencyParser {
         }
     }
 
-    private static final String NO_ESCAPING = "ptb3Escaping=false";
-
-    private TokenizerFactory tokenizer;
+    private NlpTokenizer nlpTokenizer;
     private MaxentTagger posTagger;
-    private edu.stanford.nlp.parser.nndep.DependencyParser depParser;
+    private DependencyParser depParser;
 
-    public StanfordDependencyParser(StanfordParserModel model) {
-        tokenizer = PTBTokenizer.coreLabelFactory();
-        posTagger = new MaxentTagger(MaxentTagger.DEFAULT_JAR_PATH);
-        depParser = loadFromModelFile(model.path, model.language);
+    /**
+     * Constructor with a specific StanfordCoreNLP part-of-speech tagger and dependency parser.
+     *
+     * @param nlpTokenizer tokenizer
+     * @param posTagger    part-of-speech tagger
+     * @param depParser    dependency parser
+     */
+    public StanfordDependencyParser(NlpTokenizer nlpTokenizer, MaxentTagger posTagger, DependencyParser depParser) {
+        this.nlpTokenizer = nlpTokenizer;
+        this.posTagger = posTagger;
+        this.depParser = depParser;
     }
 
+    /**
+     * Constructor taking a model type from {@link StanfordParserModel}.
+     *
+     * @param model dependency parser model type
+     */
+    public StanfordDependencyParser(StanfordParserModel model) {
+        this(new StanfordTokenizer(), new MaxentTagger(MaxentTagger.DEFAULT_JAR_PATH),
+                loadFromModelFile(model.path, model.language));
+        nlpTokenizer = new StanfordTokenizer();
+    }
+
+    /**
+     * Constructor that automatically initializes the {@link StanfordParserModel#UD} model.
+     */
     public StanfordDependencyParser() {
         this(StanfordParserModel.UD);
     }
 
     @Override
-    public List<String> segment(String string) {
-        DocumentPreprocessor preprocessor = new DocumentPreprocessor(new StringReader(string));
-        List<String> results = new ArrayList<>();
-        for (List<HasWord> sentence : preprocessor) {
-            results.add(SentenceUtils.listToOriginalTextString(sentence));
-        }
-        return results;
+    public List<String> segment(String input) {
+        return nlpTokenizer.segment(input);
     }
 
     @Override
-    public List<String> tokenize(String text) {
-        Tokenizer tokenizer = this.tokenizer.getTokenizer(new StringReader(text), NO_ESCAPING);
-        List<String> tokens = new ArrayList<>();
-        while (tokenizer.hasNext()) {
-            tokens.add(((HasWord) tokenizer.next()).word());
-        }
-        return tokens;
+    public List<String> tokenize(String sentence) {
+        return nlpTokenizer.tokenize(sentence);
     }
 
     @Override

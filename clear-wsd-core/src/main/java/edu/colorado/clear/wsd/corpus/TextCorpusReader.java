@@ -8,8 +8,8 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-import edu.colorado.clear.wsd.parser.DependencyParser;
-import edu.colorado.clear.wsd.type.DepTree;
+import edu.colorado.clear.parser.NlpParser;
+import edu.colorado.clear.type.DepTree;
 import lombok.extern.slf4j.Slf4j;
 
 import static edu.colorado.clear.wsd.corpus.CoNllDepTreeReader.writeDependencyTrees;
@@ -22,9 +22,9 @@ import static edu.colorado.clear.wsd.corpus.CoNllDepTreeReader.writeDependencyTr
 @Slf4j
 public class TextCorpusReader implements CorpusReader<DepTree> {
 
-    private DependencyParser parser;
+    private NlpParser parser;
 
-    public TextCorpusReader(DependencyParser parser) {
+    public TextCorpusReader(NlpParser parser) {
         this.parser = parser;
     }
 

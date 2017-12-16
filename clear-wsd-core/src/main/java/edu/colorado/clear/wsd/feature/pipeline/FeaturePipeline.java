@@ -3,9 +3,9 @@ package edu.colorado.clear.wsd.feature.pipeline;
 import java.io.Serializable;
 import java.util.List;
 
+import edu.colorado.clear.type.NlpInstance;
 import edu.colorado.clear.wsd.classifier.SparseInstance;
 import edu.colorado.clear.wsd.feature.model.FeatureModel;
-import edu.colorado.clear.wsd.type.NlpInstance;
 
 /**
  * Trainable feature pipeline.

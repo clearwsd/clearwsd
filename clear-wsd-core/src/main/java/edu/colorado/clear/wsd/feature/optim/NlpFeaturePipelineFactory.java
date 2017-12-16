@@ -7,6 +7,7 @@ import java.util.Objects;
 import java.util.Random;
 import java.util.stream.Collectors;
 
+import edu.colorado.clear.type.NlpInstance;
 import edu.colorado.clear.wsd.feature.context.NlpContextFactory;
 import edu.colorado.clear.wsd.feature.extractor.StringExtractor;
 import edu.colorado.clear.wsd.feature.extractor.StringListExtractor;
@@ -17,7 +18,6 @@ import edu.colorado.clear.wsd.feature.function.MultiStringFeatureFunction;
 import edu.colorado.clear.wsd.feature.function.StringFeatureFunction;
 import edu.colorado.clear.wsd.feature.pipeline.DefaultFeaturePipeline;
 import edu.colorado.clear.wsd.feature.pipeline.FeaturePipeline;
-import edu.colorado.clear.wsd.type.NlpInstance;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;

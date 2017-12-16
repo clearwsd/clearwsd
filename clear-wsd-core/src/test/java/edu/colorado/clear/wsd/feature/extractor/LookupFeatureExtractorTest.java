@@ -5,9 +5,9 @@ import org.junit.Test;
 import java.util.Arrays;
 import java.util.Collections;
 
+import edu.colorado.clear.type.DepNode;
+import edu.colorado.clear.type.FeatureType;
 import edu.colorado.clear.wsd.type.DefaultDepNode;
-import edu.colorado.clear.wsd.type.DepNode;
-import edu.colorado.clear.wsd.type.FeatureType;
 
 import static junit.framework.TestCase.assertEquals;
 

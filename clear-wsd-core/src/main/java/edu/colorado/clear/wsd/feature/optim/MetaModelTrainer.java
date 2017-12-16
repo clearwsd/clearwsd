@@ -12,6 +12,8 @@ import java.util.function.BiConsumer;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import edu.colorado.clear.type.FeatureType;
+import edu.colorado.clear.type.NlpInstance;
 import edu.colorado.clear.wsd.classifier.Classifier;
 import edu.colorado.clear.wsd.classifier.ClassifierFactory;
 import edu.colorado.clear.wsd.classifier.DefaultHyperparameter;
@@ -23,8 +25,6 @@ import edu.colorado.clear.wsd.eval.Evaluation;
 import edu.colorado.clear.wsd.feature.pipeline.DefaultFeaturePipeline;
 import edu.colorado.clear.wsd.feature.pipeline.FeaturePipeline;
 import edu.colorado.clear.wsd.feature.pipeline.NlpClassifier;
-import edu.colorado.clear.wsd.type.FeatureType;
-import edu.colorado.clear.wsd.type.NlpInstance;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 import lombok.extern.slf4j.Slf4j;

@@ -4,8 +4,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import edu.colorado.clear.type.NlpInstance;
 import edu.colorado.clear.wsd.feature.extractor.string.StringFunction;
-import edu.colorado.clear.wsd.type.NlpInstance;
 
 import static edu.colorado.clear.wsd.feature.util.FeatureUtils.KEY_DELIM;
 
