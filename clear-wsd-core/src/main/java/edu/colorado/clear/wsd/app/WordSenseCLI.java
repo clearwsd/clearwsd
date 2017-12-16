@@ -44,9 +44,9 @@ import edu.colorado.clear.wsd.eval.Predictions;
 import edu.colorado.clear.wsd.parser.DependencyParser;
 import edu.colorado.clear.wsd.parser.WhitespaceTokenizer;
 import edu.colorado.clear.wsd.type.DepNode;
-import edu.colorado.clear.wsd.type.DependencyTree;
+import edu.colorado.clear.wsd.type.DepTree;
 import edu.colorado.clear.wsd.type.FeatureType;
-import edu.colorado.clear.wsd.type.FocusInstance;
+import edu.colorado.clear.wsd.type.NlpFocus;
 import edu.colorado.clear.wsd.type.NlpInstance;
 import edu.colorado.clear.wsd.utils.CountingSenseInventory;
 import edu.colorado.clear.wsd.utils.InteractiveTestLoop;
@@ -94,13 +94,13 @@ public abstract class WordSenseCLI {
         Semeval(ParsingSemevalReader::new, SemevalReader::new, WordNet),
         Semlink((unused, parser) -> new ParsingSemlinkReader(parser), (unused) -> new VerbNetReader(), VerbNet);
 
-        private BiFunction<String, DependencyParser, CorpusReader<FocusInstance<DepNode, DependencyTree>>> corpusParser;
-        private Function<String, CorpusReader<FocusInstance<DepNode, DependencyTree>>> corpusReader;
+        private BiFunction<String, DependencyParser, CorpusReader<NlpFocus<DepNode, DepTree>>> corpusParser;
+        private Function<String, CorpusReader<NlpFocus<DepNode, DepTree>>> corpusReader;
         @Getter
         private SenseInventoryType defaultInventory;
 
-        CorpusType(BiFunction<String, DependencyParser, CorpusReader<FocusInstance<DepNode, DependencyTree>>> corpusParser,
-                   Function<String, CorpusReader<FocusInstance<DepNode, DependencyTree>>> corpusReader, SenseInventoryType type) {
+        CorpusType(BiFunction<String, DependencyParser, CorpusReader<NlpFocus<DepNode, DepTree>>> corpusParser,
+                   Function<String, CorpusReader<NlpFocus<DepNode, DepTree>>> corpusReader, SenseInventoryType type) {
             this.corpusParser = corpusParser;
             this.corpusReader = corpusReader;
             this.defaultInventory = type;
@@ -113,7 +113,7 @@ public abstract class WordSenseCLI {
          * @param depParser dependency parser used to parse the input corpus
          * @return parsing {@link CorpusReader}
          */
-        public CorpusReader<FocusInstance<DepNode, DependencyTree>> corpusParser(String path, DependencyParser depParser) {
+        public CorpusReader<NlpFocus<DepNode, DepTree>> corpusParser(String path, DependencyParser depParser) {
             return corpusParser.apply(path, depParser);
         }
 
@@ -123,7 +123,7 @@ public abstract class WordSenseCLI {
          * @param path key path
          * @return {@link CorpusReader} for reading a pre-parsed corpus
          */
-        public CorpusReader<FocusInstance<DepNode, DependencyTree>> corpusReader(String path) {
+        public CorpusReader<NlpFocus<DepNode, DepTree>> corpusReader(String path) {
             return corpusReader.apply(path);
         }
 
@@ -288,9 +288,9 @@ public abstract class WordSenseCLI {
         if (trainPath == null) {
             return;
         }
-        List<FocusInstance<DepNode, DependencyTree>> trainInstances = getParseTrees(trainPath, parsed(trainPath)
+        List<NlpFocus<DepNode, DepTree>> trainInstances = getParseTrees(trainPath, parsed(trainPath)
                 ? corpusType.corpusReader(getKeyPath(trainPath)) : corpusType.corpusParser(getKeyPath(trainPath), getParser()));
-        List<FocusInstance<DepNode, DependencyTree>> validInstances = validPath == null ? new ArrayList<>()
+        List<NlpFocus<DepNode, DepTree>> validInstances = validPath == null ? new ArrayList<>()
                 : getParseTrees(validPath, parsed(validPath) ? corpusType.corpusReader(getKeyPath(validPath))
                 : corpusType.corpusParser(getKeyPath(validPath), getParser()));
         classifier = newClassifier();
@@ -312,11 +312,11 @@ public abstract class WordSenseCLI {
         Preconditions.checkState(trainPer < 1 && trainPer > 0,
                 "Percentage of training data must be between 0 and 1 (got %f). "
                         + "Please set ratio of percentage of training instances per fold (e.g. \"-per 0.8\")", trainPer);
-        List<FocusInstance<DepNode, DependencyTree>> trainInstances = getParseTrees(trainPath, parsed(trainPath)
+        List<NlpFocus<DepNode, DepTree>> trainInstances = getParseTrees(trainPath, parsed(trainPath)
                 ? corpusType.corpusReader(getKeyPath(trainPath)) : corpusType.corpusParser(getKeyPath(trainPath), getParser()));
         log.info("Performing {}-fold cross validation on {} instances in training corpus at {}", folds,
                 trainInstances.size(), trainPath);
-        CrossValidation<FocusInstance<DepNode, DependencyTree>> cv = new CrossValidation<>(seed, i -> i.feature(FeatureType.Gold));
+        CrossValidation<NlpFocus<DepNode, DepTree>> cv = new CrossValidation<>(seed, i -> i.feature(FeatureType.Gold));
         List<Evaluation> evaluations = cv.crossValidate(newClassifier(), cv.createFolds(trainInstances, folds, trainPer));
         int index = 0;
         for (Evaluation evaluation : evaluations) {
@@ -332,18 +332,18 @@ public abstract class WordSenseCLI {
         if (classifier == null) {
             classifier = loadClassifier();
         }
-        List<FocusInstance<DepNode, DependencyTree>> testInstances = getParseTrees(testPath, parsed(testPath)
+        List<NlpFocus<DepNode, DepTree>> testInstances = getParseTrees(testPath, parsed(testPath)
                 ? corpusType.corpusReader(getKeyPath(testPath)) : corpusType.corpusParser(getKeyPath(testPath), getParser()));
         evaluate(testInstances, testPath);
     }
 
-    private void evaluate(List<FocusInstance<DepNode, DependencyTree>> instances, String path) {
+    private void evaluate(List<NlpFocus<DepNode, DepTree>> instances, String path) {
         log.info("Evaluating word sense classifier at {} on {} instances in corpus at {}", modelPath, instances.size(), path);
-        Predictions<FocusInstance<DepNode, DependencyTree>> predictions = new Predictions<>(
+        Predictions<NlpFocus<DepNode, DepTree>> predictions = new Predictions<>(
                 instance -> instance.sequence().tokens().stream()
                         .map(token -> token == instance.focus() ? "{" + token.feature(Text) + "}" : token.feature(Text))
                         .collect(Collectors.joining(" ")), instance -> instance.feature(FeatureType.Gold));
-        for (FocusInstance<DepNode, DependencyTree> instance : instances) {
+        for (NlpFocus<DepNode, DepTree> instance : instances) {
             String prediction = classifier.classify(instance);
             // multiple acceptable gold senses per word, if available
             Set<String> allPredictions = instance.feature(FeatureType.AllSenses);
@@ -374,7 +374,7 @@ public abstract class WordSenseCLI {
             log.warn("No output path provided, saving predictions to {}", outputPath);
         }
         WordSenseAnnotator annotator = getAnnotator();
-        List<DependencyTree> instances = getParseTrees(inputPath,
+        List<DepTree> instances = getParseTrees(inputPath,
                 parsed(inputPath) ? new CoNllDepTreeReader() : new TextCorpusReader(getParser()));
         log.info("Applying word sense annotator to {} instances", modelPath, instances.size());
         instances.parallelStream().forEach(annotator::annotate);

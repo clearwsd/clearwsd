@@ -3,7 +3,7 @@ package edu.colorado.clear.wsd.verbnet;
 import edu.colorado.clear.wsd.feature.annotator.Annotator;
 import edu.colorado.clear.wsd.feature.util.PosUtils;
 import edu.colorado.clear.wsd.type.DepNode;
-import edu.colorado.clear.wsd.type.DependencyTree;
+import edu.colorado.clear.wsd.type.DepTree;
 import edu.colorado.clear.wsd.utils.LemmaDictionary;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -18,7 +18,7 @@ import static edu.colorado.clear.wsd.type.FeatureType.Predicate;
  * @author jamesgung
  */
 @AllArgsConstructor
-public class DefaultPredicateAnnotator implements Annotator<DependencyTree> {
+public class DefaultPredicateAnnotator implements Annotator<DepTree> {
 
     private static final long serialVersionUID = -2953300591005876159L;
 
@@ -26,7 +26,7 @@ public class DefaultPredicateAnnotator implements Annotator<DependencyTree> {
     private final LemmaDictionary dictionary;
 
     @Override
-    public DependencyTree annotate(DependencyTree instance) {
+    public DepTree annotate(DepTree instance) {
         for (DepNode token : instance.tokens()) {
             if (PosUtils.isVerb(token.feature(Pos))) {
                 token.addFeature(Predicate, dictionary.apply(token));

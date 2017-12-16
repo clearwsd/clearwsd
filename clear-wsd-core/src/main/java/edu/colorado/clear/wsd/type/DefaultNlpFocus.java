@@ -1,6 +1,9 @@
 package edu.colorado.clear.wsd.type;
 
+import java.util.Iterator;
 import java.util.List;
+
+import javax.annotation.Nonnull;
 
 import lombok.Getter;
 import lombok.experimental.Accessors;
@@ -12,21 +15,16 @@ import lombok.experimental.Accessors;
  */
 @Getter
 @Accessors(fluent = true)
-public class FocusInstance<T extends NlpInstance, S extends NlpTokenSequence<T>> extends BaseNlpInstance
-        implements NlpTokenSequence<T> {
+public class DefaultNlpFocus<T extends NlpInstance, S extends NlpSequence<T>> extends DefaultNlpInstance
+        implements NlpFocus<T, S> {
 
     private T focus;
     private S sequence;
 
-    public FocusInstance(int index, T focus, S sequence) {
+    public DefaultNlpFocus(int index, T focus, S sequence) {
         super(index);
         this.focus = focus;
         this.sequence = sequence;
-    }
-
-    @Override
-    public String toString() {
-        return focus.toString() + "\n\n" + sequence.toString();
     }
 
     @Override
@@ -43,4 +41,16 @@ public class FocusInstance<T extends NlpInstance, S extends NlpTokenSequence<T>>
     public int size() {
         return sequence.size();
     }
+
+    @Nonnull
+    @Override
+    public Iterator<T> iterator() {
+        return tokens().iterator();
+    }
+
+    @Override
+    public String toString() {
+        return focus.toString() + "\n\n" + sequence.toString();
+    }
+
 }

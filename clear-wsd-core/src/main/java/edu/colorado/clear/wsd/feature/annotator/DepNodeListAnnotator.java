@@ -4,14 +4,14 @@ import edu.colorado.clear.wsd.feature.context.NlpContext;
 import edu.colorado.clear.wsd.feature.context.NlpContextFactory;
 import edu.colorado.clear.wsd.feature.context.SequenceIdentifyContextFactory;
 import edu.colorado.clear.wsd.type.NlpInstance;
-import edu.colorado.clear.wsd.type.NlpTokenSequence;
+import edu.colorado.clear.wsd.type.NlpSequence;
 
 /**
  * Annotates tokens in a sequence with lists.
  *
  * @author jamesgung
  */
-public class DepNodeListAnnotator<T extends NlpInstance, S extends NlpTokenSequence<T>> extends ResourceAnnotator<T, S> {
+public class DepNodeListAnnotator<T extends NlpInstance, S extends NlpSequence<T>> extends ResourceAnnotator<T, S> {
 
     private static final long serialVersionUID = 7456297953368403608L;
 

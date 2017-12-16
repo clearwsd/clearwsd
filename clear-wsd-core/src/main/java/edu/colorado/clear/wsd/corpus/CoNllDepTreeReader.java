@@ -14,10 +14,10 @@ import java.util.Map;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-import edu.colorado.clear.wsd.type.BaseDepNode;
-import edu.colorado.clear.wsd.type.BaseDependencyTree;
+import edu.colorado.clear.wsd.type.DefaultDepNode;
+import edu.colorado.clear.wsd.type.DefaultDepTree;
 import edu.colorado.clear.wsd.type.DepNode;
-import edu.colorado.clear.wsd.type.DependencyTree;
+import edu.colorado.clear.wsd.type.DepTree;
 import edu.colorado.clear.wsd.type.FeatureType;
 
 /**
@@ -25,15 +25,15 @@ import edu.colorado.clear.wsd.type.FeatureType;
  *
  * @author jamesgung
  */
-public class CoNllDepTreeReader implements CorpusReader<DependencyTree> {
+public class CoNllDepTreeReader implements CorpusReader<DepTree> {
 
     private static final String FIELD_DELIM = "\t";
 
     private Pattern headerPattern = Pattern.compile("^#.*$");
 
     @Override
-    public List<DependencyTree> readInstances(InputStream inputStream) {
-        List<DependencyTree> results = new ArrayList<>();
+    public List<DepTree> readInstances(InputStream inputStream) {
+        List<DepTree> results = new ArrayList<>();
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream))) {
             List<String> lines = new ArrayList<>();
             String currentLine;
@@ -57,9 +57,9 @@ public class CoNllDepTreeReader implements CorpusReader<DependencyTree> {
     }
 
 
-    private DependencyTree readTree(int id, List<String> tree) {
+    private DepTree readTree(int id, List<String> tree) {
         List<DepNode> depNodes = new ArrayList<>();
-        Map<BaseDepNode, Integer> headMap = new HashMap<>();
+        Map<DefaultDepNode, Integer> headMap = new HashMap<>();
         Map<Integer, DepNode> depMap = new HashMap<>();
         int index = 0;
 
@@ -78,27 +78,27 @@ public class CoNllDepTreeReader implements CorpusReader<DependencyTree> {
             depNodes.add(getDepNode(index++, line.split(FIELD_DELIM), depMap, headMap));
         }
         DepNode root = null;
-        for (Map.Entry<BaseDepNode, Integer> head : headMap.entrySet()) {
+        for (Map.Entry<DefaultDepNode, Integer> head : headMap.entrySet()) {
             if (head.getValue() < 0) {
                 root = head.getKey();
                 continue;
             }
             head.getKey().head(depMap.get(head.getValue()));
         }
-        DependencyTree result = new BaseDependencyTree(id, depNodes, root);
+        DepTree result = new DefaultDepTree(id, depNodes, root);
         processHeader(header, result);
         return result;
     }
 
-    protected void processHeader(List<String> header, DependencyTree result) {
+    protected void processHeader(List<String> header, DepTree result) {
         // template method
     }
 
-    private BaseDepNode getDepNode(int index, String[] fields,
-                                   Map<Integer, DepNode> tokenMap,
-                                   Map<BaseDepNode, Integer> tokenHeadMap) {
+    private DefaultDepNode getDepNode(int index, String[] fields,
+                                      Map<Integer, DepNode> tokenMap,
+                                      Map<DefaultDepNode, Integer> tokenHeadMap) {
         try {
-            BaseDepNode depNode = new BaseDepNode(index);
+            DefaultDepNode depNode = new DefaultDepNode(index);
             tokenMap.put(Integer.parseInt(fields[0]), depNode);
             depNode.addFeature(FeatureType.Text, fields[1]);
             depNode.addFeature(FeatureType.Lemma, fields[2]);
@@ -113,19 +113,19 @@ public class CoNllDepTreeReader implements CorpusReader<DependencyTree> {
 
 
     @Override
-    public void writeInstances(List<DependencyTree> trees, OutputStream outputStream) {
+    public void writeInstances(List<DepTree> trees, OutputStream outputStream) {
         writeDependencyTrees(trees, outputStream);
     }
 
     /**
-     * Write a list of {@link DependencyTree} to an {@link OutputStream} in a CoNLL-style format.
+     * Write a list of {@link DepTree} to an {@link OutputStream} in a CoNLL-style format.
      *
      * @param trees        dependency trees
      * @param outputStream output stream
      */
-    public static void writeDependencyTrees(List<DependencyTree> trees, OutputStream outputStream) {
+    public static void writeDependencyTrees(List<DepTree> trees, OutputStream outputStream) {
         try (PrintWriter writer = new PrintWriter(outputStream)) {
-            for (DependencyTree tree : trees) {
+            for (DepTree tree : trees) {
                 writer.println(treeToString(tree));
                 writer.println();
                 writer.flush();
@@ -134,12 +134,12 @@ public class CoNllDepTreeReader implements CorpusReader<DependencyTree> {
     }
 
     /**
-     * Convert an {@link DependencyTree} to a tab-separated CoNLL-style string (index word lemma pos dep head).
+     * Convert an {@link DepTree} to a tab-separated CoNLL-style string (index word lemma pos dep head).
      *
      * @param tree dependency tree
      * @return CoNLL-style string
      */
-    public static String treeToString(DependencyTree tree, String... extra) {
+    public static String treeToString(DepTree tree, String... extra) {
         List<String> lines = new ArrayList<>();
         for (DepNode depNode : tree.tokens()) {
             List<String> fields = new ArrayList<>();

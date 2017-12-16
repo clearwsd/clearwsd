@@ -10,9 +10,10 @@ import java.util.stream.Collectors;
 
 import edu.colorado.clear.wsd.corpus.CoNllDepTreeReader;
 import edu.colorado.clear.wsd.corpus.CorpusReader;
+import edu.colorado.clear.wsd.type.DefaultNlpFocus;
 import edu.colorado.clear.wsd.type.DepNode;
-import edu.colorado.clear.wsd.type.DependencyTree;
-import edu.colorado.clear.wsd.type.FocusInstance;
+import edu.colorado.clear.wsd.type.DepTree;
+import edu.colorado.clear.wsd.type.NlpFocus;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -29,19 +30,19 @@ import static edu.colorado.clear.wsd.type.FeatureType.Text;
  *
  * @author jamesgung
  */
-public class VerbNetReader implements CorpusReader<FocusInstance<DepNode, DependencyTree>> {
+public class VerbNetReader implements CorpusReader<NlpFocus<DepNode, DepTree>> {
 
     private VerbNetCoNllDepReader depReader = new VerbNetCoNllDepReader();
 
     @Override
-    public List<FocusInstance<DepNode, DependencyTree>> readInstances(InputStream inputStream) {
-        List<FocusInstance<DepNode, DependencyTree>> results = new ArrayList<>();
+    public List<NlpFocus<DepNode, DepTree>> readInstances(InputStream inputStream) {
+        List<NlpFocus<DepNode, DepTree>> results = new ArrayList<>();
         int index = 0;
-        for (DependencyTree tree : depReader.readInstances(inputStream)) {
+        for (DepTree tree : depReader.readInstances(inputStream)) {
             for (DepNode focus : tree.tokens().stream()
                     .filter(t -> t.feature(Gold) != null)
                     .collect(Collectors.toList())) {
-                FocusInstance<DepNode, DependencyTree> instance = new FocusInstance<>(index++, focus, tree);
+                NlpFocus<DepNode, DepTree> instance = new DefaultNlpFocus<>(index++, focus, tree);
                 instance.addFeature(Gold, focus.feature(Gold));
                 results.add(instance);
             }
@@ -50,13 +51,13 @@ public class VerbNetReader implements CorpusReader<FocusInstance<DepNode, Depend
     }
 
     @Override
-    public void writeInstances(List<FocusInstance<DepNode, DependencyTree>> instances, OutputStream outputStream) {
+    public void writeInstances(List<NlpFocus<DepNode, DepTree>> instances, OutputStream outputStream) {
         try (PrintWriter writer = new PrintWriter(outputStream)) {
             if (instances.size() == 0) {
                 return;
             }
-            DependencyTree currentTree = instances.get(0).sequence();
-            for (FocusInstance<DepNode, DependencyTree> instance : instances) {
+            DepTree currentTree = instances.get(0).sequence();
+            for (NlpFocus<DepNode, DepTree> instance : instances) {
                 if (instance.sequence() != currentTree) {
                     writer.println(treeToString(currentTree, Sense.name()));
                     writer.println();
@@ -85,7 +86,7 @@ public class VerbNetReader implements CorpusReader<FocusInstance<DepNode, Depend
 
     public static class VerbNetCoNllDepReader extends CoNllDepTreeReader {
         @Override
-        protected void processHeader(List<String> header, DependencyTree result) {
+        protected void processHeader(List<String> header, DepTree result) {
             for (String headerLine : header) {
                 headerLine = headerLine.replaceAll("^#\\s*", "");
                 VerbNetInstance instance = new VerbNetInstanceParser().parse(headerLine);

@@ -7,8 +7,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import edu.colorado.clear.wsd.type.DepNode;
-import edu.colorado.clear.wsd.type.DependencyTree;
-import edu.colorado.clear.wsd.type.FocusInstance;
+import edu.colorado.clear.wsd.type.DepTree;
+import edu.colorado.clear.wsd.type.NlpFocus;
 
 /**
  * Offset-based context factory. Provides option to either concatenate resulting offsets into a single context,
@@ -47,14 +47,14 @@ public class OffsetContextFactory extends DepContextFactory {
     }
 
     @Override
-    public List<NlpContext<DepNode>> apply(FocusInstance<DepNode, DependencyTree> instance) {
+    public List<NlpContext<DepNode>> apply(NlpFocus<DepNode, DepTree> instance) {
         if (concatenate) {
             return applyConcatenate(instance);
         }
         return applySeparate(instance);
     }
 
-    private List<NlpContext<DepNode>> applySeparate(FocusInstance<DepNode, DependencyTree> instance) {
+    private List<NlpContext<DepNode>> applySeparate(NlpFocus<DepNode, DepTree> instance) {
         List<NlpContext<DepNode>> results = new ArrayList<>();
         for (Integer offset : offsets) {
             int containerIndex = instance.focus().index() + offset;
@@ -66,7 +66,7 @@ public class OffsetContextFactory extends DepContextFactory {
         return results;
     }
 
-    private List<NlpContext<DepNode>> applyConcatenate(FocusInstance<DepNode, DependencyTree> instance) {
+    private List<NlpContext<DepNode>> applyConcatenate(NlpFocus<DepNode, DepTree> instance) {
         List<DepNode> results = new ArrayList<>();
         for (Integer offset : offsets) {
             int containerIndex = instance.focus().index() + offset;

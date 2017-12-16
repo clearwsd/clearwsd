@@ -22,12 +22,13 @@ import java.util.stream.Collectors;
 import javax.xml.bind.JAXBException;
 
 import edu.colorado.clear.wsd.corpus.CorpusReader;
-import edu.colorado.clear.wsd.type.BaseDepNode;
-import edu.colorado.clear.wsd.type.BaseDependencyTree;
+import edu.colorado.clear.wsd.type.DefaultDepNode;
+import edu.colorado.clear.wsd.type.DefaultDepTree;
+import edu.colorado.clear.wsd.type.DefaultNlpFocus;
 import edu.colorado.clear.wsd.type.DepNode;
-import edu.colorado.clear.wsd.type.DependencyTree;
+import edu.colorado.clear.wsd.type.DepTree;
 import edu.colorado.clear.wsd.type.FeatureType;
-import edu.colorado.clear.wsd.type.FocusInstance;
+import edu.colorado.clear.wsd.type.NlpFocus;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
@@ -39,13 +40,13 @@ import lombok.extern.slf4j.Slf4j;
  * @author jamesgung
  */
 @Slf4j
-public class SemevalReader implements CorpusReader<FocusInstance<DepNode, DependencyTree>> {
+public class SemevalReader implements CorpusReader<NlpFocus<DepNode, DepTree>> {
 
     @Getter
     @AllArgsConstructor
     private static class InstanceParsePair<T> {
         private List<T> instances;
-        private BaseDependencyTree tree;
+        private DefaultDepTree tree;
     }
 
     private SetMultimap<String, String> keys;
@@ -58,18 +59,18 @@ public class SemevalReader implements CorpusReader<FocusInstance<DepNode, Depend
     }
 
     @Override
-    public List<FocusInstance<DepNode, DependencyTree>> readInstances(InputStream inputStream) {
+    public List<NlpFocus<DepNode, DepTree>> readInstances(InputStream inputStream) {
         SemevalCorpus semevalCorpus;
         try {
             semevalCorpus = SemevalFactory.readCorpus(inputStream);
         } catch (JAXBException e) {
             throw new RuntimeException("Error reading Semeval XML", e);
         }
-        List<FocusInstance<DepNode, DependencyTree>> instances = new ArrayList<>();
+        List<NlpFocus<DepNode, DepTree>> instances = new ArrayList<>();
         int sentenceIndex = 0;
         for (SemevalSentence semevalSentence : semevalCorpus.getAllSentences()) {
             InstanceParsePair<DepNode> instancePair = addInstances(sentenceIndex, semevalSentence);
-            DependencyTree tree = processSentence(instancePair.getTree());
+            DepTree tree = processSentence(instancePair.getTree());
             Iterator<DepNode> tokenIterator = instancePair.getTree().tokens().iterator();
             for (DepNode token : tree.tokens()) {
                 DepNode original = tokenIterator.next();
@@ -82,7 +83,7 @@ public class SemevalReader implements CorpusReader<FocusInstance<DepNode, Depend
                     continue;
                 }
                 DepNode treeToken = tree.get(token.index());
-                FocusInstance<DepNode, DependencyTree> instance = new FocusInstance<>(instances.size(), treeToken, tree);
+                NlpFocus<DepNode, DepTree> instance = new DefaultNlpFocus<>(instances.size(), treeToken, tree);
                 instance.addFeature(FeatureType.Gold, token.feature(FeatureType.Gold));
                 instance.addFeature(FeatureType.AllSenses, token.feature(FeatureType.AllSenses));
                 treeToken.addFeature(FeatureType.Id, token.feature(FeatureType.Id));
@@ -97,19 +98,19 @@ public class SemevalReader implements CorpusReader<FocusInstance<DepNode, Depend
         return instances;
     }
 
-    protected DependencyTree processSentence(BaseDependencyTree dependencyTree) {
+    protected DepTree processSentence(DefaultDepTree dependencyTree) {
         return dependencyTree;
     }
 
     private InstanceParsePair<DepNode> addInstances(int sentenceIndex, SemevalSentence semevalSentence) {
         List<DepNode> tokens = new ArrayList<>();
         List<DepNode> newInstances = new ArrayList<>();
-        BaseDependencyTree sentence = new BaseDependencyTree(sentenceIndex, tokens, null);
-        BaseDepNode root = null;
+        DefaultDepTree sentence = new DefaultDepTree(sentenceIndex, tokens, null);
+        DefaultDepNode root = null;
         Map<Integer, Integer> headMap = new HashMap<>();
         int index = 0;
         for (SemevalWordForm word : semevalSentence) {
-            BaseDepNode token = new BaseDepNode(index++);
+            DefaultDepNode token = new DefaultDepNode(index++);
             token.addFeature(FeatureType.Text, word.getValue());
             token.addFeature(FeatureType.GoldLemma, word.getLemma());
             token.addFeature(FeatureType.GoldPos, word.getPos());
@@ -133,7 +134,7 @@ public class SemevalReader implements CorpusReader<FocusInstance<DepNode, Depend
             }
         }
         for (Map.Entry<Integer, Integer> entry : headMap.entrySet()) {
-            BaseDepNode depNode = (BaseDepNode) sentence.get(entry.getKey());
+            DefaultDepNode depNode = (DefaultDepNode) sentence.get(entry.getKey());
             Integer head = entry.getValue();
             if (head < 0) {
                 root = depNode;
@@ -147,16 +148,16 @@ public class SemevalReader implements CorpusReader<FocusInstance<DepNode, Depend
     }
 
     @Override
-    public void writeInstances(List<FocusInstance<DepNode, DependencyTree>> instances,
+    public void writeInstances(List<NlpFocus<DepNode, DepTree>> instances,
                                OutputStream outputStream) {
         SemevalCorpus corpus = new SemevalCorpus();
-        PeekingIterator<FocusInstance<DepNode, DependencyTree>> iterator = Iterators.peekingIterator(instances.iterator());
-        InstanceParsePair<FocusInstance<DepNode, DependencyTree>> current;
+        PeekingIterator<NlpFocus<DepNode, DepTree>> iterator = Iterators.peekingIterator(instances.iterator());
+        InstanceParsePair<NlpFocus<DepNode, DepTree>> current;
         while ((current = nextTree(iterator)) != null) {
             SemevalSentence semevalSentence = new SemevalSentence();
-            BaseDependencyTree tree = current.getTree();
+            DefaultDepTree tree = current.getTree();
             semevalSentence.setId(tree.feature(FeatureType.Id));
-            List<FocusInstance<DepNode, DependencyTree>> tokens = current.getInstances();
+            List<NlpFocus<DepNode, DepTree>> tokens = current.getInstances();
             Map<Integer, SemevalInstance> instanceMap = tokens.stream().collect(
                     Collectors.toMap(focusInstance -> focusInstance.focus().index(),
                             focusInstance -> {
@@ -194,14 +195,14 @@ public class SemevalReader implements CorpusReader<FocusInstance<DepNode, Depend
         }
     }
 
-    private InstanceParsePair<FocusInstance<DepNode, DependencyTree>> nextTree(PeekingIterator<FocusInstance<DepNode,
-            DependencyTree>> iterator) {
+    private InstanceParsePair<NlpFocus<DepNode, DepTree>> nextTree(PeekingIterator<NlpFocus<DepNode,
+            DepTree>> iterator) {
         if (!iterator.hasNext()) {
             return null;
         }
-        List<FocusInstance<DepNode, DependencyTree>> instances = new ArrayList<>();
-        FocusInstance<DepNode, DependencyTree> current = iterator.next();
-        DependencyTree tree = current.sequence();
+        List<NlpFocus<DepNode, DepTree>> instances = new ArrayList<>();
+        NlpFocus<DepNode, DepTree> current = iterator.next();
+        DepTree tree = current.sequence();
         instances.add(current);
         while (iterator.hasNext()) {
             current = iterator.peek();
@@ -211,7 +212,7 @@ public class SemevalReader implements CorpusReader<FocusInstance<DepNode, Depend
             }
             break;
         }
-        return new InstanceParsePair<>(instances, (BaseDependencyTree) tree);
+        return new InstanceParsePair<>(instances, (DefaultDepTree) tree);
     }
 
     /**

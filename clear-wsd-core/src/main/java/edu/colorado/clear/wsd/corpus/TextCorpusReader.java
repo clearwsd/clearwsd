@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import edu.colorado.clear.wsd.parser.DependencyParser;
-import edu.colorado.clear.wsd.type.DependencyTree;
+import edu.colorado.clear.wsd.type.DepTree;
 import lombok.extern.slf4j.Slf4j;
 
 import static edu.colorado.clear.wsd.corpus.CoNllDepTreeReader.writeDependencyTrees;
@@ -20,7 +20,7 @@ import static edu.colorado.clear.wsd.corpus.CoNllDepTreeReader.writeDependencyTr
  * @author jamesgung
  */
 @Slf4j
-public class TextCorpusReader implements CorpusReader<DependencyTree> {
+public class TextCorpusReader implements CorpusReader<DepTree> {
 
     private DependencyParser parser;
 
@@ -29,8 +29,8 @@ public class TextCorpusReader implements CorpusReader<DependencyTree> {
     }
 
     @Override
-    public List<DependencyTree> readInstances(InputStream inputStream) {
-        List<DependencyTree> results = new ArrayList<>();
+    public List<DepTree> readInstances(InputStream inputStream) {
+        List<DepTree> results = new ArrayList<>();
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream))) {
             String line;
             while ((line = reader.readLine()) != null) {
@@ -39,7 +39,7 @@ public class TextCorpusReader implements CorpusReader<DependencyTree> {
                     continue;
                 }
                 for (String sentence : parser.segment(line)) {
-                    DependencyTree tree = parser.parse(parser.tokenize(sentence));
+                    DepTree tree = parser.parse(parser.tokenize(sentence));
                     results.add(tree);
                 }
             }
@@ -50,7 +50,7 @@ public class TextCorpusReader implements CorpusReader<DependencyTree> {
     }
 
     @Override
-    public void writeInstances(List<DependencyTree> instances, OutputStream outputStream) {
+    public void writeInstances(List<DepTree> instances, OutputStream outputStream) {
         writeDependencyTrees(instances, outputStream);
     }
 

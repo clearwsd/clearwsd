@@ -12,9 +12,9 @@ import java.util.stream.Stream;
 import edu.colorado.clear.wsd.classifier.Classifier;
 import edu.colorado.clear.wsd.classifier.Hyperparameter;
 import edu.colorado.clear.wsd.type.DepNode;
-import edu.colorado.clear.wsd.type.DependencyTree;
+import edu.colorado.clear.wsd.type.DepTree;
 import edu.colorado.clear.wsd.type.FeatureType;
-import edu.colorado.clear.wsd.type.FocusInstance;
+import edu.colorado.clear.wsd.type.NlpFocus;
 import edu.colorado.clear.wsd.utils.LemmaDictionary;
 import edu.colorado.clear.wsd.utils.SenseInventory;
 import lombok.AllArgsConstructor;
@@ -31,11 +31,11 @@ import static edu.colorado.clear.wsd.type.FeatureType.Predicate;
 @Getter
 @Accessors(fluent = true)
 @AllArgsConstructor
-public class WordSenseClassifier implements Classifier<FocusInstance<DepNode, DependencyTree>, String> {
+public class WordSenseClassifier implements Classifier<NlpFocus<DepNode, DepTree>, String> {
 
     private static final long serialVersionUID = -7555582268789530929L;
 
-    private Classifier<FocusInstance<DepNode, DependencyTree>, String> classifier;
+    private Classifier<NlpFocus<DepNode, DepTree>, String> classifier;
     private SenseInventory senseInventory;
     private LemmaDictionary predicateDictionary;
 
@@ -44,7 +44,7 @@ public class WordSenseClassifier implements Classifier<FocusInstance<DepNode, De
     }
 
     @Override
-    public String classify(FocusInstance<DepNode, DependencyTree> instance) {
+    public String classify(NlpFocus<DepNode, DepTree> instance) {
         String lemma = instance.focus().feature(Predicate);
         Set<String> options = senseInventory.senses(instance.focus().feature(Predicate));
         Map<String, Double> scores = classifier.score(instance);
@@ -57,12 +57,12 @@ public class WordSenseClassifier implements Classifier<FocusInstance<DepNode, De
     }
 
     @Override
-    public Map<String, Double> score(FocusInstance<DepNode, DependencyTree> instance) {
+    public Map<String, Double> score(NlpFocus<DepNode, DepTree> instance) {
         return classifier.score(instance);
     }
 
     @Override
-    public void train(List<FocusInstance<DepNode, DependencyTree>> train, List<FocusInstance<DepNode, DependencyTree>> valid) {
+    public void train(List<NlpFocus<DepNode, DepTree>> train, List<NlpFocus<DepNode, DepTree>> valid) {
         predicateDictionary.train(true);
         Stream.concat(train.stream(), valid.stream()).forEach(instance -> {
             predicateDictionary.apply(instance.focus());
@@ -86,7 +86,7 @@ public class WordSenseClassifier implements Classifier<FocusInstance<DepNode, De
     public void load(ObjectInputStream inputStream) {
         try {
             //noinspection unchecked
-            classifier = (Classifier<FocusInstance<DepNode, DependencyTree>, String>) inputStream.readObject();
+            classifier = (Classifier<NlpFocus<DepNode, DepTree>, String>) inputStream.readObject();
             senseInventory = (SenseInventory) inputStream.readObject();
             predicateDictionary = (LemmaDictionary) inputStream.readObject();
         } catch (IOException | ClassNotFoundException e) {

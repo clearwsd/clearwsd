@@ -21,6 +21,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.ObjectInputStream;
+import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.io.Serializable;
 import java.nio.file.Files;
@@ -35,6 +36,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+import java.util.zip.GZIPInputStream;
+import java.util.zip.GZIPOutputStream;
 
 import edu.colorado.clear.wsd.WordSenseAnnotator;
 import edu.colorado.clear.wsd.WordSenseClassifier;
@@ -44,7 +47,7 @@ import edu.colorado.clear.wsd.corpus.semlink.VerbNetReader;
 import edu.colorado.clear.wsd.feature.annotator.Annotator;
 import edu.colorado.clear.wsd.parser.StanfordDependencyParser;
 import edu.colorado.clear.wsd.type.DepNode;
-import edu.colorado.clear.wsd.type.DependencyTree;
+import edu.colorado.clear.wsd.type.DepTree;
 import edu.colorado.clear.wsd.type.FeatureType;
 import edu.colorado.clear.wsd.verbnet.DefaultPredicateAnnotator;
 import edu.stanford.nlp.util.Comparators;
@@ -114,7 +117,7 @@ public class VerbSenseArgumentCounter {
     @Parameter(names = {"-corpus", "-c"}, description = "Path to corpus directory or file for argument counting", required = true)
     private String corpusPath;
     @Parameter(names = "-ext", description = "Extension of parsed files in corpus to be processed")
-    private String corpusExt = ".dep";
+    private String corpusExt = ".dep.gz";
     @Parameter(names = "-raw", description = "Extension of raw files in corpus to be parsed")
     private String rawExt = ".txt";
     @Parameter(names = {"-model", "-m"}, description = "Path to word sense classifier model file")
@@ -145,8 +148,8 @@ public class VerbSenseArgumentCounter {
     @Parameter(names = {"-separator", "-sep"}, description = "Separator character", order = 904)
     private String sep = ",";
 
-    private CorpusReader<DependencyTree> corpusReader = new VerbNetReader.VerbNetCoNllDepReader();
-    private Annotator<DependencyTree> senseAnnotator;
+    private CorpusReader<DepTree> corpusReader = new VerbNetReader.VerbNetCoNllDepReader();
+    private Annotator<DepTree> senseAnnotator;
     private DB db;
     private HTreeMap<Argument, Long> countMap;
     private Set<String> parsed;
@@ -253,17 +256,19 @@ public class VerbSenseArgumentCounter {
                 .filter(f -> !processed.contains(f.getPath() + corpusExt))
                 .collect(Collectors.toList());
         if (toParse.size() > 0) {
-            TextCorpusReader reader = new TextCorpusReader(new StanfordDependencyParser());
             log.debug("Found {} files ending in {} at {}", toParse.size(), rawExt, corpusPath);
-            toParse.parallelStream().forEach(
+            TextCorpusReader reader = new TextCorpusReader(new StanfordDependencyParser());
+            toParse.forEach(
                     file -> {
                         if (!parsed.contains(file.getPath())) {
-                            log.debug("Parsing file {}", file);
                             try (FileInputStream inputStream = new FileInputStream(file)) {
                                 // read instances
-                                List<DependencyTree> dependencyTrees = reader.readInstances(inputStream);
+                                log.debug("Parsing file {}", file);
+                                List<DepTree> dependencyTrees = reader.readInstances(inputStream);
                                 // write instances
-                                try (FileOutputStream outputStream = new FileOutputStream(file.getPath() + corpusExt)) {
+                                log.debug("Saving parse trees to {}", file.getPath() + corpusExt);
+                                try (OutputStream outputStream = new GZIPOutputStream(
+                                        new FileOutputStream(file.getPath() + corpusExt))) {
                                     corpusReader.writeInstances(dependencyTrees, outputStream);
                                 }
                                 parsed.add(file.getPath());
@@ -280,7 +285,7 @@ public class VerbSenseArgumentCounter {
                     continue;
                 }
                 log.debug("Processing file: {}", file.getAbsolutePath());
-                List<DependencyTree> instances = readTrees(file);
+                List<DepTree> instances = readTrees(file);
                 if (senseAnnotator != null) {
                     instances.parallelStream().forEach(senseAnnotator::annotate);
                 }
@@ -292,8 +297,8 @@ public class VerbSenseArgumentCounter {
         db.close();
     }
 
-    private List<DependencyTree> readTrees(File file) {
-        try (InputStream is = new FileInputStream(file)) {
+    private List<DepTree> readTrees(File file) {
+        try (InputStream is = new GZIPInputStream(new FileInputStream(file))) {
             return corpusReader.readInstances(is);
         } catch (Exception e) {
             log.warn("Error reading file at {}", file.getAbsolutePath(), e);
@@ -306,7 +311,7 @@ public class VerbSenseArgumentCounter {
      *
      * @param tree dependency tree
      */
-    private void process(DependencyTree tree) {
+    private void process(DepTree tree) {
         for (DepNode depNode : tree.tokens()) {
             String sense = depNode.feature(FeatureType.Sense);
             if (null == sense || sense.isEmpty()) {

@@ -4,12 +4,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import edu.colorado.clear.wsd.type.BaseDepNode;
-import edu.colorado.clear.wsd.type.BaseDependencyTree;
+import edu.colorado.clear.wsd.type.DefaultDepNode;
+import edu.colorado.clear.wsd.type.DefaultDepTree;
+import edu.colorado.clear.wsd.type.DefaultNlpFocus;
 import edu.colorado.clear.wsd.type.DepNode;
+import edu.colorado.clear.wsd.type.DepTree;
 import edu.colorado.clear.wsd.type.FeatureType;
-import edu.colorado.clear.wsd.type.FocusInstance;
-import edu.colorado.clear.wsd.type.DependencyTree;
 
 /**
  * Builder for dependency tree focus instances.
@@ -18,13 +18,13 @@ import edu.colorado.clear.wsd.type.DependencyTree;
  */
 public class TestInstanceBuilder {
 
-    private List<BaseDepNode> depNodes = new ArrayList<>();
-    private BaseDepNode root;
-    private BaseDepNode focus;
+    private List<DefaultDepNode> depNodes = new ArrayList<>();
+    private DefaultDepNode root;
+    private DefaultDepNode focus;
 
     public TestInstanceBuilder(String instance, int focus) {
         for (String string : instance.split("\\s+")) {
-            BaseDepNode depNode = new BaseDepNode(depNodes.size());
+            DefaultDepNode depNode = new DefaultDepNode(depNodes.size());
             depNode.addFeature(FeatureType.Text, string);
             depNodes.add(depNode);
         }
@@ -42,8 +42,8 @@ public class TestInstanceBuilder {
         return this;
     }
 
-    public FocusInstance<DepNode, DependencyTree> build() {
-        return new FocusInstance<>(0, focus, new BaseDependencyTree(0,
+    public DefaultNlpFocus<DepNode, DepTree> build() {
+        return new DefaultNlpFocus<>(0, focus, new DefaultDepTree(0,
                 depNodes.stream().map(s -> (DepNode) s).collect(Collectors.toList()), root));
     }
 

@@ -5,7 +5,7 @@ package edu.colorado.clear.wsd.type;
  *
  * @author jamesgung
  */
-public interface DependencyTree extends NlpTokenSequence<DepNode> {
+public interface DepTree extends NlpSequence<DepNode> {
 
     /**
      * Return the syntactic root of this dependency tree.

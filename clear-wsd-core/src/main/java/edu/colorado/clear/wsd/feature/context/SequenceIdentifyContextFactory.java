@@ -5,14 +5,14 @@ import java.util.Collections;
 import java.util.List;
 
 import edu.colorado.clear.wsd.type.NlpInstance;
-import edu.colorado.clear.wsd.type.NlpTokenSequence;
+import edu.colorado.clear.wsd.type.NlpSequence;
 
 /**
  * Context factory that returns the whole sequence of input tokens as a single context.
  *
  * @author jamesgung
  */
-public class SequenceIdentifyContextFactory<S extends NlpTokenSequence<T>, T extends NlpInstance>
+public class SequenceIdentifyContextFactory<S extends NlpSequence<T>, T extends NlpInstance>
         implements NlpContextFactory<S, T> {
 
     private static final long serialVersionUID = -6999855605864180292L;

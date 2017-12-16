@@ -2,10 +2,11 @@ package edu.colorado.clear.wsd;
 
 import edu.colorado.clear.wsd.classifier.Classifier;
 import edu.colorado.clear.wsd.feature.annotator.Annotator;
+import edu.colorado.clear.wsd.type.DefaultNlpFocus;
 import edu.colorado.clear.wsd.type.DepNode;
-import edu.colorado.clear.wsd.type.DependencyTree;
+import edu.colorado.clear.wsd.type.DepTree;
 import edu.colorado.clear.wsd.type.FeatureType;
-import edu.colorado.clear.wsd.type.FocusInstance;
+import edu.colorado.clear.wsd.type.NlpFocus;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -19,12 +20,12 @@ import lombok.experimental.Accessors;
  */
 @Getter
 @Accessors(fluent = true)
-public class WordSenseAnnotator implements Annotator<DependencyTree> {
+public class WordSenseAnnotator implements Annotator<DepTree> {
 
     private static final long serialVersionUID = 1756016409763214122L;
 
-    private final Classifier<FocusInstance<DepNode, DependencyTree>, String> classifier;
-    private final Annotator<DependencyTree> targetAnnotator;
+    private final Classifier<NlpFocus<DepNode, DepTree>, String> classifier;
+    private final Annotator<DepTree> targetAnnotator;
 
     @Setter
     private String annotationType = FeatureType.Sense.name();
@@ -36,21 +37,21 @@ public class WordSenseAnnotator implements Annotator<DependencyTree> {
      * @param classifier      word sense classifier
      * @param targetAnnotator predicate identifier/annotator
      */
-    public WordSenseAnnotator(Classifier<FocusInstance<DepNode, DependencyTree>, String> classifier,
-                              Annotator<DependencyTree> targetAnnotator) {
+    public WordSenseAnnotator(Classifier<NlpFocus<DepNode, DepTree>, String> classifier,
+                              Annotator<DepTree> targetAnnotator) {
         this.classifier = classifier;
         this.targetAnnotator = targetAnnotator;
     }
 
     @Override
-    public DependencyTree annotate(DependencyTree instance) {
+    public DepTree annotate(DepTree instance) {
         // apply annotator
         instance = targetAnnotator.annotate(instance);
         // classify each resulting instance
         for (DepNode token : instance.tokens()) {
             String predicate = token.feature(FeatureType.Predicate);
             if (predicate != null) {
-                FocusInstance<DepNode, DependencyTree> input = new FocusInstance<>(token.index(), token, instance);
+                NlpFocus<DepNode, DepTree> input = new DefaultNlpFocus<>(token.index(), token, instance);
                 token.addFeature(annotationType, classifier.classify(input));
             }
         }

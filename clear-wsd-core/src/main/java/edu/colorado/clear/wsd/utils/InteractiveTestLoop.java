@@ -9,7 +9,7 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import edu.colorado.clear.wsd.parser.DependencyParser;
-import edu.colorado.clear.wsd.type.DependencyTree;
+import edu.colorado.clear.wsd.type.DepTree;
 import edu.colorado.clear.wsd.type.FeatureType;
 import lombok.AllArgsConstructor;
 
@@ -25,7 +25,7 @@ public class InteractiveTestLoop {
      *
      * @param dependencyParser dependency parser
      */
-    public static void test(DependencyParser dependencyParser, Function<DependencyTree, String> formatter) {
+    public static void test(DependencyParser dependencyParser, Function<DepTree, String> formatter) {
         Scanner scanner = new Scanner(System.in);
         System.out.println("Enter test input (\"EXIT\" to quit).");
         try {
@@ -37,7 +37,7 @@ public class InteractiveTestLoop {
                 }
                 System.out.println();
                 for (String sentence : dependencyParser.segment(line)) {
-                    DependencyTree tree = dependencyParser.parse(dependencyParser.tokenize(sentence));
+                    DepTree tree = dependencyParser.parse(dependencyParser.tokenize(sentence));
                     System.out.println(formatter.apply(tree));
                     System.out.println();
                 }
@@ -58,9 +58,9 @@ public class InteractiveTestLoop {
         test(dependencyParser, new InlineFormatter(keys));
     }
 
-    public static class CoNllFormatter implements Function<DependencyTree, String> {
+    public static class CoNllFormatter implements Function<DepTree, String> {
         @Override
-        public String apply(DependencyTree dependencyTree) {
+        public String apply(DepTree dependencyTree) {
             return dependencyTree.tokens().stream()
                     .map(t -> String.format("%d\t%s\t%s\t%s\t%s\t%d",
                             t.index(),
@@ -74,7 +74,7 @@ public class InteractiveTestLoop {
     }
 
     @AllArgsConstructor
-    public static class InlineFormatter implements Function<DependencyTree, String> {
+    public static class InlineFormatter implements Function<DepTree, String> {
 
         private List<String> keys;
 
@@ -83,7 +83,7 @@ public class InteractiveTestLoop {
         }
 
         @Override
-        public String apply(DependencyTree dependencyTree) {
+        public String apply(DepTree dependencyTree) {
             return dependencyTree.tokens().stream().map(t -> {
                 String text = t.feature(FeatureType.Text);
                 List<String> results = keys.stream()

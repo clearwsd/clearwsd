@@ -15,7 +15,7 @@ import lombok.experimental.Accessors;
  */
 @Getter
 @Accessors(fluent = true)
-public class BaseDepNode implements DepNode {
+public class DefaultDepNode implements DepNode {
 
     private DepNode head;
     @Setter
@@ -23,8 +23,8 @@ public class BaseDepNode implements DepNode {
     @Setter
     private List<DepNode> children;
 
-    public BaseDepNode(int index) {
-        this.nlpToken = new BaseNlpInstance(index);
+    public DefaultDepNode(int index) {
+        this.nlpToken = new DefaultNlpInstance(index);
         children = new ArrayList<>();
     }
 

@@ -3,7 +3,7 @@ package edu.colorado.clear.wsd;
 import java.util.List;
 
 import edu.colorado.clear.wsd.parser.DependencyParser;
-import edu.colorado.clear.wsd.type.DependencyTree;
+import edu.colorado.clear.wsd.type.DepTree;
 import lombok.AllArgsConstructor;
 
 /**
@@ -18,7 +18,7 @@ public class SenseDisambiguatingParser implements DependencyParser {
     private DependencyParser dependencyParser;
 
     @Override
-    public DependencyTree parse(List<String> tokens) {
+    public DepTree parse(List<String> tokens) {
         return annotator.annotate(dependencyParser.parse(tokens));
     }
 

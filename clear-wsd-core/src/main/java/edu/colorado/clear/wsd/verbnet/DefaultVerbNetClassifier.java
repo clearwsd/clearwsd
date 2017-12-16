@@ -45,9 +45,9 @@ import edu.colorado.clear.wsd.feature.resource.DefaultTsvResourceInitializer;
 import edu.colorado.clear.wsd.feature.resource.FeatureResourceManager;
 import edu.colorado.clear.wsd.feature.resource.WordNetResource.WordNetInitializer;
 import edu.colorado.clear.wsd.type.DepNode;
-import edu.colorado.clear.wsd.type.DependencyTree;
+import edu.colorado.clear.wsd.type.DepTree;
 import edu.colorado.clear.wsd.type.FeatureType;
-import edu.colorado.clear.wsd.type.FocusInstance;
+import edu.colorado.clear.wsd.type.NlpFocus;
 import lombok.extern.slf4j.Slf4j;
 
 import static edu.colorado.clear.wsd.feature.context.Contexts.excludingDeps;
@@ -78,7 +78,7 @@ import static edu.colorado.clear.wsd.type.FeatureType.Pos;
  * @author jamesgung
  */
 @Slf4j
-public class DefaultVerbNetClassifier implements Classifier<FocusInstance<DepNode, DependencyTree>, String> {
+public class DefaultVerbNetClassifier implements Classifier<NlpFocus<DepNode, DepTree>, String> {
 
     private static final long serialVersionUID = -3815702452161005214L;
 
@@ -93,7 +93,7 @@ public class DefaultVerbNetClassifier implements Classifier<FocusInstance<DepNod
     private Set<String> excludedRels = Sets.newHashSet("punct");
     private Set<Integer> offsets = Sets.newHashSet(-2, -1, 0, 1, 2);
 
-    private AnnotatingClassifier<FocusInstance<DepNode, DependencyTree>> classifier;
+    private AnnotatingClassifier<NlpFocus<DepNode, DepTree>> classifier;
     private FeatureResourceManager resources;
 
     public DefaultVerbNetClassifier() {
@@ -102,27 +102,27 @@ public class DefaultVerbNetClassifier implements Classifier<FocusInstance<DepNod
         classifier.initialize(resources);
     }
 
-    private AnnotatingClassifier<FocusInstance<DepNode, DependencyTree>> initialize() {
-        MultiClassifier<FocusInstance<DepNode, DependencyTree>, String> multiClassifier
-                = new MultiClassifier<>((Serializable & Function<FocusInstance<DepNode, DependencyTree>, String>)
+    private AnnotatingClassifier<NlpFocus<DepNode, DepTree>> initialize() {
+        MultiClassifier<NlpFocus<DepNode, DepTree>, String> multiClassifier
+                = new MultiClassifier<>((Serializable & Function<NlpFocus<DepNode, DepTree>, String>)
                 (i) -> i.focus().feature(FeatureType.Predicate),
-                (Serializable & Supplier<Classifier<FocusInstance<DepNode, DependencyTree>, String>>)
+                (Serializable & Supplier<Classifier<NlpFocus<DepNode, DepTree>, String>>)
                         () -> new NlpClassifier<>(initializeClassifier(), initializeFeatures()));
         return new AnnotatingClassifier<>(multiClassifier, initializeAnnotator());
     }
 
     @Override
-    public String classify(FocusInstance<DepNode, DependencyTree> instance) {
+    public String classify(NlpFocus<DepNode, DepTree> instance) {
         return classifier.classify(instance);
     }
 
     @Override
-    public Map<String, Double> score(FocusInstance<DepNode, DependencyTree> instance) {
+    public Map<String, Double> score(NlpFocus<DepNode, DepTree> instance) {
         return classifier.score(instance);
     }
 
     @Override
-    public void train(List<FocusInstance<DepNode, DependencyTree>> train, List<FocusInstance<DepNode, DependencyTree>> valid) {
+    public void train(List<NlpFocus<DepNode, DepTree>> train, List<NlpFocus<DepNode, DepTree>> valid) {
         classifier.train(train, valid);
     }
 
@@ -140,7 +140,7 @@ public class DefaultVerbNetClassifier implements Classifier<FocusInstance<DepNod
     public void load(ObjectInputStream inputStream) {
         try {
             //noinspection unchecked
-            classifier = (AnnotatingClassifier<FocusInstance<DepNode, DependencyTree>>) inputStream.readObject();
+            classifier = (AnnotatingClassifier<NlpFocus<DepNode, DepTree>>) inputStream.readObject();
             resources = (FeatureResourceManager) inputStream.readObject();
         } catch (IOException | ClassNotFoundException e) {
             throw new RuntimeException(e);
@@ -170,8 +170,8 @@ public class DefaultVerbNetClassifier implements Classifier<FocusInstance<DepNod
         return resources;
     }
 
-    private Annotator<FocusInstance<DepNode, DependencyTree>> initializeAnnotator() {
-        List<Annotator<FocusInstance<DepNode, DependencyTree>>> annotators = new ArrayList<>();
+    private Annotator<NlpFocus<DepNode, DepTree>> initializeAnnotator() {
+        List<Annotator<NlpFocus<DepNode, DepTree>>> annotators = new ArrayList<>();
         for (String cluster : clusters) {
             annotators.add(new ListAnnotator<>(cluster, lowerForm()));
         }
@@ -181,7 +181,7 @@ public class DefaultVerbNetClassifier implements Classifier<FocusInstance<DepNod
         return new AggregateAnnotator<>(annotators);
     }
 
-    private FeaturePipeline<FocusInstance<DepNode, DependencyTree>> initializeFeatures() {
+    private FeaturePipeline<NlpFocus<DepNode, DepTree>> initializeFeatures() {
         // basic extractors
         StringExtractor<DepNode> text = lowerForm();
         StringExtractor<DepNode> lemma = lowerLemma();
@@ -199,7 +199,7 @@ public class DefaultVerbNetClassifier implements Classifier<FocusInstance<DepNod
 
         DepContextFactory depContexts = excludingDeps(excludedRels);
 
-        List<FeatureFunction<FocusInstance<DepNode, DependencyTree>>> features = Arrays.asList(
+        List<FeatureFunction<NlpFocus<DepNode, DepTree>>> features = Arrays.asList(
                 cross(function(depContexts, concat(pos, dep))),
                 function(window(offsets), Arrays.asList(text, lemma, pos)),
                 function(depContexts, concat(dep, Arrays.asList(lemma, pos))),

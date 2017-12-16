@@ -7,10 +7,10 @@ import org.junit.Test;
 import java.util.HashSet;
 import java.util.List;
 
-import edu.colorado.clear.wsd.type.FocusInstance;
 import edu.colorado.clear.wsd.feature.TestInstanceBuilder;
+import edu.colorado.clear.wsd.type.DefaultNlpFocus;
 import edu.colorado.clear.wsd.type.DepNode;
-import edu.colorado.clear.wsd.type.DependencyTree;
+import edu.colorado.clear.wsd.type.DepTree;
 import edu.colorado.clear.wsd.type.FeatureType;
 
 import static junit.framework.TestCase.assertEquals;
@@ -20,7 +20,7 @@ import static junit.framework.TestCase.assertEquals;
  */
 public class DepChildrenContextFactoryTest {
 
-    private FocusInstance<DepNode, DependencyTree> getTestInstance() {
+    private DefaultNlpFocus<DepNode, DepTree> getTestInstance() {
         return new TestInstanceBuilder("the fox jumped over the fence", 2)
                 .addHead(0, 1, "det")
                 .addHead(1, 2, "nsubj")

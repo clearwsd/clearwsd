@@ -12,13 +12,13 @@ import lombok.experimental.Accessors;
  * @author jamesgung
  */
 @Accessors(fluent = true)
-public class BaseDependencyTree extends BaseNlpTokenSequence<DepNode> implements DependencyTree {
+public class DefaultDepTree extends DefaultNlpSequence<DepNode> implements DepTree {
 
     @Getter
     @Setter
     private DepNode root;
 
-    public BaseDependencyTree(int index, List<DepNode> tokens, DepNode root) {
+    public DefaultDepTree(int index, List<DepNode> tokens, DepNode root) {
         super(index, tokens);
         this.root = root;
     }

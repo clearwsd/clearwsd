@@ -16,13 +16,13 @@ import lombok.experimental.Accessors;
  */
 @Getter
 @Accessors(fluent = true)
-public class BaseNlpInstance implements NlpInstance {
+public class DefaultNlpInstance implements NlpInstance {
 
     @Setter
     private int index;
     private Map<String, Object> features;
 
-    public BaseNlpInstance(int index) {
+    public DefaultNlpInstance(int index) {
         this.index = index;
         this.features = new HashMap<>();
     }

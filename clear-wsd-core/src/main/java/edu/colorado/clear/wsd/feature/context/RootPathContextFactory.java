@@ -7,8 +7,8 @@ import java.util.List;
 import java.util.Set;
 
 import edu.colorado.clear.wsd.type.DepNode;
-import edu.colorado.clear.wsd.type.DependencyTree;
-import edu.colorado.clear.wsd.type.FocusInstance;
+import edu.colorado.clear.wsd.type.DepTree;
+import edu.colorado.clear.wsd.type.NlpFocus;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -31,7 +31,7 @@ public class RootPathContextFactory extends DepContextFactory {
     private int maxLength = -1;
 
     @Override
-    public List<NlpContext<DepNode>> apply(FocusInstance<DepNode, DependencyTree> instance) {
+    public List<NlpContext<DepNode>> apply(NlpFocus<DepNode, DepTree> instance) {
         return Collections.singletonList(new NlpContext<>(KEY, getRootPath(instance.focus())));
     }
 

@@ -8,8 +8,8 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import edu.colorado.clear.wsd.type.DepNode;
-import edu.colorado.clear.wsd.type.DependencyTree;
-import edu.colorado.clear.wsd.type.FocusInstance;
+import edu.colorado.clear.wsd.type.DepTree;
+import edu.colorado.clear.wsd.type.NlpFocus;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -64,7 +64,7 @@ public class DepChildrenContextFactory extends DepContextFactory {
     }
 
     @Override
-    public List<NlpContext<DepNode>> apply(FocusInstance<DepNode, DependencyTree> instance) {
+    public List<NlpContext<DepNode>> apply(NlpFocus<DepNode, DepTree> instance) {
         List<NlpContext<DepNode>> results = new ArrayList<>();
         for (DepNode child : instance.focus().children().stream()
                 .filter(c -> include.size() == 0 || include.contains(c.dep()))

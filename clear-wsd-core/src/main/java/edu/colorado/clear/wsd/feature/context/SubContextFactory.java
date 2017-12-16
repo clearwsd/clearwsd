@@ -3,8 +3,8 @@ package edu.colorado.clear.wsd.feature.context;
 import java.util.List;
 
 import edu.colorado.clear.wsd.type.DepNode;
-import edu.colorado.clear.wsd.type.DependencyTree;
-import edu.colorado.clear.wsd.type.FocusInstance;
+import edu.colorado.clear.wsd.type.DepTree;
+import edu.colorado.clear.wsd.type.NlpFocus;
 
 /**
  * Apply nested context factories over a base context.
@@ -25,7 +25,7 @@ public class SubContextFactory extends DepContextFactory {
     }
 
     @Override
-    public List<NlpContext<DepNode>> apply(FocusInstance<DepNode, DependencyTree> instance) {
+    public List<NlpContext<DepNode>> apply(NlpFocus<DepNode, DepTree> instance) {
         return nestedContextFactory.apply(baseContextFactory.apply(instance));
     }
 }

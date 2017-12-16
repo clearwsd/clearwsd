@@ -1,7 +1,10 @@
 package edu.colorado.clear.wsd.type;
 
+import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import javax.annotation.Nonnull;
 
 import lombok.Getter;
 import lombok.experimental.Accessors;
@@ -13,11 +16,11 @@ import lombok.experimental.Accessors;
  */
 @Getter
 @Accessors(fluent = true)
-public class BaseNlpTokenSequence<T extends NlpInstance> extends BaseNlpInstance implements NlpTokenSequence<T> {
+public class DefaultNlpSequence<T extends NlpInstance> extends DefaultNlpInstance implements NlpSequence<T> {
 
     private List<T> tokens;
 
-    public BaseNlpTokenSequence(int index, List<T> tokens) {
+    public DefaultNlpSequence(int index, List<T> tokens) {
         super(index);
         this.tokens = tokens;
     }
@@ -30,6 +33,12 @@ public class BaseNlpTokenSequence<T extends NlpInstance> extends BaseNlpInstance
     @Override
     public int size() {
         return tokens.size();
+    }
+
+    @Nonnull
+    @Override
+    public Iterator<T> iterator() {
+        return tokens.iterator();
     }
 
     @Override

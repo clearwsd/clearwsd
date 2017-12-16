@@ -2,7 +2,7 @@ package edu.colorado.clear.wsd.parser;
 
 import java.util.List;
 
-import edu.colorado.clear.wsd.type.DependencyTree;
+import edu.colorado.clear.wsd.type.DepTree;
 
 /**
  * Dependency parser interface.
@@ -12,11 +12,11 @@ import edu.colorado.clear.wsd.type.DependencyTree;
 public interface DependencyParser extends NlpTokenizer {
 
     /**
-     * Parse a sentence into an {@link DependencyTree}.
+     * Parse a sentence into an {@link DepTree}.
      *
      * @param tokens input sentence tokens
      * @return dependency tree
      */
-    DependencyTree parse(List<String> tokens);
+    DepTree parse(List<String> tokens);
 
 }

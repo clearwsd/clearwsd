@@ -15,9 +15,10 @@ import edu.colorado.clear.wsd.corpus.semlink.VerbNetReader.VerbNetInstanceParser
 import edu.colorado.clear.wsd.parser.DependencyParser;
 import edu.colorado.clear.wsd.parser.NlpTokenizer;
 import edu.colorado.clear.wsd.parser.WhitespaceTokenizer;
+import edu.colorado.clear.wsd.type.DefaultNlpFocus;
 import edu.colorado.clear.wsd.type.DepNode;
-import edu.colorado.clear.wsd.type.DependencyTree;
-import edu.colorado.clear.wsd.type.FocusInstance;
+import edu.colorado.clear.wsd.type.DepTree;
+import edu.colorado.clear.wsd.type.NlpFocus;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 
@@ -33,7 +34,7 @@ import static edu.colorado.clear.wsd.type.FeatureType.Text;
  * @author jamesgung
  */
 @Slf4j
-public class ParsingSemlinkReader implements CorpusReader<FocusInstance<DepNode, DependencyTree>> {
+public class ParsingSemlinkReader implements CorpusReader<NlpFocus<DepNode, DepTree>> {
 
     private DependencyParser dependencyParser;
     private NlpTokenizer tokenizer;
@@ -56,10 +57,10 @@ public class ParsingSemlinkReader implements CorpusReader<FocusInstance<DepNode,
     }
 
     @Override
-    public List<FocusInstance<DepNode, DependencyTree>> readInstances(InputStream inputStream) {
+    public List<NlpFocus<DepNode, DepTree>> readInstances(InputStream inputStream) {
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream))) {
             VerbNetInstanceParser parser = new VerbNetInstanceParser();
-            List<FocusInstance<DepNode, DependencyTree>> results = new ArrayList<>();
+            List<NlpFocus<DepNode, DepTree>> results = new ArrayList<>();
             int index = 0;
             String line;
             while ((line = reader.readLine()) != null) {
@@ -68,7 +69,7 @@ public class ParsingSemlinkReader implements CorpusReader<FocusInstance<DepNode,
                     continue;
                 }
                 VerbNetReader.VerbNetInstance instance = parser.parse(line);
-                DependencyTree depTree = dependencyParser.parse(tokenizer.tokenize(instance.originalText()));
+                DepTree depTree = dependencyParser.parse(tokenizer.tokenize(instance.originalText()));
 
                 DepNode focus = depTree.get(instance.token());
                 if (!instance.lemma().equalsIgnoreCase(focus.feature(Lemma))) {
@@ -78,7 +79,7 @@ public class ParsingSemlinkReader implements CorpusReader<FocusInstance<DepNode,
                 focus.addFeature(Gold, instance.label());
                 focus.addFeature(Predicate, instance.lemma());
 
-                FocusInstance<DepNode, DependencyTree> focusInstance = new FocusInstance<>(index++, focus, depTree);
+                NlpFocus<DepNode, DepTree> focusInstance = new DefaultNlpFocus<>(index++, focus, depTree);
                 focusInstance.addFeature(Gold, instance.label());
                 focusInstance.addFeature(Metadata, line);
                 if (index % 1000 == 0) {
@@ -94,12 +95,12 @@ public class ParsingSemlinkReader implements CorpusReader<FocusInstance<DepNode,
     }
 
     @Override
-    public void writeInstances(List<FocusInstance<DepNode, DependencyTree>> instances, OutputStream outputStream) {
+    public void writeInstances(List<NlpFocus<DepNode, DepTree>> instances, OutputStream outputStream) {
         if (!writeSemlink) {
             new VerbNetReader().writeInstances(instances, outputStream);
         }
         try (PrintWriter writer = new PrintWriter(outputStream)) {
-            for (FocusInstance<DepNode, DependencyTree> instance : instances) {
+            for (NlpFocus<DepNode, DepTree> instance : instances) {
                 String result = instance.feature(Metadata);
                 if (result == null) {
                     result = String.format("%d %d %d %s %s\t%s",
@@ -117,12 +118,12 @@ public class ParsingSemlinkReader implements CorpusReader<FocusInstance<DepNode,
         }
     }
 
-    public static List<FocusInstance<DepNode, DependencyTree>> getFocusInstances(List<DependencyTree> dependencyTrees) {
-        List<FocusInstance<DepNode, DependencyTree>> instances = new ArrayList<>();
-        for (DependencyTree dependencyTree : dependencyTrees) {
+    public static List<NlpFocus<DepNode, DepTree>> getFocusInstances(List<DepTree> dependencyTrees) {
+        List<NlpFocus<DepNode, DepTree>> instances = new ArrayList<>();
+        for (DepTree dependencyTree : dependencyTrees) {
             for (DepNode depNode : dependencyTree.tokens()) {
                 if (depNode.feature(Predicate) != null) {
-                    instances.add(new FocusInstance<>(instances.size(), depNode, dependencyTree));
+                    instances.add(new DefaultNlpFocus<>(instances.size(), depNode, dependencyTree));
                 }
             }
         }

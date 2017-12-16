@@ -9,10 +9,10 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.stream.Collectors;
 
-import edu.colorado.clear.wsd.type.BaseDepNode;
-import edu.colorado.clear.wsd.type.BaseDependencyTree;
+import edu.colorado.clear.wsd.type.DefaultDepNode;
+import edu.colorado.clear.wsd.type.DefaultDepTree;
 import edu.colorado.clear.wsd.type.DepNode;
-import edu.colorado.clear.wsd.type.DependencyTree;
+import edu.colorado.clear.wsd.type.DepTree;
 import edu.colorado.clear.wsd.type.FeatureType;
 import edu.stanford.nlp.international.Language;
 import edu.stanford.nlp.ling.CoreLabel;
@@ -91,7 +91,7 @@ public class StanfordDependencyParser implements DependencyParser {
     }
 
     @Override
-    public DependencyTree parse(List<String> sentence) {
+    public DepTree parse(List<String> sentence) {
         return parseTokens(tag(sentence));
     }
 
@@ -126,7 +126,7 @@ public class StanfordDependencyParser implements DependencyParser {
         List<DepNode> tokens = new ArrayList<>();
         for (Iterator<CoreLabel> iterator = cls.iterator(); iterator.hasNext(); ++index) {
             CoreLabel coreLabel = iterator.next();
-            BaseDepNode token = new BaseDepNode(index);
+            DefaultDepNode token = new DefaultDepNode(index);
             token.addFeature(FeatureType.Text, coreLabel.originalText());
             token.addFeature(FeatureType.Lemma, coreLabel.lemma());
             token.addFeature(FeatureType.Pos, coreLabel.tag());
@@ -135,7 +135,7 @@ public class StanfordDependencyParser implements DependencyParser {
         return tokens;
     }
 
-    private DependencyTree parseTokens(List<CoreLabel> cls) {
+    private DepTree parseTokens(List<CoreLabel> cls) {
         List<DepNode> tokens = toTokens(cls);
         GrammaticalStructure structure = depParser.predict(cls);
         Map<Integer, TypedDependency> dependencyMap = structure.typedDependencies()
@@ -158,7 +158,7 @@ public class StanfordDependencyParser implements DependencyParser {
             token.addFeature(FeatureType.Dep, rel.reln().toString());
             int head = rel.gov().index() - 1;
             if (head >= 0) {
-                ((BaseDepNode) token).head(tokens.get(head));
+                ((DefaultDepNode) token).head(tokens.get(head));
                 if (!collapsed) {
                     tokens.get(head).children().add(token);
                 }
@@ -167,7 +167,7 @@ public class StanfordDependencyParser implements DependencyParser {
             }
         }
 
-        return new BaseDependencyTree(0, tokens, root);
+        return new DefaultDepTree(0, tokens, root);
     }
 
 }

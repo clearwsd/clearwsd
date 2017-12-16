@@ -3,8 +3,8 @@ package edu.colorado.clear.wsd.corpus.semeval;
 import java.util.stream.Collectors;
 
 import edu.colorado.clear.wsd.parser.DependencyParser;
-import edu.colorado.clear.wsd.type.BaseDependencyTree;
-import edu.colorado.clear.wsd.type.DependencyTree;
+import edu.colorado.clear.wsd.type.DefaultDepTree;
+import edu.colorado.clear.wsd.type.DepTree;
 import edu.colorado.clear.wsd.type.FeatureType;
 
 /**
@@ -22,8 +22,8 @@ public class ParsingSemevalReader extends SemevalReader {
     }
 
     @Override
-    protected DependencyTree processSentence(BaseDependencyTree dependencyTree) {
-        BaseDependencyTree result = (BaseDependencyTree) parser.parse(dependencyTree.tokens().stream().
+    protected DepTree processSentence(DefaultDepTree dependencyTree) {
+        DefaultDepTree result = (DefaultDepTree) parser.parse(dependencyTree.tokens().stream().
                 map(t -> (String) t.feature(FeatureType.Text))
                 .collect(Collectors.toList()));
         result.addFeature(FeatureType.Id, dependencyTree.feature(FeatureType.Id));

@@ -7,7 +7,7 @@ import java.util.List;
  *
  * @author jamesgung
  */
-public interface NlpTokenSequence<T extends NlpInstance> extends NlpInstance {
+public interface NlpSequence<T extends NlpInstance> extends NlpInstance, Iterable<T> {
 
     /**
      * List of tokens in this NLP sequence.
