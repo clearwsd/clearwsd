@@ -4,7 +4,8 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
- * Whitespace tokenizer. Tokens are split on whitespace, and sentences are split on newlines.
+ * Whitespace tokenizer implementation used mostly for pre-tokenized/space-separated/formatted text, not intended for actual use in
+ * a natural language setting. Tokens are split on whitespace, and sentences are split on newlines.
  *
  * @author jamesgung
  */

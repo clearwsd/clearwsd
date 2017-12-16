@@ -10,7 +10,7 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 
 /**
- * NLP instance default implementation.
+ * Default {@link NlpInstance} implementation.
  *
  * @author jamesgung
  */

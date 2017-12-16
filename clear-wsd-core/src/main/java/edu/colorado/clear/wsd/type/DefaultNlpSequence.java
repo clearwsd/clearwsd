@@ -10,7 +10,7 @@ import lombok.Getter;
 import lombok.experimental.Accessors;
 
 /**
- * Default NLP sequence implementation.
+ * Default {@link NlpSequence} implementation.
  *
  * @author jamesgung
  */

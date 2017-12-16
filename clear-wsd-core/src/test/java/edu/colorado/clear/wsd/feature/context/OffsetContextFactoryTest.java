@@ -7,9 +7,9 @@ import java.util.Collections;
 import java.util.List;
 
 import edu.colorado.clear.wsd.feature.TestInstanceBuilder;
-import edu.colorado.clear.wsd.type.DefaultNlpFocus;
 import edu.colorado.clear.wsd.type.DepNode;
 import edu.colorado.clear.wsd.type.DepTree;
+import edu.colorado.clear.wsd.type.NlpFocus;
 
 import static junit.framework.TestCase.assertEquals;
 
@@ -18,7 +18,7 @@ import static junit.framework.TestCase.assertEquals;
  */
 public class OffsetContextFactoryTest {
 
-    private DefaultNlpFocus<DepNode, DepTree> getTestInstance() {
+    private NlpFocus<DepNode, DepTree> getTestInstance() {
         return new TestInstanceBuilder("0 1 2 3 4 5 6", 3).build();
     }
 

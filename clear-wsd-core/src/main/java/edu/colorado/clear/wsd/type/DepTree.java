@@ -1,7 +1,7 @@
 package edu.colorado.clear.wsd.type;
 
 /**
- * Dependency tree data structure used in feature extraction.
+ * Syntactic dependency tree data structure used in feature extraction.
  *
  * @author jamesgung
  */

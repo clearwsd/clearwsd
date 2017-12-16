@@ -1,7 +1,7 @@
 package edu.colorado.clear.wsd.type;
 
 /**
- * Core features used in NLP.
+ * Core features used for feature extraction and annotation.
  *
  * @author jamesgung
  */

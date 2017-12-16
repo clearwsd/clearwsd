@@ -7,7 +7,7 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 
 /**
- * Dependency tree data structure used for feature processing.
+ * Default {@link DepTree} implementation.
  *
  * @author jamesgung
  */

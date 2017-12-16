@@ -9,7 +9,7 @@ import lombok.Getter;
 import lombok.experimental.Accessors;
 
 /**
- * Focus/sequence pair instance, such as for classification of a token within a larger sequence.
+ * Default {@link NlpFocus} implementation.
  *
  * @author jamesgung
  */

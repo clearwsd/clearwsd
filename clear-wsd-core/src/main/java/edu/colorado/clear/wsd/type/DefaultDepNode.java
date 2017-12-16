@@ -9,7 +9,7 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 
 /**
- * Base dependency node.
+ * Default {@link DepNode} implementation.
  *
  * @author jamesgung
  */

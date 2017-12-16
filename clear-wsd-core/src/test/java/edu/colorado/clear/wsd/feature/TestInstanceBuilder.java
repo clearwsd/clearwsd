@@ -10,6 +10,7 @@ import edu.colorado.clear.wsd.type.DefaultNlpFocus;
 import edu.colorado.clear.wsd.type.DepNode;
 import edu.colorado.clear.wsd.type.DepTree;
 import edu.colorado.clear.wsd.type.FeatureType;
+import edu.colorado.clear.wsd.type.NlpFocus;
 
 /**
  * Builder for dependency tree focus instances.
@@ -42,7 +43,7 @@ public class TestInstanceBuilder {
         return this;
     }
 
-    public DefaultNlpFocus<DepNode, DepTree> build() {
+    public NlpFocus<DepNode, DepTree> build() {
         return new DefaultNlpFocus<>(0, focus, new DefaultDepTree(0,
                 depNodes.stream().map(s -> (DepNode) s).collect(Collectors.toList()), root));
     }

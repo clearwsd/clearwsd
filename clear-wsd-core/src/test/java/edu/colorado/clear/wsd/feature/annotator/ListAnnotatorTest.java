@@ -10,10 +10,10 @@ import edu.colorado.clear.wsd.feature.TestInstanceBuilder;
 import edu.colorado.clear.wsd.feature.extractor.LookupFeatureExtractor;
 import edu.colorado.clear.wsd.feature.resource.DefaultFeatureResourceManager;
 import edu.colorado.clear.wsd.feature.resource.DefaultTsvResourceInitializer;
-import edu.colorado.clear.wsd.type.DefaultNlpFocus;
 import edu.colorado.clear.wsd.type.DepNode;
 import edu.colorado.clear.wsd.type.DepTree;
 import edu.colorado.clear.wsd.type.FeatureType;
+import edu.colorado.clear.wsd.type.NlpFocus;
 
 import static junit.framework.TestCase.assertEquals;
 
@@ -22,7 +22,7 @@ import static junit.framework.TestCase.assertEquals;
  */
 public class ListAnnotatorTest {
 
-    private DefaultNlpFocus<DepNode, DepTree> getTestInstance() {
+    private NlpFocus<DepNode, DepTree> getTestInstance() {
         return new TestInstanceBuilder("the fox jumped over the fence", 2)
                 .addHead(0, 1, "det")
                 .addHead(1, 2, "nsubj")
@@ -37,10 +37,10 @@ public class ListAnnotatorTest {
     public void testAnnotate() throws MalformedURLException {
         DefaultTsvResourceInitializer<String> testResource = new DefaultTsvResourceInitializer<>(
                 "testResource", new File("src/test/resources/test_resource.tsv").toURI().toURL());
-        ListAnnotator<DepNode, DefaultNlpFocus<DepNode, DepTree>> annotator = new ListAnnotator<>(
+        ListAnnotator<DepNode, NlpFocus<DepNode, DepTree>> annotator = new ListAnnotator<>(
                 "testResource", new LookupFeatureExtractor<DepNode>(FeatureType.Text.name()));
         annotator.initialize(new DefaultFeatureResourceManager().registerInitializer("testResource", testResource));
-        DefaultNlpFocus<DepNode, DepTree> annotated = annotator.annotate(getTestInstance());
+        NlpFocus<DepNode, DepTree> annotated = annotator.annotate(getTestInstance());
         assertEquals(Collections.singletonList("noun"), annotated.get(1).feature("testResource"));
         assertEquals(Collections.singletonList("verb"), annotated.get(2).feature("testResource"));
         assertEquals(Collections.singletonList("noun"), annotated.get(5).feature("testResource"));

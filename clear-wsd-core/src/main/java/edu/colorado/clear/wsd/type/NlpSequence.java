@@ -3,7 +3,7 @@ package edu.colorado.clear.wsd.type;
 import java.util.List;
 
 /**
- * List of tokens, such as a sentence, dependency tree, or document.
+ * List of tokens ({@link NlpInstance NlpInstances}), such as a sentence, dependency tree, or document.
  *
  * @author jamesgung
  */

@@ -3,14 +3,15 @@ package edu.colorado.clear.wsd.parser;
 import java.util.List;
 
 /**
- * Tokenizer interface.
+ * Tokenizer/sentence segmenter for natural language text. Splits text into sentences with {@link NlpTokenizer#segment(String)},
+ * and further splits an individual sentence into a list of tokens through {@link NlpTokenizer#tokenize(String)}.
  *
  * @author jamesgung
  */
 public interface NlpTokenizer {
 
     /**
-     * Split an input into sentences.
+     * Split raw input text into a list of sentences. Each {@link String} returned in the list should be a single sentence.
      *
      * @param input input text
      * @return list of sentence strings
@@ -18,7 +19,7 @@ public interface NlpTokenizer {
     List<String> segment(String input);
 
     /**
-     * Split an input into tokens.
+     * Split an input sentence into individual tokens.
      *
      * @param sentence single sentence
      * @return list of tokens
