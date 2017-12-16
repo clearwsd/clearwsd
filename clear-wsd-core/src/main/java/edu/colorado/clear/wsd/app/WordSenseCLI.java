@@ -202,12 +202,12 @@ public abstract class WordSenseCLI {
         cmd = new JCommander(this);
         cmd.setProgramName(this.getClass().getSimpleName());
         try {
+            cmd.parse(args);
             if (help || args.length == 0) {
                 System.out.println(helpMessage);
                 cmd.usage();
                 System.exit(0);
             }
-            cmd.parse(args);
         } catch (ParameterException e) {
             System.err.println(e.getMessage());
             cmd.usage();
