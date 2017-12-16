@@ -16,7 +16,7 @@
         <liblinear.version>2.11</liblinear.version>
         <jwnl.version>1.9.4</jwnl.version>
         <jwnldata.version>1.2</jwnldata.version>
-        <jverbnet.version>1.2.0</jverbnet.version>
+        <jverbnet.version>1.2.0.1</jverbnet.version>
         <lucene.version>3.6.2</lucene.version>
         <jcommander.version>1.72</jcommander.version>
     </properties>
@@ -36,6 +36,12 @@
             <groupId>edu.mit</groupId>
             <artifactId>jverbnet</artifactId>
             <version>${jverbnet.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>ch.qos.logback</groupId>
+                    <artifactId>logback-core</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>com.beust</groupId>

@@ -9,7 +9,6 @@ import edu.colorado.clear.wsd.feature.extractor.IdentityFeatureExtractor;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
-import lombok.extern.slf4j.Slf4j;
 
 /**
  * Multimap-based resource. Can define an arbitrary initializer for loading the multimap.
@@ -18,7 +17,6 @@ import lombok.extern.slf4j.Slf4j;
  * @param <K> input key type used during lookup
  * @author jamesgung
  */
-@Slf4j
 @Setter
 @Getter
 @Accessors(fluent = true)
