@@ -102,7 +102,7 @@ public class VerbNetReader implements CorpusReader<NlpFocus<DepNode, DepTree>> {
     @Getter
     @Setter
     @Accessors(fluent = true)
-    static class VerbNetInstance {
+    public static class VerbNetInstance {
         private String path;
         private int sentence;
         private int token;
