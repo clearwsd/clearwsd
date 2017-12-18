@@ -2,8 +2,6 @@ package edu.colorado.clear.wsd.feature.context;
 
 import org.junit.Test;
 
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 import edu.colorado.clear.type.DepNode;
@@ -24,7 +22,7 @@ public class OffsetContextFactoryTest {
 
     @Test
     public void testContextFocus() {
-        OffsetContextFactory factory = new OffsetContextFactory(Collections.singletonList(0));
+        OffsetContextFactory<DepNode, DepTree> factory = new OffsetContextFactory<>(0);
         List<NlpContext<DepNode>> contexts = factory.apply(getTestInstance());
         assertEquals(1, contexts.size());
         assertEquals(1, contexts.get(0).tokens().size());
@@ -34,7 +32,7 @@ public class OffsetContextFactoryTest {
 
     @Test
     public void testContextSeparate() {
-        OffsetContextFactory factory = new OffsetContextFactory(Arrays.asList(-1, 1));
+        OffsetContextFactory<DepNode, DepTree> factory = new OffsetContextFactory<>(-1, 1);
         List<NlpContext<DepNode>> contexts = factory.apply(getTestInstance());
         assertEquals(2, contexts.size());
         assertEquals(1, contexts.get(0).tokens().size());
@@ -47,7 +45,7 @@ public class OffsetContextFactoryTest {
 
     @Test
     public void testContextConcatenated() {
-        OffsetContextFactory factory = new OffsetContextFactory(Arrays.asList(-1, 1), true);
+        OffsetContextFactory<DepNode, DepTree> factory = new OffsetContextFactory<>(true, -1, 1);
         List<NlpContext<DepNode>> contexts = factory.apply(getTestInstance());
         assertEquals(1, contexts.size());
         assertEquals(OffsetContextFactory.KEY + "[-1,1]", contexts.get(0).identifier());

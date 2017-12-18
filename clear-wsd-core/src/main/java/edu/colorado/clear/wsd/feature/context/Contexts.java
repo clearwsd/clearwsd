@@ -5,6 +5,9 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
+import edu.colorado.clear.type.NlpInstance;
+import edu.colorado.clear.type.NlpSequence;
+
 /**
  * Utilities for commonly used NLP contexts.
  *
@@ -23,16 +26,16 @@ public class Contexts {
         return new DepChildrenContextFactory(inclusions);
     }
 
-    public static OffsetContextFactory focus() {
-        return new OffsetContextFactory(0);
+    public static <T extends NlpInstance, S extends NlpSequence<T>> OffsetContextFactory<T, S> focus() {
+        return new OffsetContextFactory<>(0);
     }
 
-    public static OffsetContextFactory window(Integer... offsets) {
-        return new OffsetContextFactory(offsets);
+    public static <T extends NlpInstance, S extends NlpSequence<T>> OffsetContextFactory<T, S> window(Integer... offsets) {
+        return new OffsetContextFactory<>(offsets);
     }
 
-    public static OffsetContextFactory window(Collection<Integer> offsets) {
-        return new OffsetContextFactory(new ArrayList<>(offsets));
+    public static <T extends NlpInstance, S extends NlpSequence<T>> OffsetContextFactory<T, S> window(Collection<Integer> offsets) {
+        return new OffsetContextFactory<>(new ArrayList<>(offsets));
     }
 
     public static RootPathContextFactory head() {

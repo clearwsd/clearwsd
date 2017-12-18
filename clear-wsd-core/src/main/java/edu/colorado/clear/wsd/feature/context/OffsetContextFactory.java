@@ -6,9 +6,9 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import edu.colorado.clear.type.DepNode;
-import edu.colorado.clear.type.DepTree;
 import edu.colorado.clear.type.NlpFocus;
+import edu.colorado.clear.type.NlpInstance;
+import edu.colorado.clear.type.NlpSequence;
 
 /**
  * Offset-based context factory. Provides option to either concatenate resulting offsets into a single context,
@@ -16,7 +16,7 @@ import edu.colorado.clear.type.NlpFocus;
  *
  * @author jamesgung
  */
-public class OffsetContextFactory extends DepContextFactory {
+public class OffsetContextFactory<T extends NlpInstance, S extends NlpSequence<T>> implements NlpContextFactory<NlpFocus<T, S>, T> {
 
     public static final String KEY = "COL";
 
@@ -47,15 +47,15 @@ public class OffsetContextFactory extends DepContextFactory {
     }
 
     @Override
-    public List<NlpContext<DepNode>> apply(NlpFocus<DepNode, DepTree> instance) {
+    public List<NlpContext<T>> apply(NlpFocus<T, S> instance) {
         if (concatenate) {
             return applyConcatenate(instance);
         }
         return applySeparate(instance);
     }
 
-    private List<NlpContext<DepNode>> applySeparate(NlpFocus<DepNode, DepTree> instance) {
-        List<NlpContext<DepNode>> results = new ArrayList<>();
+    private List<NlpContext<T>> applySeparate(NlpFocus<T, S> instance) {
+        List<NlpContext<T>> results = new ArrayList<>();
         for (Integer offset : offsets) {
             int containerIndex = instance.focus().index() + offset;
             if (containerIndex < 0 || containerIndex >= instance.sequence().size()) {
@@ -66,8 +66,8 @@ public class OffsetContextFactory extends DepContextFactory {
         return results;
     }
 
-    private List<NlpContext<DepNode>> applyConcatenate(NlpFocus<DepNode, DepTree> instance) {
-        List<DepNode> results = new ArrayList<>();
+    private List<NlpContext<T>> applyConcatenate(NlpFocus<T, S> instance) {
+        List<T> results = new ArrayList<>();
         for (Integer offset : offsets) {
             int containerIndex = instance.focus().index() + offset;
             if (containerIndex < 0 || containerIndex >= instance.sequence().size()) {

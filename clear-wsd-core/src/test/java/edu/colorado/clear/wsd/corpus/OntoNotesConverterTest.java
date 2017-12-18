@@ -18,17 +18,19 @@ import static org.junit.Assert.assertEquals;
  */
 public class OntoNotesConverterTest {
 
+    private static final String PTB_TEST = "src/test/resources/ptb_test.txt";
+    private static final String TOKENIZED = "src/test/resources/ptb_test.tokenized.txt";
+
     @Test
     public void testParse() throws IOException {
-        String ptb = new String(Files.readAllBytes(Paths.get("src/test/resources/ptb_test.txt").toAbsolutePath()));
-        String result = OntoNotesConverter.parse(ptb).stream().map(tree -> tree.allChildren().stream()
+        String input = new String(Files.readAllBytes(Paths.get(PTB_TEST)));
+        String expected = new String(Files.readAllBytes(Paths.get(TOKENIZED)));
+        String result = OntoNotesConverter.parse(input).stream().map(tree -> tree.allChildren().stream()
                 .filter(TreebankTreeNode::isLeaf)
                 .map(TreebankTreeNode::value)
                 .collect(Collectors.joining(" ")))
                 .collect(Collectors.joining("\n"));
-        assertEquals("In the summer of 2005 , a picture that people have long been looking forward to *T*-1 started *-2 emerging"
-                + " with frequency in various major Hong Kong media .\nWith their unique charm , these well - known cartoon images "
-                + "once again caused Hong Kong to be a focus of worldwide attention .", result);
+        assertEquals(expected, result);
     }
 
 }

@@ -1,0 +1,36 @@
+# wsj/23/wsj_2300.mrg 11 13 stop 55.4	When the dollar is in a free-fall , even central banks ca n't stop it .
+0	When	when	WRB	advmod	6
+1	the	the	DT	det	2
+2	dollar	dollar	NN	nsubj	6
+3	is	be	VBZ	cop	6
+4	in	in	IN	case	6
+5	a	a	DT	det	6
+6	free-fall	free-fall	NN	advcl	13
+7	,	,	,	punct	13
+8	even	even	RB	advmod	10
+9	central	central	JJ	amod	10
+10	banks	bank	NNS	nsubj	13
+11	ca	can	MD	aux	13
+12	n't	not	RB	neg	13
+13	stop	stop	VB	root	-1
+14	it	it	PRP	dobj	13
+15	.	.	.	punct	13
+
+# wsj/23/wsj_2300.mrg 12 2 call 60	Speculators are calling for a degree of liquidity that is not there in the market . "
+0	Speculators	speculator	NNS	nsubj	2
+1	are	be	VBP	aux	2
+2	calling	call	VBG	root	-1
+3	for	for	IN	case	5
+4	a	a	DT	det	5
+5	degree	degree	NN	nmod:for	2
+6	of	of	IN	case	7
+7	liquidity	liquidity	NN	nmod:of	5
+8	that	that	WDT	nsubj	11
+9	is	be	VBZ	cop	11
+10	not	not	RB	neg	11
+11	there	there	RB	acl:relcl	5
+12	in	in	IN	case	14
+13	the	the	DT	det	14
+14	market	market	NN	nmod:in	11
+15	.	.	.	punct	2
+16	"	"	''	punct	2

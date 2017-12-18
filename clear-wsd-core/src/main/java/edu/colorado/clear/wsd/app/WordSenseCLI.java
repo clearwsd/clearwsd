@@ -193,7 +193,7 @@ public abstract class WordSenseCLI {
     private SenseInventoryType senseInventory;
 
     private WordSenseClassifier classifier;
-    protected NlpParser parser;
+    private NlpParser parser;
     private Pattern depPattern;
 
     private JCommander cmd;
