@@ -20,7 +20,6 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.ObjectInputStream;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.io.Serializable;
@@ -224,12 +223,10 @@ public class VerbSenseArgumentCounter {
         if (modelPath != null && !parseOnly) {
             Stopwatch sw = Stopwatch.createStarted();
             log.debug("Loading sense annotator at {}...", modelPath);
-            try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(modelPath))) {
-                WordSenseClassifier classifier = new WordSenseClassifier(ois);
+            try {
+                WordSenseClassifier classifier = WordSenseClassifier.load(new File(modelPath).toURI().toURL());
                 senseAnnotator = new WordSenseAnnotator(classifier, new DefaultPredicateAnnotator(
                         classifier.predicateDictionary()));
-            } catch (FileNotFoundException e) {
-                throw new RuntimeException("Unable to locate model at path " + modelPath, e);
             } catch (Exception e) {
                 throw new RuntimeException("Unable to load word sense classifier model: " + e.getMessage(), e);
             }

@@ -44,6 +44,7 @@
         <module>clear-wsd-core</module>
         <module>clear-wsd-stanford-parser</module>
         <module>clear-wsd-cli</module>
+        <module>clear-wsd-models</module>
     </modules>
 
     <dependencies>
@@ -57,6 +58,7 @@
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
             <version>${lombok.version}</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
@@ -97,6 +99,12 @@
                 <groupId>edu.colorado.clear</groupId>
                 <artifactId>clear-wsd-stanford-parser</artifactId>
                 <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>edu.colorado.clear</groupId>
+                <artifactId>clear-wsd-models</artifactId>
+                <version>${project.version}</version>
+                <scope>provided</scope>
             </dependency>
         </dependencies>
     </dependencyManagement>

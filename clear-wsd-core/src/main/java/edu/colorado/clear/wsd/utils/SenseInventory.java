@@ -9,6 +9,8 @@ import java.util.Set;
  */
 public interface SenseInventory {
 
+    String DEFAULT_SENSE = "NONE";
+
     /**
      * Return all labels associated with a particular word form.
      *

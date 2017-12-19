@@ -1,9 +1,12 @@
 package edu.colorado.clear.wsd;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import edu.colorado.clear.parser.NlpParser;
 import edu.colorado.clear.type.DepTree;
+import edu.colorado.clear.type.FeatureType;
+import edu.colorado.clear.wsd.utils.SenseInventory;
 import lombok.AllArgsConstructor;
 
 /**
@@ -12,7 +15,7 @@ import lombok.AllArgsConstructor;
  * @author jamesgung
  */
 @AllArgsConstructor
-public class SenseDisambiguatingParser implements NlpParser {
+public class DefaultSensePredictor implements NlpParser, SensePredictor<String> {
 
     private WordSenseAnnotator annotator;
     private NlpParser dependencyParser;
@@ -30,6 +33,15 @@ public class SenseDisambiguatingParser implements NlpParser {
     @Override
     public List<String> tokenize(String sentence) {
         return dependencyParser.tokenize(sentence);
+    }
+
+    @Override
+    public List<String> predict(List<String> sentence) {
+        DepTree depTree = parse(sentence);
+        return depTree.tokens().stream()
+                .map(token -> token.feature(FeatureType.Sense))
+                .map(sense -> sense == null ? SenseInventory.DEFAULT_SENSE : (String) sense)
+                .collect(Collectors.toList());
     }
 
 }

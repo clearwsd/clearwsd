@@ -3,6 +3,7 @@ package edu.colorado.clear.wsd;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.net.URL;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -102,6 +103,20 @@ public class WordSenseClassifier implements Classifier<NlpFocus<DepNode, DepTree
             outputStream.writeObject(predicateDictionary);
         } catch (IOException e) {
             throw new RuntimeException("Unable to save classifier: " + e.getMessage(), e);
+        }
+    }
+
+    /**
+     * Load/initialize a word sense classifier from a provided {@link URL}.
+     *
+     * @param path path to classifier model
+     * @return initialized word sense classifier
+     */
+    public static WordSenseClassifier load(URL path) {
+        try (ObjectInputStream objectInputStream = new ObjectInputStream(path.openStream())) {
+            return new WordSenseClassifier(objectInputStream);
+        } catch (IOException e) {
+            throw new RuntimeException("Unable to load classifier model at " + path.getPath() + ": " + e.getMessage(), e);
         }
     }
 

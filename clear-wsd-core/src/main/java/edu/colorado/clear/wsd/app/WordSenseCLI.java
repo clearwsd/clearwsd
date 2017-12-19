@@ -34,7 +34,7 @@ import edu.colorado.clear.type.DepTree;
 import edu.colorado.clear.type.FeatureType;
 import edu.colorado.clear.type.NlpFocus;
 import edu.colorado.clear.type.NlpInstance;
-import edu.colorado.clear.wsd.SenseDisambiguatingParser;
+import edu.colorado.clear.wsd.DefaultSensePredictor;
 import edu.colorado.clear.wsd.WordSenseAnnotator;
 import edu.colorado.clear.wsd.WordSenseClassifier;
 import edu.colorado.clear.wsd.corpus.CoNllDepTreeReader;
@@ -390,7 +390,7 @@ public abstract class WordSenseCLI {
         if (!itl) {
             return;
         }
-        NlpParser parser = new SenseDisambiguatingParser(getAnnotator(), getParser());
+        NlpParser parser = new DefaultSensePredictor(getAnnotator(), getParser());
         InteractiveTestLoop.test(parser, Sense.name());
     }
 
