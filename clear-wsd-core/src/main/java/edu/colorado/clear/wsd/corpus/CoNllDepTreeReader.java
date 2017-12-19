@@ -9,8 +9,10 @@ import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
@@ -35,20 +37,9 @@ public class CoNllDepTreeReader implements CorpusReader<DepTree> {
     public List<DepTree> readInstances(InputStream inputStream) {
         List<DepTree> results = new ArrayList<>();
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream))) {
-            List<String> lines = new ArrayList<>();
-            String currentLine;
-            while ((currentLine = reader.readLine()) != null) {
-                if (currentLine.isEmpty()) {
-                    if (lines.size() > 0) {
-                        results.add(readTree(results.size(), lines));
-                        lines = new ArrayList<>();
-                    }
-                    continue;
-                }
-                lines.add(currentLine);
-            }
-            if (lines.size() > 0) {
-                results.add(readTree(results.size(), lines));
+            List<String> tree;
+            while ((tree = readTree(reader)) != null) {
+                results.add(readTree(results.size(), tree));
             }
         } catch (IOException e) {
             throw new RuntimeException("An error occurred while reading dependency trees.", e);
@@ -56,6 +47,28 @@ public class CoNllDepTreeReader implements CorpusReader<DepTree> {
         return results;
     }
 
+    @Override
+    public Iterator<DepTree> instanceIterator(InputStream inputStream) {
+        return new TreeIterator(inputStream);
+    }
+
+    private List<String> readTree(BufferedReader reader) throws IOException {
+        List<String> lines = new ArrayList<>();
+        String currentLine;
+        while ((currentLine = reader.readLine()) != null) {
+            if (currentLine.isEmpty()) {
+                if (lines.size() > 0) {
+                    return lines;
+                }
+                continue;
+            }
+            lines.add(currentLine);
+        }
+        if (lines.size() > 0) {
+            return lines;
+        }
+        return null;
+    }
 
     private DepTree readTree(int id, List<String> tree) {
         List<DepNode> depNodes = new ArrayList<>();
@@ -115,6 +128,70 @@ public class CoNllDepTreeReader implements CorpusReader<DepTree> {
     @Override
     public void writeInstances(List<DepTree> trees, OutputStream outputStream) {
         writeDependencyTrees(trees, outputStream);
+    }
+
+    private class TreeIterator implements Iterator<DepTree>, AutoCloseable {
+
+        private List<DepTree> treeCache;
+        private BufferedReader reader;
+        private int cacheSize;
+
+        private int index = 0;
+        private int current = 0;
+        private boolean closed = false;
+
+        TreeIterator(InputStream inputStream, int cacheSize) {
+            reader = new BufferedReader(new InputStreamReader(inputStream));
+            this.cacheSize = cacheSize;
+            treeCache = new ArrayList<>(cacheSize);
+            index = 0;
+            current = 0;
+        }
+
+        TreeIterator(InputStream inputStream) {
+            this(inputStream, 1000);
+        }
+
+        @Override
+        public boolean hasNext() {
+            if (current == treeCache.size()) {
+                populateCache();
+            }
+            return current < treeCache.size();
+        }
+
+        @Override
+        public DepTree next() {
+            if (!hasNext()) {
+                throw new NoSuchElementException();
+            }
+            return treeCache.get(current++);
+        }
+
+        @Override
+        public void close() throws Exception {
+            reader.close();
+        }
+
+        private void populateCache() {
+            current = 0;
+            treeCache.clear();
+            if (closed) {
+                return;
+            }
+            try {
+                List<String> tree;
+                while ((tree = readTree(reader)) != null && treeCache.size() < cacheSize) {
+                    treeCache.add(readTree(index++, tree));
+                }
+                if (tree == null) {
+                    closed = true;
+                    reader.close();
+                }
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
     }
 
     /**

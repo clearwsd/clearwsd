@@ -2,6 +2,7 @@ package edu.colorado.clear.wsd.corpus;
 
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.Iterator;
 import java.util.List;
 
 import edu.colorado.clear.type.NlpInstance;
@@ -9,6 +10,7 @@ import edu.colorado.clear.type.NlpInstance;
 /**
  * Corpus reader/writer.
  *
+ * @param <T> instance type
  * @author jamesgung
  */
 public interface CorpusReader<T extends NlpInstance> {
@@ -28,5 +30,16 @@ public interface CorpusReader<T extends NlpInstance> {
      * @param outputStream target output
      */
     void writeInstances(List<T> instances, OutputStream outputStream);
+
+    /**
+     * Create an instance iterator, useful when the input corpus is too large to fit into memory.
+     *
+     * @param inputStream corpus input stream
+     * @return iterator over instances
+     */
+    default Iterator<T> instanceIterator(InputStream inputStream) {
+        List<T> instances = readInstances(inputStream);
+        return instances.iterator();
+    }
 
 }

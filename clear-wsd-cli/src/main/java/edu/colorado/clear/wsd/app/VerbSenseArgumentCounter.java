@@ -31,9 +31,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.zip.GZIPInputStream;
@@ -124,7 +126,7 @@ public class VerbSenseArgumentCounter {
     private String modelPath;
     @Parameter(names = "-db", description = "Path to MapDB DB file to persist or restore counts", required = true)
     private String dbPath;
-    @Parameter(names = {"-outputDir", "o", "-out"}, description = "Path to output directory")
+    @Parameter(names = {"-outputDir", "-o", "-out"}, description = "Path to output directory")
     private String outputPath;
     @Parameter(names = "-outputExt", description = "Output file extension")
     private String outputExt = ".txt";
@@ -138,7 +140,9 @@ public class VerbSenseArgumentCounter {
     private boolean parseOnly = false;
 
     @Parameter(names = "-limit", description = "Maximum number of entries to return in output", order = 900)
-    private int limit = (int) 10000000;
+    private int limit = 10000000;
+    @Parameter(names = "-threshold", description = "Minimum count to be returned in output", order = 900)
+    private int threshold = 5;
     @Parameter(names = "-sort", description = "List of fields to sort by in output", order = 901)
     private List<ArgField> sortFields = Collections.singletonList(ArgField.COUNT);
     @Parameter(names = "-print", description = "List of fields to print (in order) in output", order = 902)
@@ -280,12 +284,16 @@ public class VerbSenseArgumentCounter {
                 if (processed.contains(file.getPath())) { // skip already-processed files
                     continue;
                 }
-                log.debug("Processing file: {}", file.getAbsolutePath());
-                List<DepTree> instances = readTrees(file);
-                if (senseAnnotator != null) {
-                    instances.parallelStream().forEach(senseAnnotator::annotate);
+                log.debug("Reading file: {}", file.getAbsolutePath());
+                Stopwatch sw = Stopwatch.createStarted();
+                int index = 0;
+                Iterator<DepTree> iterator = readTrees(file);
+                while (iterator.hasNext()) {
+                    process(iterator.next());
+                    if (++index % 10000 == 0) {
+                        log.debug("Processing {} trees/second ({} total).", index / sw.elapsed(TimeUnit.SECONDS), index);
+                    }
                 }
-                instances.forEach(this::process);
                 processed.add(file.getPath());
             }
             outputEntries();
@@ -293,13 +301,13 @@ public class VerbSenseArgumentCounter {
         db.close();
     }
 
-    private List<DepTree> readTrees(File file) {
-        try (InputStream is = new GZIPInputStream(new FileInputStream(file))) {
-            return corpusReader.readInstances(is);
-        } catch (Exception e) {
-            log.warn("Error reading file at {}", file.getAbsolutePath(), e);
+    private Iterator<DepTree> readTrees(File file) {
+        try {
+            InputStream is = new GZIPInputStream(new FileInputStream(file));
+            return corpusReader.instanceIterator(is);
+        } catch (IOException e) {
+            throw new RuntimeException("Error reading file at " + file.getAbsolutePath(), e);
         }
-        return new ArrayList<>();
     }
 
     /**
@@ -308,6 +316,9 @@ public class VerbSenseArgumentCounter {
      * @param tree dependency tree
      */
     private void process(DepTree tree) {
+        if (senseAnnotator != null) {
+            senseAnnotator.annotate(tree);
+        }
         for (DepNode depNode : tree) {
             String sense = depNode.feature(FeatureType.Sense);
             if (null == sense || sense.isEmpty()) {
@@ -344,6 +355,7 @@ public class VerbSenseArgumentCounter {
     private void outputEntries() {
         List<Map.Entry<Argument, Long>> counts = countMap.getEntries().stream()
                 .sorted((a1, a2) -> Long.compare(a2.getValue(), a1.getValue()))
+                .filter(s -> s.getValue() > threshold)
                 .limit(limit)
                 .collect(Collectors.toList());
         // group entries by provided field
