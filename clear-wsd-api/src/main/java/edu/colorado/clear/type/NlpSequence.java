@@ -5,6 +5,7 @@ import java.util.List;
 /**
  * List of tokens ({@link NlpInstance NlpInstances}), such as a sentence, dependency tree, or document.
  *
+ * @param <T> token type
  * @author jamesgung
  */
 public interface NlpSequence<T extends NlpInstance> extends NlpInstance, Iterable<T> {

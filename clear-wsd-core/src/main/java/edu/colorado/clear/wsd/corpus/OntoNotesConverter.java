@@ -2,7 +2,14 @@ package edu.colorado.clear.wsd.corpus;
 
 import com.google.common.collect.Lists;
 
+import com.beust.jcommander.JCommander;
+import com.beust.jcommander.Parameter;
+import com.beust.jcommander.ParameterException;
+
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -20,8 +27,10 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import edu.colorado.clear.parser.NlpTokenizer;
+import edu.colorado.clear.wsd.corpus.semlink.VerbNetReader;
 import edu.colorado.clear.wsd.corpus.semlink.VerbNetReader.VerbNetInstance;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
@@ -31,11 +40,46 @@ import lombok.experimental.Accessors;
  * @author jamesgung
  */
 @Setter
+@NoArgsConstructor
 @Accessors(fluent = true)
 public class OntoNotesConverter {
 
+    @Parameter(names = {"-input", "-i"}, description = "Input path", required = true)
+    private String inputPath;
+    @Parameter(names = {"-output", "-o"}, description = "Output path", required = true)
+    private String outputPath;
+    @Parameter(names = "-parseExt", description = "Parse file extension")
     private String parseExt = ".parse";
+    @Parameter(names = "-senseExt", description = "Sense file extension")
     private String senseExt = ".sense";
+
+    private OntoNotesConverter(String... args) {
+        JCommander cmd = new JCommander(this);
+        cmd.setProgramName(this.getClass().getSimpleName());
+        try {
+            cmd.parse(args);
+        } catch (ParameterException e) {
+            System.err.println(e.getMessage());
+            cmd.usage();
+            System.exit(1);
+        }
+    }
+
+    private void run() {
+        File outputFile = new File(outputPath).getAbsoluteFile();
+        if (!outputFile.exists()) {
+            if (!outputFile.getParentFile().mkdirs()) {
+                throw new RuntimeException("Unable to write to directory at " + outputFile.getParent());
+            }
+        }
+        try (PrintWriter writer = new PrintWriter(outputPath)) {
+            for (VerbNetInstance instance : new OntoNotesConverter().getInstances(Paths.get(inputPath))) {
+                writer.println(VerbNetReader.VerbNetInstanceParser.toString(instance));
+            }
+        } catch (FileNotFoundException e) {
+            throw new RuntimeException("Unable to write to output path at " + outputPath + ": " + e.getMessage(), e);
+        }
+    }
 
     private List<Path> getParseFiles(Path directory) {
         try {
@@ -78,7 +122,7 @@ public class OntoNotesConverter {
                 }
             }
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new RuntimeException("Error reading instances: " + e.getMessage(), e);
         }
         return instances;
     }
@@ -238,6 +282,10 @@ public class OntoNotesConverter {
                     .map(TreebankTreeNode::value)
                     .collect(Collectors.joining(" "));
         }
+    }
+
+    public static void main(String[] args) {
+        new OntoNotesConverter(args).run();
     }
 
 }

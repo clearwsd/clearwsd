@@ -125,7 +125,7 @@ public class VerbNetReader implements CorpusReader<NlpFocus<DepNode, DepTree>> {
                     .originalText(fields[1]);
         }
 
-        public String toString(VerbNetInstance instance) {
+        public static String toString(VerbNetInstance instance) {
             return String.format("%s %d %d %s %s\t%s", instance.path, instance.sentence, instance.token,
                     instance.lemma, instance.label, instance.originalText);
         }
