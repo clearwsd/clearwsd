@@ -7,6 +7,9 @@ package edu.colorado.clear.wsd.feature.util;
  */
 public class PosUtils {
 
+    private PosUtils() {
+    }
+
     public static boolean isNoun(String pos) {
         return pos.startsWith("NN") || pos.equals("PRP") || pos.equals("WP");
     }
