@@ -137,6 +137,8 @@ public class VerbSenseArgumentCounter {
     private boolean overwrite = false;
     @Parameter(names = "--parseOnly", description = "Only parse, don't count or apply annotator")
     private boolean parseOnly = false;
+    @Parameter(names = "--reparse", description = "Parse even if there is an existing parsed file")
+    private boolean reparse = false;
 
     @Parameter(names = "-limit", description = "Maximum number of entries to return in output", order = 900)
     private int limit = 10000000;
@@ -255,6 +257,7 @@ public class VerbSenseArgumentCounter {
     private void run() {
         List<File> toParse = getCorpusFiles(rawExt).stream()
                 .filter(f -> !processed.contains(f.getPath() + corpusExt))
+                .filter(f -> reparse || !(new File(f.getPath() + corpusExt).exists()))
                 .collect(Collectors.toList());
         if (toParse.size() > 0) {
             log.debug("Found {} files ending in {} at {}", toParse.size(), rawExt, corpusPath);

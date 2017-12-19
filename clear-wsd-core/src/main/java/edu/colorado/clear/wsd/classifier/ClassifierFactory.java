@@ -9,7 +9,9 @@ package edu.colorado.clear.wsd.classifier;
 public interface ClassifierFactory<T extends Classifier> {
 
     /**
-     * Instantiate a classifier.
+     * Instantiate a classifier using factory-specific configuration.
+     *
+     * @return a new classifier
      */
     T create();
 

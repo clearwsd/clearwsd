@@ -24,6 +24,7 @@ public class InteractiveTestLoop {
      * Test a dependency parser--interactively input utterances, and print the resulting parse tree.
      *
      * @param dependencyParser dependency parser
+     * @param formatter        function used to format dependency tree into a string
      */
     public static void test(NlpParser dependencyParser, Function<DepTree, String> formatter) {
         Scanner scanner = new Scanner(System.in);

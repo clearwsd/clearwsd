@@ -140,6 +140,7 @@ public final class EmbeddingIoUtils {
      *
      * @param multimap   multimap with string keys
      * @param outputFile output file
+     * @param <T>        multimap value type
      */
     public static <T> void printMultimapTsv(Multimap<String, T> multimap, File outputFile) {
         try (PrintWriter writer = new PrintWriter(outputFile)) {

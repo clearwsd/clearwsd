@@ -34,6 +34,8 @@ public interface Genotype<T> {
 
     /**
      * Perform crossover with this genotype and another parent.
+     *
+     * @param other other parent to be crossed with this one
      */
     void cross(Genotype<T> other);
 

@@ -39,7 +39,7 @@ public class VerbNetSenseInventory implements SenseInventory, Serializable {
     private static final long serialVersionUID = 410274561044821035L;
 
     /**
-     * Return the base lemma of a multi-word expression (e.g. "go_ballistic" -> "go").
+     * Return the base lemma of a multi-word expression (e.g. "go_ballistic" 0-&gt; "go").
      *
      * @param mwe multi word expression
      * @return base lemma
@@ -50,7 +50,7 @@ public class VerbNetSenseInventory implements SenseInventory, Serializable {
     }
 
     /**
-     * Get the numbered portion of a VerbNet class string, (e.g. "confront-98" -> "98").
+     * Get the numbered portion of a VerbNet class string, (e.g. "confront-98" --&gt; "98").
      *
      * @param id VerbNet class id
      * @return VerbNet class number

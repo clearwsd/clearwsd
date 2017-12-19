@@ -34,6 +34,9 @@ public interface Classifier<U, O> extends Serializable {
 
     /**
      * Trains a new model, overwriting any existing model.
+     *
+     * @param train training data
+     * @param valid validation data, used for hyperparameter tuning and early stopping
      */
     void train(List<U> train, List<U> valid);
 

@@ -223,7 +223,8 @@ public class CoNllDepTreeReader implements CorpusReader<DepTree> {
     /**
      * Convert an {@link DepTree} to a tab-separated CoNLL-style string (index word lemma pos dep head).
      *
-     * @param tree dependency tree
+     * @param tree  dependency tree
+     * @param extra extra features to be serialized
      * @return CoNLL-style string
      */
     public static String treeToString(DepTree tree, String... extra) {
