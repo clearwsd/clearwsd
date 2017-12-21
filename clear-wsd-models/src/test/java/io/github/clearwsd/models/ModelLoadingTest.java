@@ -13,11 +13,25 @@ import static junit.framework.TestCase.assertNotNull;
  */
 public class ModelLoadingTest {
 
-    private static final String SEMLINK_PATH = "models/verbnet/semlink.bin";
+    private static final String SEMLINK_PATH = "models/semlink.bin";
+    private static final String ONTONOTES_PATH = "models/ontonotes.bin";
+    private static final String SEMCOR_PATH = "models/semcor.bin";
 
     @Test
     public void testSemlink() {
         WordSenseClassifier classifier = WordSenseClassifier.load(this.getClass().getClassLoader().getResource(SEMLINK_PATH));
+        assertNotNull(classifier);
+    }
+
+    @Test
+    public void testOntoNotes() {
+        WordSenseClassifier classifier = WordSenseClassifier.load(this.getClass().getClassLoader().getResource(ONTONOTES_PATH));
+        assertNotNull(classifier);
+    }
+
+    @Test
+    public void testSemcor() {
+        WordSenseClassifier classifier = WordSenseClassifier.load(this.getClass().getClassLoader().getResource(SEMCOR_PATH));
         assertNotNull(classifier);
     }
 
