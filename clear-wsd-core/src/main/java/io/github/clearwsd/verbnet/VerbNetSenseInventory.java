@@ -4,10 +4,12 @@ import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Sets;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -18,18 +20,18 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import io.github.clearwsd.utils.CountingSenseInventory;
-import io.github.clearwsd.utils.SenseInventory;
 import edu.mit.jverbnet.data.IMember;
 import edu.mit.jverbnet.data.IVerbClass;
 import edu.mit.jverbnet.data.IWordnetKey;
 import edu.mit.jverbnet.index.IVerbIndex;
 import edu.mit.jverbnet.index.VerbIndex;
+import io.github.clearwsd.utils.CountingSenseInventory;
+import io.github.clearwsd.utils.SenseInventory;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
 /**
- * VerbNet XML-based sense inventory.
+ * VerbNet XML-based {@link SenseInventory} implementation.
  *
  * @author jamesgung
  */
@@ -69,11 +71,33 @@ public class VerbNetSenseInventory implements SenseInventory, Serializable {
     private CountingSenseInventory countingSenseInventory = new CountingSenseInventory();
     private URL url;
 
+    /**
+     * Initialize sense inventory from directory.
+     *
+     * @param path VerbNet XML directory
+     */
+    public VerbNetSenseInventory(File path) {
+        try {
+            this.url = path.toURI().toURL();
+            initialize();
+        } catch (MalformedURLException e) {
+            throw new RuntimeException("Error initializing VerbNet sense inventory: " + e.getMessage(), e);
+        }
+    }
+
+    /**
+     * Initialize sense inventory from {@link URL} (possibly on classpath).
+     *
+     * @param url VerbNet XML URL
+     */
     public VerbNetSenseInventory(URL url) {
         this.url = url;
         initialize();
     }
 
+    /**
+     * Initialize sense inventory with default VerbNet from classpath resources.
+     */
     public VerbNetSenseInventory() {
         this(VerbNetSenseInventory.class.getClassLoader().getResource("vn32.xml"));
     }

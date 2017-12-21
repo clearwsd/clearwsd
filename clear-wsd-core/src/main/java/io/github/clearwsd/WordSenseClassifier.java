@@ -18,10 +18,6 @@ import io.github.clearwsd.type.FeatureType;
 import io.github.clearwsd.type.NlpFocus;
 import io.github.clearwsd.utils.LemmaDictionary;
 import io.github.clearwsd.utils.SenseInventory;
-import io.github.clearwsd.classifier.Classifier;
-import io.github.clearwsd.classifier.Hyperparameter;
-import io.github.clearwsd.utils.LemmaDictionary;
-import io.github.clearwsd.utils.SenseInventory;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.experimental.Accessors;
@@ -51,7 +47,7 @@ public class WordSenseClassifier implements Classifier<NlpFocus<DepNode, DepTree
     @Override
     public String classify(NlpFocus<DepNode, DepTree> instance) {
         String lemma = instance.focus().feature(Predicate);
-        Set<String> options = senseInventory.senses(instance.focus().feature(Predicate));
+        Set<String> options = senseInventory.senses(lemma);
         Map<String, Double> scores = classifier.score(instance);
         return scores.entrySet().stream()
                 .filter(e -> options.contains(e.getKey()))
@@ -70,8 +66,8 @@ public class WordSenseClassifier implements Classifier<NlpFocus<DepNode, DepTree
     public void train(List<NlpFocus<DepNode, DepTree>> train, List<NlpFocus<DepNode, DepTree>> valid) {
         predicateDictionary.train(true);
         Stream.concat(train.stream(), valid.stream()).forEach(instance -> {
-            predicateDictionary.apply(instance.focus());
-            senseInventory.addSense(instance.focus().feature(FeatureType.Lemma), instance.focus().feature(FeatureType.Gold));
+            String lemma = predicateDictionary.apply(instance.focus());
+            senseInventory.addSense(lemma, instance.focus().feature(FeatureType.Gold));
         });
         predicateDictionary.train(false);
         classifier.train(train, valid);

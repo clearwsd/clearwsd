@@ -14,10 +14,6 @@ import io.github.clearwsd.classifier.Classifier;
 import io.github.clearwsd.classifier.Hyperparameter;
 import io.github.clearwsd.feature.annotator.Annotator;
 import io.github.clearwsd.feature.resource.FeatureResourceManager;
-import io.github.clearwsd.classifier.Classifier;
-import io.github.clearwsd.classifier.Hyperparameter;
-import io.github.clearwsd.feature.annotator.Annotator;
-import io.github.clearwsd.feature.resource.FeatureResourceManager;
 
 /**
  * Classifier wrapper that applies provided annotations prior to training, classification and scoring.
@@ -63,8 +59,8 @@ public class AnnotatingClassifier<T> implements Classifier<T, String> {
     @Override
     public void train(List<T> train, List<T> valid) {
         Preconditions.checkState(annotator.initialized(), "Annotator is not initialized.");
-        train = train.stream().map(annotator::annotate).collect(Collectors.toList());
-        valid = valid.stream().map(annotator::annotate).collect(Collectors.toList());
+        train = train.parallelStream().map(annotator::annotate).collect(Collectors.toList());
+        valid = valid.parallelStream().map(annotator::annotate).collect(Collectors.toList());
         classifier.train(train, valid);
     }
 

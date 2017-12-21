@@ -23,12 +23,13 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.Stack;
+import java.util.function.Predicate;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-import io.github.clearwsd.parser.NlpTokenizer;
 import io.github.clearwsd.corpus.semlink.VerbNetReader;
 import io.github.clearwsd.corpus.semlink.VerbNetReader.VerbNetInstance;
+import io.github.clearwsd.parser.NlpTokenizer;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -52,6 +53,8 @@ public class OntoNotesConverter {
     private String parseExt = ".parse";
     @Parameter(names = "-senseExt", description = "Sense file extension")
     private String senseExt = ".sense";
+    @Parameter(names = "-lemmaFilter", description = "Regex filter for specific lemma types")
+    private String lemmafilter = ".*-v";
 
     private OntoNotesConverter(String... args) {
         JCommander cmd = new JCommander(this);
@@ -67,7 +70,7 @@ public class OntoNotesConverter {
 
     private void run() {
         File outputFile = new File(outputPath).getAbsoluteFile();
-        if (!outputFile.exists()) {
+        if (!outputFile.getParentFile().exists()) {
             if (!outputFile.getParentFile().mkdirs()) {
                 throw new RuntimeException("Unable to write to directory at " + outputFile.getParent());
             }
@@ -97,6 +100,7 @@ public class OntoNotesConverter {
      * @return list of sense instances
      */
     public List<VerbNetInstance> getInstances(Path directory) {
+        Predicate<String> filter = Pattern.compile(lemmafilter).asPredicate();
         List<VerbNetInstance> instances = new ArrayList<>();
         try {
             for (Path path : getParseFiles(directory)) {
@@ -110,11 +114,15 @@ public class OntoNotesConverter {
                     String senses = new String(Files.readAllBytes(sensePath));
                     for (String senseLine : senses.split("[\\r\\n]+")) {
                         String[] fields = senseLine.split(" ");
+                        String lemma = fields[3];
+                        if (!filter.test(lemma)) {
+                            continue;
+                        }
                         VerbNetInstance instance = new VerbNetInstance()
                                 .path(fields[0])
                                 .sentence(Integer.parseInt(fields[1]))
                                 .token(Integer.parseInt(fields[2]))
-                                .lemma(fields[3])
+                                .lemma(lemma)
                                 .label(fields.length == 6 ? fields[5] : fields[4]);
                         instance.originalText(sentenceMap.getOrDefault(instance.sentence(), ""));
                         instances.add(instance);

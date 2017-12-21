@@ -1,5 +1,6 @@
 package io.github.clearwsd.corpus.semlink;
 
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -7,18 +8,20 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
+import io.github.clearwsd.corpus.CorpusReader;
+import io.github.clearwsd.corpus.semlink.VerbNetReader.VerbNetInstanceParser;
 import io.github.clearwsd.parser.NlpParser;
 import io.github.clearwsd.parser.NlpTokenizer;
+import io.github.clearwsd.parser.WhitespaceTokenizer;
+import io.github.clearwsd.type.DefaultNlpFocus;
 import io.github.clearwsd.type.DepNode;
 import io.github.clearwsd.type.DepTree;
 import io.github.clearwsd.type.NlpFocus;
-import io.github.clearwsd.corpus.CorpusReader;
-import io.github.clearwsd.corpus.semlink.VerbNetReader.VerbNetInstanceParser;
-import io.github.clearwsd.parser.WhitespaceTokenizer;
-import io.github.clearwsd.type.DefaultNlpFocus;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 
@@ -41,6 +44,8 @@ public class ParsingSemlinkReader implements CorpusReader<NlpFocus<DepNode, DepT
 
     @Setter
     private boolean writeSemlink = false;
+    @Setter
+    private boolean cacheTrees = true;
 
     public ParsingSemlinkReader(NlpParser dependencyParser, NlpTokenizer tokenizer) {
         this.dependencyParser = dependencyParser;
@@ -58,6 +63,7 @@ public class ParsingSemlinkReader implements CorpusReader<NlpFocus<DepNode, DepT
 
     @Override
     public List<NlpFocus<DepNode, DepTree>> readInstances(InputStream inputStream) {
+        Map<String, DepTree> parseCache = new HashMap<>();
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream))) {
             VerbNetInstanceParser parser = new VerbNetInstanceParser();
             List<NlpFocus<DepNode, DepTree>> results = new ArrayList<>();
@@ -69,7 +75,17 @@ public class ParsingSemlinkReader implements CorpusReader<NlpFocus<DepNode, DepT
                     continue;
                 }
                 VerbNetReader.VerbNetInstance instance = parser.parse(line);
-                DepTree depTree = dependencyParser.parse(tokenizer.tokenize(instance.originalText()));
+
+                DepTree depTree;
+                if (cacheTrees) {
+                    depTree = parseCache.get(instance.originalText());
+                    if (depTree == null) {
+                        depTree = dependencyParser.parse(tokenizer.tokenize(instance.originalText()));
+                        parseCache.put(instance.originalText(), depTree);
+                    }
+                } else {
+                    depTree = dependencyParser.parse(tokenizer.tokenize(instance.originalText()));
+                }
 
                 DepNode focus = depTree.get(instance.token());
                 if (!instance.lemma().equalsIgnoreCase(focus.feature(Lemma))) {

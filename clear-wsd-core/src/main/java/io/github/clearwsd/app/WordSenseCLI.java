@@ -30,14 +30,6 @@ import java.util.stream.Collectors;
 
 import io.github.clearwsd.DefaultSensePredictor;
 import io.github.clearwsd.WordSenseAnnotator;
-import io.github.clearwsd.parser.NlpParser;
-import io.github.clearwsd.type.DepNode;
-import io.github.clearwsd.type.DepTree;
-import io.github.clearwsd.type.FeatureType;
-import io.github.clearwsd.type.NlpFocus;
-import io.github.clearwsd.type.NlpInstance;
-import io.github.clearwsd.DefaultSensePredictor;
-import io.github.clearwsd.WordSenseAnnotator;
 import io.github.clearwsd.WordSenseClassifier;
 import io.github.clearwsd.corpus.CoNllDepTreeReader;
 import io.github.clearwsd.corpus.CorpusReader;
@@ -49,23 +41,31 @@ import io.github.clearwsd.corpus.semlink.VerbNetReader;
 import io.github.clearwsd.eval.CrossValidation;
 import io.github.clearwsd.eval.Evaluation;
 import io.github.clearwsd.eval.Predictions;
+import io.github.clearwsd.parser.NlpParser;
 import io.github.clearwsd.parser.WhitespaceTokenizer;
+import io.github.clearwsd.type.DepNode;
+import io.github.clearwsd.type.DepTree;
+import io.github.clearwsd.type.FeatureType;
+import io.github.clearwsd.type.NlpFocus;
+import io.github.clearwsd.type.NlpInstance;
 import io.github.clearwsd.utils.CountingSenseInventory;
 import io.github.clearwsd.utils.InteractiveTestLoop;
 import io.github.clearwsd.utils.LemmaDictionary;
+import io.github.clearwsd.utils.OntoNotesSenseInventory;
 import io.github.clearwsd.utils.SenseInventory;
 import io.github.clearwsd.utils.WordNetSenseInventory;
 import io.github.clearwsd.verbnet.DefaultPredicateAnnotator;
 import io.github.clearwsd.verbnet.DefaultVerbNetClassifier;
 import io.github.clearwsd.verbnet.VerbNetSenseInventory;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
+import static io.github.clearwsd.app.WordSenseCLI.SenseInventoryType.VerbNet;
+import static io.github.clearwsd.app.WordSenseCLI.SenseInventoryType.WordNet;
 import static io.github.clearwsd.type.FeatureType.Gold;
 import static io.github.clearwsd.type.FeatureType.Sense;
 import static io.github.clearwsd.type.FeatureType.Text;
-import static io.github.clearwsd.app.WordSenseCLI.SenseInventoryType.VerbNet;
-import static io.github.clearwsd.app.WordSenseCLI.SenseInventoryType.WordNet;
 
 /**
  * Command line interface for training, evaluating and applying a word sense classifier.
@@ -75,18 +75,22 @@ import static io.github.clearwsd.app.WordSenseCLI.SenseInventoryType.WordNet;
 @Slf4j
 public abstract class WordSenseCLI {
 
+    @AllArgsConstructor
     public enum SenseInventoryType {
-        VerbNet(VerbNetSenseInventory::new),
-        WordNet(WordNetSenseInventory::new),
-        Counting(CountingSenseInventory::new);
-        private Supplier<SenseInventory> senseInventory;
+        VerbNet(VerbNetSenseInventory::new, path -> new VerbNetSenseInventory(new File(path))),
+        WordNet(WordNetSenseInventory::new, path -> new WordNetSenseInventory()),
+        OntoNotes(OntoNotesSenseInventory::new, path -> new OntoNotesSenseInventory(Paths.get(path))),
+        Counting(CountingSenseInventory::new, path -> new CountingSenseInventory());
 
-        SenseInventoryType(Supplier<SenseInventory> senseInventory) {
-            this.senseInventory = senseInventory;
-        }
+        private Supplier<SenseInventory> senseInventory;
+        private Function<String, SenseInventory> providedSenseInventory;
 
         public SenseInventory senseInventory() {
             return senseInventory.get();
+        }
+
+        public SenseInventory senseInventory(String path) {
+            return providedSenseInventory.apply(path);
         }
 
     }
@@ -151,9 +155,11 @@ public abstract class WordSenseCLI {
     @Parameter(names = {"-input", "-i"}, description = "Path to unlabeled input file for new predictions", order = 1)
     private String inputPath;
 
-    @Parameter(names = {"-output", "-o"}, description = "Path to output file where predictions on the input file are stored (optional)")
+    @Parameter(names = {"-output", "-o"}, description = "Path to output file where predictions on the input file are stored "
+            + "(optional)")
     private String outputPath;
-    @Parameter(names = "--reparse", description = "Reparse, even if a parsed file of the same name already exists (false by default)")
+    @Parameter(names = "--reparse", description = "Reparse, even if a parsed file of the same name already exists (false by "
+            + "default)")
     private Boolean reparse = false;
     @Parameter(names = "-ext", description = "Parse file extension")
     private String parseSuffix = ".dep";
@@ -193,6 +199,8 @@ public abstract class WordSenseCLI {
 
     @Parameter(names = {"-inventory", "-inv"}, description = "Sense inventory")
     private SenseInventoryType senseInventory;
+    @Parameter(names = "-inventoryPath", description = "Sense inventory path (optional)")
+    private String senseInventoryPath;
 
     private WordSenseClassifier classifier;
     private NlpParser parser;
@@ -414,8 +422,9 @@ public abstract class WordSenseCLI {
     }
 
     private WordSenseClassifier newClassifier() {
-        return new WordSenseClassifier(new DefaultVerbNetClassifier(),
-                senseInventory.senseInventory(), new LemmaDictionary());
+        SenseInventory inventory = senseInventoryPath != null ? senseInventory.senseInventory(senseInventoryPath)
+                : senseInventory.senseInventory();
+        return new WordSenseClassifier(new DefaultVerbNetClassifier(), inventory, new LemmaDictionary());
     }
 
     private WordSenseClassifier loadClassifier() {
@@ -441,7 +450,7 @@ public abstract class WordSenseCLI {
     }
 
     private <T extends NlpInstance> List<T> getParseTrees(String path, CorpusReader<T> reader) {
-        return parseSafe(path, reader, reparse && !parsed(path));
+        return parseSafe(path, reader, reparse || !parsed(path));
     }
 
     private <T extends NlpInstance> List<T> parseSafe(String inputPath, CorpusReader<T> reader, boolean save) {

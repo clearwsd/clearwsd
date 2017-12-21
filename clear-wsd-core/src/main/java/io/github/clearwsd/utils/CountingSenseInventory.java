@@ -28,11 +28,11 @@ public class CountingSenseInventory implements SenseInventory, Serializable {
     public String defaultSense(String lemma) {
         Map<String, Integer> senseMap = inventoryMap.get(lemma);
         if (senseMap == null) {
-            return null;
+            return SenseInventory.DEFAULT_SENSE;
         }
         return senseMap.entrySet().stream()
                 .reduce((e1, e2) -> e1.getValue() >= e2.getValue() ? e1 : e2)
-                .map(Map.Entry::getKey).orElse(null);
+                .map(Map.Entry::getKey).orElse(SenseInventory.DEFAULT_SENSE);
     }
 
     @Override
