@@ -6,8 +6,8 @@ implementations of sub-components such as parsers or resources used for feature 
 
 It is meant for use in both research and production settings. Main features include
 
-- State-of-the-art results on verb sense disambiguation over VerbNet classes
-- Automatic optimization of feature subsets and classification algorithm hyperparameters
+- State-of-the-art results in verb sense disambiguation over VerbNet classes
+- Automatic optimization of feature subsets and hyperparameters
 - Production-ready pre-trained models
 - Easy retraining/packaging of models
 
@@ -21,7 +21,7 @@ git clone https://github.com/jgung/clear-wsd.git
 cd clear-wsd
 mvn package
 ```
-Alternatively (or additionally), for use as an API, install the package in your local Maven repo (~/.m2/repository)
+Alternatively (or additionally), for use as an API, install the package in your local Maven repo (`~/.m2/repository`), use
 ```bash
 mvn install
 ```
@@ -30,9 +30,9 @@ mvn install
 To make use of the ClearWSD library in its entirety in your project, you can simply add the following dependency:
 ```xml
 <dependency>
-  <groupId>edu.colorado.clear</groupId>
+  <groupId>io.github.clearwsd</groupId>
   <artifactId>clear-wsd</artifactId>
-  <version>1.0-SNAPSHOT</version>
+  <version>1.0.0</version>
 </dependency>
 ```
 
@@ -40,9 +40,9 @@ ClearWSD is composed of several modules. To try out ClearWSD in your project wit
 include just two of these, the first being `clear-wsd-core`:
 ```xml
 <dependency>
-  <groupId>edu.colorado.clear</groupId>
+  <groupId>io.github.clearwsd</groupId>
   <artifactId>clear-wsd-core</artifactId>
-  <version>1.0-SNAPSHOT</version>
+  <version>1.0.0</version>
 </dependency>
 ```
 and the second being a parser module, used for pre-processing before word sense disambiguation.
@@ -50,9 +50,9 @@ and the second being a parser module, used for pre-processing before word sense 
 For the Stanford Parser wrapper module (GPL licensed), add the following dependency:
 ```xml
 <dependency>
-  <groupId>edu.colorado.clear</groupId>
+  <groupId>io.github.clearwsd</groupId>
   <artifactId>clear-wsd-stanford</artifactId>
-  <version>1.0-SNAPSHOT</version>
+  <version>1.0.0</version>
 </dependency>
 ```
 
