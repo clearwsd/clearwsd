@@ -98,6 +98,7 @@ public class DefaultVerbNetClassifier implements Classifier<NlpFocus<DepNode, De
 
     public DefaultVerbNetClassifier() {
         resources = initializeResources();
+        resources.initialize();
         classifier = initialize();
         classifier.initialize(resources);
     }
@@ -142,6 +143,7 @@ public class DefaultVerbNetClassifier implements Classifier<NlpFocus<DepNode, De
             //noinspection unchecked
             classifier = (AnnotatingClassifier<NlpFocus<DepNode, DepTree>>) inputStream.readObject();
             resources = (FeatureResourceManager) inputStream.readObject();
+            resources.initialize();
         } catch (IOException | ClassNotFoundException e) {
             throw new RuntimeException(e);
         }

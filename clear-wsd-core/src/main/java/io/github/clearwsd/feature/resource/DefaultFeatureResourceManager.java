@@ -16,9 +16,7 @@ public class DefaultFeatureResourceManager implements FeatureResourceManager, Se
 
     private Map<String, FeatureResourceProxy> resourceMap = new HashMap<>();
 
-    /**
-     * Initialize all resources.
-     */
+    @Override
     public void initialize() {
         for (Map.Entry<String, FeatureResourceProxy> entry : resourceMap.entrySet()) {
             FeatureResourceProxy resource = entry.getValue();

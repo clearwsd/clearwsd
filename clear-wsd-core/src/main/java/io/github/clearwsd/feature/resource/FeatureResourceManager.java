@@ -10,6 +10,11 @@ import java.util.function.Supplier;
 public interface FeatureResourceManager {
 
     /**
+     * Force initialization of any lazily-loaded resources/proxies.
+     */
+    void initialize();
+
+    /**
      * Retrieve the feature resource with the provided identifier, initializing the resource if it is not available.
      *
      * @param identifier  feature resource identifier
