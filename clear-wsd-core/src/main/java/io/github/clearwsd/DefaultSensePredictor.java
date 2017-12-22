@@ -44,4 +44,14 @@ public class DefaultSensePredictor implements NlpParser, SensePredictor<String> 
                 .collect(Collectors.toList());
     }
 
+    /**
+     * Initialize a {@link DefaultSensePredictor} from a classpath resource and parser.
+     *
+     * @param resource classpath resource
+     * @return initialized sense predictor
+     */
+    public static DefaultSensePredictor loadFromResource(String resource, NlpParser parser) {
+        return new DefaultSensePredictor(WordSenseAnnotator.loadFromResource(resource), parser);
+    }
+
 }

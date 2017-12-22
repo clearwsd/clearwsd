@@ -19,7 +19,6 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import io.github.clearwsd.feature.util.PosUtils;
-import io.github.clearwsd.feature.util.PosUtils;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
@@ -44,7 +43,7 @@ public class ExtJwnlWordNet implements WordNetFacade {
         Stopwatch stopwatch = Stopwatch.createStarted();
         try {
             dictionary = inputPath == null ? Dictionary.getDefaultResourceInstance() : Dictionary.getFileBackedInstance(inputPath);
-            log.debug("Loaded ExtJWNL WordNet in {}", stopwatch.toString());
+            log.trace("Loaded ExtJWNL WordNet in {}", stopwatch.toString());
         } catch (Exception e) {
             log.error("Error loading ExtJWNL WordNet dictionary", e);
         }

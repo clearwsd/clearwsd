@@ -120,4 +120,14 @@ public class WordSenseClassifier implements Classifier<NlpFocus<DepNode, DepTree
         }
     }
 
+    /**
+     * Load/initialize a word sense classifier from a classpath resource at a specified path.
+     *
+     * @param resource classpath resource
+     * @return initialized word sense classifier
+     */
+    public static WordSenseClassifier loadFromResource(String resource) {
+        return load(WordSenseClassifier.class.getClassLoader().getResource(resource));
+    }
+
 }

@@ -1,12 +1,13 @@
 package io.github.clearwsd;
 
+import io.github.clearwsd.classifier.Classifier;
+import io.github.clearwsd.feature.annotator.Annotator;
+import io.github.clearwsd.type.DefaultNlpFocus;
 import io.github.clearwsd.type.DepNode;
 import io.github.clearwsd.type.DepTree;
 import io.github.clearwsd.type.FeatureType;
 import io.github.clearwsd.type.NlpFocus;
-import io.github.clearwsd.classifier.Classifier;
-import io.github.clearwsd.feature.annotator.Annotator;
-import io.github.clearwsd.type.DefaultNlpFocus;
+import io.github.clearwsd.verbnet.DefaultPredicateAnnotator;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -61,6 +62,18 @@ public class WordSenseAnnotator implements Annotator<DepTree> {
     @Override
     public boolean initialized() {
         return targetAnnotator.initialized();
+    }
+
+
+    /**
+     * Initialize a {@link WordSenseAnnotator} from a classpath resource.
+     *
+     * @param resource classpath resource
+     * @return initialized word sense annotator
+     */
+    public static WordSenseAnnotator loadFromResource(String resource) {
+        WordSenseClassifier classifier = WordSenseClassifier.loadFromResource(resource);
+        return new WordSenseAnnotator(classifier, new DefaultPredicateAnnotator(classifier.predicateDictionary()));
     }
 
 }
