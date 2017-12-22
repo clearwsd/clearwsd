@@ -149,48 +149,46 @@ public abstract class WordSenseCLI {
             "interactively test in a single command:\n\t-train path/to/training/data.txt -test " +
             "path/to/test/data.txt -apply path/to/input/data.txt --itl\n";
 
-    @Parameter(names = {"-model", "-m"}, description = "Path to classifier model for loading and/or saving", order = 0)
+    @Parameter(names = {"-model", "-m"}, description = "Path to classifier model (for loading or saving)", order = 0)
     private String modelPath;
 
     @Parameter(names = {"-input", "-i"}, description = "Path to unlabeled input file for new predictions", order = 1)
     private String inputPath;
 
-    @Parameter(names = {"-output", "-o"}, description = "Path to output file where predictions on the input file are stored "
-            + "(optional)")
+    @Parameter(names = {"-output", "-o"}, description = "Path to output file where predictions on the input file are stored")
     private String outputPath;
-    @Parameter(names = "--reparse", description = "Reparse, even if a parsed file of the same name already exists (false by "
-            + "default)")
+    @Parameter(names = "--reparse", description = "Reparse, even if a parsed file of the same name already exists")
     private Boolean reparse = false;
-    @Parameter(names = "-ext", description = "Parse file extension")
+    @Parameter(names = "-ext", description = "Parse file extension, appended to input file names to save parses")
     private String parseSuffix = ".dep";
 
     @Parameter(names = "--om", description = "Output misses on evaluation data in separate files")
     private Boolean outputMisses = false;
 
-    @Parameter(names = {"-train", "-t"}, description = "Path to training data file (required for training)", order = 2)
+    @Parameter(names = {"-train", "-t"}, description = "Path to training data (required for training)", order = 2)
     private String trainPath;
-    @Parameter(names = {"-valid", "-dev", "-v"}, description = "Path to validation data file (recommended for training)", order = 3)
+    @Parameter(names = {"-valid", "-dev", "-v"}, description = "Path to validation data", order = 3)
     private String validPath;
 
     @Parameter(names = "-seed", description = "Random seed for cross-validation fold selection", hidden = true)
     private Integer seed = 0;
-    @Parameter(names = {"-cv", "-folds"}, description = "Number of cross validation folds to sample", order = 5)
+    @Parameter(names = {"-cv", "-folds"}, description = "Number of cross-validation folds", order = 5)
     private Integer folds = 0;
     @Parameter(names = "-per", description = "Percentage of instances to use for training in each fold, if using stratified "
             + "sampling cross-validation", hidden = true)
     private Double trainPer = 0.8;
 
-    @Parameter(names = "-test", description = "Path to testing data file", order = 6)
+    @Parameter(names = "-test", description = "Path to test data", order = 6)
     private String testPath;
 
-    @Parameter(names = {"--itl", "--interactive", "--loop"}, description = "Start an interactive testing session on provided model "
-            + "(after training/testing)", order = 7)
+    @Parameter(names = {"--itl", "--interactive", "--loop"}, description = "Start an interactive test session on provided model "
+            + "(after training and/or testing)", order = 7)
     private Boolean itl = false;
 
     @Parameter(names = {"--help", "--usage"}, description = "Display usage", help = true)
     private Boolean help = false;
 
-    @Parameter(names = {"-corpus", "-corpusType"}, description = "Training/evaluation corpus type")
+    @Parameter(names = {"-corpus"}, description = "Training/evaluation corpus type")
     private CorpusType corpusType = CorpusType.Semlink;
     @Parameter(names = "-keyExt", description = "Extension for sense key file (only needed for Semeval XML corpora)")
     private String keyExt = ".gold.key.txt";
@@ -210,7 +208,7 @@ public abstract class WordSenseCLI {
 
     WordSenseCLI(String[] args) {
         cmd = new JCommander(this);
-        cmd.setProgramName(this.getClass().getSimpleName());
+        cmd.setProgramName(WordSenseCLI.class.getSimpleName());
         try {
             cmd.parse(args);
             if (help || args.length == 0) {
@@ -252,7 +250,7 @@ public abstract class WordSenseCLI {
             modelPath = trainPath + ".bin";
             log.warn("No model path specified, saving to {} instead.", modelPath);
         }
-        if (trainPath == null && !itl && testPath == null && folds == 0) {
+        if (trainPath == null && !itl && testPath == null && folds == 0 && inputPath == null) {
             System.out.println(helpMessage);
             cmd.usage();
             System.exit(0);
@@ -428,7 +426,7 @@ public abstract class WordSenseCLI {
     }
 
     private WordSenseClassifier loadClassifier() {
-        log.debug("Loading saved classifier model from {}", modelPath);
+        log.info("Loading saved classifier model from {}", modelPath);
         try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(modelPath))) {
             return new WordSenseClassifier(ois);
         } catch (FileNotFoundException e) {
@@ -439,7 +437,7 @@ public abstract class WordSenseCLI {
     }
 
     private void saveClassifier() {
-        log.debug("Saving trained classifier model to {}", modelPath);
+        log.info("Saving trained classifier model to {}", modelPath);
         try (ObjectOutputStream ois = new ObjectOutputStream(new FileOutputStream(modelPath))) {
             classifier.save(ois);
         } catch (FileNotFoundException e) {
@@ -459,7 +457,7 @@ public abstract class WordSenseCLI {
             if (save) {
                 String outputFilePath = new File(inputPath + parseSuffix).getAbsolutePath();
                 try (OutputStream outputStream = new FileOutputStream(outputFilePath)) {
-                    log.debug("Saving parsed instances to {}", outputFilePath);
+                    log.info("Saving parsed instances to {}", outputFilePath);
                     reader.writeInstances(instances, outputStream);
                 } catch (Exception e) {
                     log.warn("Unable to save parsed instances", e);
