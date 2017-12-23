@@ -29,9 +29,9 @@ import static junit.framework.TestCase.assertNotNull;
  */
 public class ModelLoadingTest {
 
-    private static final String SEMLINK_PATH = "models/semlink.bin";
-    private static final String ONTONOTES_PATH = "models/ontonotes.bin";
-    private static final String SEMCOR_PATH = "models/semcor.bin";
+    private static final String SEMLINK_PATH = "models/nlp4j-semlink.bin";
+    private static final String ONTONOTES_PATH = "models/nlp4j-ontonotes.bin";
+    private static final String SEMCOR_PATH = "models/nlp4j-semcor.bin";
 
     @Test
     public void testSemlink() {

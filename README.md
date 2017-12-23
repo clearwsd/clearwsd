@@ -19,7 +19,7 @@ On Mac/Linux, you can then build the project for CLI use:
 ```bash
 git clone https://github.com/jgung/clear-wsd.git
 cd clear-wsd
-mvn package -P build-cli
+mvn package -P build-nlp4j-cli
 ```
 Alternatively (or additionally), for use as an API, install the package in your local Maven repo (`~/.m2/repository`), use
 ```bash
@@ -40,12 +40,19 @@ include just two of these, the first being `clear-wsd-core`:
 </dependency>
 ```
 and the second being a parser module, used for pre-processing and feature extraction.
-
-For the Stanford Parser wrapper module (GPL licensed), add the following dependency:
+A wrapper for the [NLP4J](https://emorynlp.github.io/nlp4j/) dependency parser is provided:
 ```xml
 <dependency>
   <groupId>io.github.clearwsd</groupId>
-  <artifactId>clear-wsd-stanford-parser</artifactId>
+  <artifactId>clear-wsd-nlp4j</artifactId>
+  <version>1.0.0</version>
+</dependency>
+```
+For the [Stanford Parser](https://stanfordnlp.github.io/CoreNLP/) wrapper module (GPL licensed), you can instead add the following dependency:
+```xml
+<dependency>
+  <groupId>io.github.clearwsd</groupId>
+  <artifactId>clear-wsd-stanford</artifactId>
   <version>1.0.0</version>
 </dependency>
 ```
@@ -64,13 +71,13 @@ You can then try out a pre-trained model (from OntoNotes) with the following:
 import java.util.List;
 
 import io.github.clearwsd.DefaultSensePredictor;
-import io.github.clearwsd.parser.StanfordDependencyParser;
+import io.github.clearwsd.parser.Nlp4jDependencyParser;
 
 public class Test {
     public static void main(String[] args) {
-        StanfordDependencyParser parser = new StanfordDependencyParser(); // load dependency parser
+        Nlp4jDependencyParser parser = new Nlp4jDependencyParser(); // load dependency parser
         DefaultSensePredictor wsd = DefaultSensePredictor.loadFromResource(
-                "models/ontonotes.bin", parser); // load WSD model
+                "models/nlp4j-ontonotes.bin", parser); // load WSD model
         	
         String sentence = "Mary took the bus to school (which "
         	+ "took about 30 minutes), and studiously began to "
@@ -186,3 +193,7 @@ java -jar clear-wsd-cli-*.jar -input path/to/raw/data.txt -output path/to/predic
 ```bash
 java -jar clear-wsd-cli-*.jar --loop -model path/to/saved/model.bin
 ```
+
+## License
+
+Please refer to the `LICENSE.txt` in individual modules.

@@ -31,7 +31,7 @@
     <dependencies>
         <dependency>
             <groupId>io.github.clearwsd</groupId>
-            <artifactId>clear-wsd-stanford-parser</artifactId>
+            <artifactId>clear-wsd-stanford</artifactId>
         </dependency>
         <dependency>
             <groupId>org.mapdb</groupId>
@@ -39,42 +39,5 @@
             <version>${mapdb.version}</version>
         </dependency>
     </dependencies>
-
-    <profiles>
-        <profile>
-            <id>build-cli</id>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-assembly-plugin</artifactId>
-                        <executions>
-                            <execution>
-                                <phase>package</phase>
-                                <goals>
-                                    <goal>single</goal>
-                                </goals>
-                                <configuration>
-                                    <outputDirectory>..</outputDirectory>
-                                    <finalName>clear-wsd-cli-${project.version}</finalName>
-                                    <appendAssemblyId>false</appendAssemblyId>
-                                    <descriptorRefs>
-                                        <descriptorRef>jar-with-dependencies</descriptorRef>
-                                    </descriptorRefs>
-                                    <archive>
-                                        <manifest>
-                                            <mainClass>
-                                                io.github.clearwsd.app.StanfordWordSenseCLI
-                                            </mainClass>
-                                        </manifest>
-                                    </archive>
-                                </configuration>
-                            </execution>
-                        </executions>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-    </profiles>
 
 </project>
