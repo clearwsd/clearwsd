@@ -13,7 +13,7 @@
 
     <artifactId>clear-wsd-nlp4j</artifactId>
 
-    <name>ClearWSD NLP4J Parser Wrapper</name>
+    <name>ClearWSD NLP4J Parser</name>
     <description>ClearWSD wrapper for NLP4J</description>
 
     <properties>
@@ -28,12 +28,12 @@
         <dependency>
             <groupId>edu.emory.mathcs.nlp</groupId>
             <artifactId>nlp4j-api</artifactId>
-            <version>1.1.3</version>
+            <version>${nlp4j.version}</version>
         </dependency>
         <dependency>
             <groupId>edu.emory.mathcs.nlp</groupId>
             <artifactId>nlp4j-english</artifactId>
-            <version>1.1.3</version>
+            <version>${nlp4j.version}</version>
         </dependency>
     </dependencies>
 

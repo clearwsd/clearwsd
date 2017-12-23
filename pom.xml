@@ -61,7 +61,7 @@
         <module>clear-wsd-core</module>
         <module>clear-wsd-models</module>
         <module>clear-wsd-nlp4j</module>
-        <module>clear-wsd-stanford-parser</module>
+        <module>clear-wsd-stanford</module>
     </modules>
 
     <dependencies>
@@ -125,7 +125,7 @@
             </dependency>
             <dependency>
                 <groupId>io.github.clearwsd</groupId>
-                <artifactId>clear-wsd-stanford-parser</artifactId>
+                <artifactId>clear-wsd-stanford</artifactId>
                 <version>${project.version}</version>
             </dependency>
         </dependencies>

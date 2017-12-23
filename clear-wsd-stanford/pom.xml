@@ -11,7 +11,7 @@
         <relativePath>..</relativePath>
     </parent>
 
-    <artifactId>clear-wsd-stanford-parser</artifactId>
+    <artifactId>clear-wsd-stanford</artifactId>
 
     <name>ClearWSD Stanford Parser</name>
     <description>ClearWSD wrapper for Stanford CoreNLP</description>
