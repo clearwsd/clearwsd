@@ -25,11 +25,6 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.stream.Collectors;
 
-import io.github.clearwsd.type.DepNode;
-import io.github.clearwsd.type.DepTree;
-import io.github.clearwsd.type.FeatureType;
-import io.github.clearwsd.type.DefaultDepNode;
-import io.github.clearwsd.type.DefaultDepTree;
 import edu.stanford.nlp.international.Language;
 import edu.stanford.nlp.ling.CoreLabel;
 import edu.stanford.nlp.parser.nndep.DependencyParser;
@@ -37,6 +32,11 @@ import edu.stanford.nlp.process.Morphology;
 import edu.stanford.nlp.tagger.maxent.MaxentTagger;
 import edu.stanford.nlp.trees.GrammaticalStructure;
 import edu.stanford.nlp.trees.TypedDependency;
+import io.github.clearwsd.type.DefaultDepNode;
+import io.github.clearwsd.type.DefaultDepTree;
+import io.github.clearwsd.type.DepNode;
+import io.github.clearwsd.type.DepTree;
+import io.github.clearwsd.type.FeatureType;
 import lombok.Getter;
 
 import static edu.stanford.nlp.parser.nndep.DependencyParser.DEFAULT_MODEL;
@@ -180,9 +180,6 @@ public class StanfordDependencyParser implements NlpParser {
             int head = rel.gov().index() - 1;
             if (head >= 0) {
                 ((DefaultDepNode) token).head(tokens.get(head));
-                if (!collapsed) {
-                    tokens.get(head).children().add(token);
-                }
             } else {
                 root = token;
             }
