@@ -60,6 +60,7 @@
         <module>clear-wsd-cli</module>
         <module>clear-wsd-core</module>
         <module>clear-wsd-models</module>
+        <module>clear-wsd-nlp4j</module>
         <module>clear-wsd-stanford-parser</module>
     </modules>
 
@@ -116,6 +117,11 @@
                 <artifactId>clear-wsd-models</artifactId>
                 <version>${project.version}</version>
                 <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>io.github.clearwsd</groupId>
+                <artifactId>clear-wsd-nlp4j</artifactId>
+                <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>io.github.clearwsd</groupId>
