@@ -193,3 +193,7 @@ java -jar clear-wsd-cli-*.jar -input path/to/raw/data.txt -output path/to/predic
 ```bash
 java -jar clear-wsd-cli-*.jar --loop -model path/to/saved/model.bin
 ```
+
+## License
+
+Please refer to the `LICENSE.txt` in individual modules.
