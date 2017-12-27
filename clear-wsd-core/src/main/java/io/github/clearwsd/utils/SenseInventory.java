@@ -23,7 +23,7 @@ import java.util.Set;
  *
  * @author jamesgung
  */
-public interface SenseInventory {
+public interface SenseInventory<T> {
 
     String DEFAULT_SENSE = "NONE";
 
@@ -50,5 +50,13 @@ public interface SenseInventory {
      * @param sense sense of word
      */
     void addSense(String lemma, String sense);
+
+    /**
+     * Return the sense object associated with this sense inventory.
+     *
+     * @param id sense unique id
+     * @return sense
+     */
+    T getSense(String id);
 
 }

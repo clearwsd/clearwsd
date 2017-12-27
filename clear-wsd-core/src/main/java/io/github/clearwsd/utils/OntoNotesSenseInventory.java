@@ -39,7 +39,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @Setter
 @NoArgsConstructor
-public class OntoNotesSenseInventory implements SenseInventory, Serializable {
+public class OntoNotesSenseInventory implements SenseInventory<OntoNotesSense>, Serializable {
 
     private static final long serialVersionUID = 3267895989039842451L;
 
@@ -61,7 +61,7 @@ public class OntoNotesSenseInventory implements SenseInventory, Serializable {
             return new HashSet<>();
         }
         return inventory.getSenses().stream()
-                .map(OntoNotesSense::getNumber)
+                .map(sense -> id(inventory.getLemma(), sense.getNumber()))
                 .collect(Collectors.toSet());
     }
 
@@ -71,7 +71,9 @@ public class OntoNotesSenseInventory implements SenseInventory, Serializable {
         if (inventory == null) {
             return SenseInventory.DEFAULT_SENSE;
         }
-        return inventory.getSenses().stream().findFirst().map(OntoNotesSense::getNumber).orElse(DEFAULT_SENSE);
+        return inventory.getSenses().stream()
+                .findFirst()
+                .map(sense -> id(inventory.getLemma(), sense.getNumber())).orElse(DEFAULT_SENSE);
     }
 
     @Override
@@ -84,6 +86,26 @@ public class OntoNotesSenseInventory implements SenseInventory, Serializable {
                 log.warn("Unrecognized sense: {}", sense);
             }
         }
+    }
+
+    private String id(String lemma, String number) {
+        return lemma + ":" + number;
+    }
+
+    @Override
+    public OntoNotesSense getSense(String id) {
+        String[] fields = id.split(":");
+        String lemma = fields[0];
+        String number = fields[1];
+        OntoNotesInventory inventory = inventoryMap.get(lemma);
+        if (inventory == null) {
+            return null;
+        }
+        return inventory.getSenses()
+                .stream()
+                .filter(s -> s.getNumber().equals(number))
+                .findFirst()
+                .orElse(null);
     }
 
 }

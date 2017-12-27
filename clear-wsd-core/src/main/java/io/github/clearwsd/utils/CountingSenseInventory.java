@@ -28,7 +28,7 @@ import javax.annotation.Nullable;
  *
  * @author jamesgung
  */
-public class CountingSenseInventory implements SenseInventory, Serializable {
+public class CountingSenseInventory implements SenseInventory<String>, Serializable {
 
     private static final long serialVersionUID = -8129315817036077873L;
 
@@ -55,6 +55,11 @@ public class CountingSenseInventory implements SenseInventory, Serializable {
     public void addSense(String lemma, String sense) {
         Map<String, Integer> current = inventoryMap.computeIfAbsent(lemma, k -> new HashMap<>());
         current.merge(sense, 1, (old, one) -> old + one);
+    }
+
+    @Override
+    public String getSense(String id) {
+        return id;
     }
 
 }

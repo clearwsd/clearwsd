@@ -30,11 +30,13 @@ import java.util.List;
 public interface SensePredictor<S> {
 
     /**
-     * Given a tokenized sentence, return a list of senses (one per input token).
+     * Given a tokenized sentence, return a list of {@link SensePrediction sense predictions}.
+     * The number of predictions is not guaranteed to correspond with the number of input tokens--to determine the input token
+     * associated with a sense, refer to {@link SensePrediction#index()}.
      *
      * @param sentence tokenized sentence
-     * @return list of senses (one per input token)
+     * @return list of sense predictions
      */
-    List<S> predict(List<String> sentence);
+    List<SensePrediction<S>> predict(List<String> sentence);
 
 }

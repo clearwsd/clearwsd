@@ -45,7 +45,7 @@ import lombok.extern.slf4j.Slf4j;
  * @author jamesgung
  */
 @Slf4j
-public class ExtJwnlWordNet implements WordNetFacade {
+public class ExtJwnlWordNet implements WordNetFacade<Word> {
 
     @Getter
     private Dictionary dictionary;
@@ -70,6 +70,16 @@ public class ExtJwnlWordNet implements WordNetFacade {
      */
     public ExtJwnlWordNet() {
         this(null);
+    }
+
+    @Override
+    public Optional<Word> lookup(String id) {
+        try {
+            return Optional.ofNullable(dictionary.getWordBySenseKey(id));
+        } catch (JWNLException e) {
+            log.warn("Error looking up word for sense key: {}", id);
+        }
+        return Optional.empty();
     }
 
     @Override
@@ -118,6 +128,11 @@ public class ExtJwnlWordNet implements WordNetFacade {
             synonyms.addAll(lemmas(id));
         }
         return synonyms;
+    }
+
+    @Override
+    public String definition(String id) {
+        return lookup(id).map(w -> w.getSynset().getGloss()).orElse("-");
     }
 
     private String getLemmaString(String input) {

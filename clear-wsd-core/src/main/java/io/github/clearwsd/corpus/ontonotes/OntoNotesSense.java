@@ -44,21 +44,26 @@ public class OntoNotesSense implements Serializable {
     @XmlAttribute(name = "n", required = true)
     @XmlJavaTypeAdapter(NormalizedStringAdapter.class)
     protected String number;
-    @XmlAttribute(name = "type")
-    @XmlJavaTypeAdapter(NormalizedStringAdapter.class)
-    protected String type;
     @XmlAttribute(name = "name", required = true)
     @XmlJavaTypeAdapter(NormalizedStringAdapter.class)
     protected String name;
     @XmlAttribute(name = "group", required = true)
     @XmlJavaTypeAdapter(NormalizedStringAdapter.class)
     protected String group;
-    protected String commentary;
+    @XmlElement(name = "SENSE_META", required = true)
+    protected OntoNotesSenseMeta senseMetaData;
     @XmlElement(required = true)
     protected String examples;
     @XmlElement(required = true)
     protected OntoNotesMappings mappings;
-    @XmlElement(name = "SENSE_META", required = true)
-    protected OntoNotesSenseMeta senseMetaData;
 
+    @XmlAttribute(name = "type")
+    @XmlJavaTypeAdapter(NormalizedStringAdapter.class)
+    protected String type;
+    protected String commentary;
+
+    @Override
+    public String toString() {
+        return number + " --> " + name;
+    }
 }

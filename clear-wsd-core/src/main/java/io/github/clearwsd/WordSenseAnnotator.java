@@ -23,6 +23,7 @@ import io.github.clearwsd.type.DepNode;
 import io.github.clearwsd.type.DepTree;
 import io.github.clearwsd.type.FeatureType;
 import io.github.clearwsd.type.NlpFocus;
+import io.github.clearwsd.utils.SenseInventory;
 import io.github.clearwsd.verbnet.DefaultPredicateAnnotator;
 import lombok.Getter;
 import lombok.Setter;
@@ -41,7 +42,7 @@ public class WordSenseAnnotator implements Annotator<DepTree> {
 
     private static final long serialVersionUID = 1756016409763214122L;
 
-    private final Classifier<NlpFocus<DepNode, DepTree>, String> classifier;
+    private final WordSenseClassifier classifier;
     private final Annotator<DepTree> targetAnnotator;
 
     @Setter
@@ -54,8 +55,7 @@ public class WordSenseAnnotator implements Annotator<DepTree> {
      * @param classifier      word sense classifier
      * @param targetAnnotator predicate identifier/annotator
      */
-    public WordSenseAnnotator(Classifier<NlpFocus<DepNode, DepTree>, String> classifier,
-                              Annotator<DepTree> targetAnnotator) {
+    public WordSenseAnnotator(WordSenseClassifier classifier, Annotator<DepTree> targetAnnotator) {
         this.classifier = classifier;
         this.targetAnnotator = targetAnnotator;
     }
@@ -80,6 +80,12 @@ public class WordSenseAnnotator implements Annotator<DepTree> {
         return targetAnnotator.initialized();
     }
 
+    /**
+     * Return the {@link SenseInventory} associated with this annotator.
+     */
+    public SenseInventory senseInventory() {
+        return classifier.senseInventory();
+    }
 
     /**
      * Initialize a {@link WordSenseAnnotator} from a classpath resource.

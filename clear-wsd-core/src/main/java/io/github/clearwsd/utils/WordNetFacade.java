@@ -22,9 +22,18 @@ import java.util.Set;
 /**
  * WordNet facade to allow alternative WN implementations to be used during feature extraction.
  *
+ * @param <T> WordNet word type
  * @author jamesgung
  */
-public interface WordNetFacade {
+public interface WordNetFacade<T> {
+
+    /**
+     * Find the WordNet word sense associated with a given ID.
+     *
+     * @param id unique WordNet id
+     * @return {@link Optional} word
+     */
+    Optional<T> lookup(String id);
 
     /**
      * Return the most frequent sense for a given lemma and part-of-speech tag.
@@ -62,5 +71,13 @@ public interface WordNetFacade {
      * @return synonyms
      */
     Set<String> synonyms(String lemma, String pos);
+
+    /**
+     * Returns a description or definition of a given sense ID, or an empty string if the sense is not found.
+     *
+     * @param id sense ID
+     * @return definition for sense
+     */
+    String definition(String id);
 
 }

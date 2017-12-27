@@ -69,7 +69,7 @@ import io.github.clearwsd.utils.InteractiveTestLoop;
 import io.github.clearwsd.utils.LemmaDictionary;
 import io.github.clearwsd.utils.OntoNotesSenseInventory;
 import io.github.clearwsd.utils.SenseInventory;
-import io.github.clearwsd.utils.WordNetSenseInventory;
+import io.github.clearwsd.utils.ExtJwnlSenseInventory;
 import io.github.clearwsd.verbnet.DefaultPredicateAnnotator;
 import io.github.clearwsd.verbnet.DefaultVerbNetClassifier;
 import io.github.clearwsd.verbnet.VerbNetSenseInventory;
@@ -94,7 +94,7 @@ public abstract class WordSenseCLI {
     @AllArgsConstructor
     public enum SenseInventoryType {
         VerbNet(VerbNetSenseInventory::new, path -> new VerbNetSenseInventory(new File(path))),
-        WordNet(WordNetSenseInventory::new, path -> new WordNetSenseInventory()),
+        WordNet(ExtJwnlSenseInventory::new, path -> new ExtJwnlSenseInventory()),
         OntoNotes(OntoNotesSenseInventory::new, path -> new OntoNotesSenseInventory(Paths.get(path))),
         Counting(CountingSenseInventory::new, path -> new CountingSenseInventory());
 

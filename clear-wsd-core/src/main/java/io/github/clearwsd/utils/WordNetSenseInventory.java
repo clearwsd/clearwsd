@@ -24,16 +24,23 @@ import java.util.Set;
  *
  * @author jamesgung
  */
-public class WordNetSenseInventory implements SenseInventory, Serializable {
+public abstract class WordNetSenseInventory<T> implements SenseInventory<T>, Serializable {
 
     private static final long serialVersionUID = -5075422456841090098L;
 
-    private transient WordNetFacade wordNet;
+    private transient WordNetFacade<T> wordNet;
+
+    /**
+     * Initialize WordNet implementation backing this sense inventory.
+     *
+     * @return initialized {@link WordNetFacade}
+     */
+    protected abstract WordNetFacade<T> initializeWordNet();
 
     @Override
     public Set<String> senses(String lemma) {
         if (wordNet == null) {
-            wordNet = new ExtJwnlWordNet();
+            wordNet = initializeWordNet();
         }
         return wordNet.senses(lemma, "VB");
     }
@@ -41,7 +48,7 @@ public class WordNetSenseInventory implements SenseInventory, Serializable {
     @Override
     public String defaultSense(String lemma) {
         if (wordNet == null) {
-            wordNet = new ExtJwnlWordNet();
+            wordNet = initializeWordNet();
         }
         return wordNet.mfs(lemma, "VB").orElse("");
     }
@@ -49,6 +56,11 @@ public class WordNetSenseInventory implements SenseInventory, Serializable {
     @Override
     public void addSense(String lemma, String sense) {
         // pass, do not update sense inventory
+    }
+
+    @Override
+    public T getSense(String id) {
+        return wordNet.lookup(id).orElse(null);
     }
 
 }

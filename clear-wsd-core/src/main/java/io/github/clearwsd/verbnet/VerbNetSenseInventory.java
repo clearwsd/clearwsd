@@ -52,7 +52,7 @@ import lombok.extern.slf4j.Slf4j;
  * @author jamesgung
  */
 @Slf4j
-public class VerbNetSenseInventory implements SenseInventory, Serializable {
+public class VerbNetSenseInventory implements SenseInventory<IVerbClass>, Serializable {
 
     private static final long serialVersionUID = 410274561044821035L;
 
@@ -148,6 +148,11 @@ public class VerbNetSenseInventory implements SenseInventory, Serializable {
             log.warn("Unrecognized sense: {}", sense);
         }
         countingSenseInventory.addSense(lemma, sense);
+    }
+
+    @Override
+    public IVerbClass getSense(String id) {
+        return senseVnMap.get(id);
     }
 
     private void initialize() {
