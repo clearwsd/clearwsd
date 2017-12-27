@@ -1,8 +1,8 @@
 # ClearWSD
 
-ClearWSD is a word sense disambiguation tool for the JVM, with core modules available under an Apache 2.0 license. It provides 
-simple APIs for integration with other libraries, as well as a CLI for non-programmatic use. It is modular, allowing for alternative 
-implementations of sub-components such as parsers or resources used for feature extraction.
+ClearWSD is a word sense disambiguation tool for the JVM, with core modules available under an Apache 2.0 license.
+It provides simple APIs for integration with other libraries, as well as a command-line interface (CLI) for non-programmatic use.
+It is modular, allowing for alternative implementations of sub-components such as parsers or resources used for feature extraction.
 
 It is meant for use in both research and production settings. Main features include
 
@@ -71,25 +71,27 @@ You can then try out a pre-trained model (from OntoNotes) with the following:
 import java.util.List;
 
 import io.github.clearwsd.DefaultSensePredictor;
+import io.github.clearwsd.SensePrediction;
+import io.github.clearwsd.corpus.ontonotes.OntoNotesSense;
 import io.github.clearwsd.parser.Nlp4jDependencyParser;
 
 public class Test {
     public static void main(String[] args) {
         Nlp4jDependencyParser parser = new Nlp4jDependencyParser(); // load dependency parser
-        DefaultSensePredictor wsd = DefaultSensePredictor.loadFromResource(
+        DefaultSensePredictor<OntoNotesSense> wsd = DefaultSensePredictor.loadFromResource(
                 "models/nlp4j-ontonotes.bin", parser); // load WSD model
-        	
-        String sentence = "Mary took the bus to school (which "
-        	+ "took about 30 minutes), and studiously began to "
-        	+ "take notes about the Bolsheviks "
-        	+ "taking over the Winter Palace";
+
+        String sentence = "Mary took the bus to school (which " // 8 --> travel by means of
+                + "took about 30 minutes), and studiously "     // 3 --> require or necessitate
+                + "took notes about the Bolsheviks "            // 2 --> light verb usage
+                + "taking over the Winter Palace";              // 9 --> claim or conquer, become in control of
+
         List<String> tokens = parser.tokenize(sentence); // split sentence into tokens
-        List<String> senses = wsd.predict(tokens);       // predict one sense per token
-        
-        System.out.println(senses.get(1));  // take-8 --> travel by means of
-        System.out.println(senses.get(8));  // take-3 --> require or necessitate
-        System.out.println(senses.get(18)); // take-2 --> light verb usage
-        System.out.println(senses.get(23)); // take-9 --> claim or conquer, become in control of
+
+        // display sense predictions and their definitions
+        for (SensePrediction<OntoNotesSense> prediction : wsd.predict(tokens)) {
+            System.out.println(prediction.sense().getNumber() + " --> " + prediction.sense().getName());
+        }
     }
 }
 ```
@@ -170,6 +172,8 @@ example.txt 57 2 get get-13.5.1-1	Did you get that part ?
 ```
 
 #### Evaluation
+The CLI provides several modes of evaluation/application. You can perform cross-validation, test on a specific dataset,
+apply a trained model to raw text, or try out a model interactively by typing in test sentences.
 ##### Cross Validation
 Specify the number of folds with `-cv`. `-cv 5`, for example, can be used for 5-fold cross validation.:
 ```bash
@@ -181,19 +185,40 @@ Specify a test file with `-test`:
 java -jar clear-wsd-cli-*.jar -test path/to/test/file.txt -model path/to/trained/model.bin
 ```
 
-#### Application
+##### Application
 To apply a trained model to new (raw) data, specify a path with `-input`. Optionally specify an output path with `-output`:
 ```bash
 java -jar clear-wsd-cli-*.jar -input path/to/raw/data.txt -output path/to/predictions.txt \
 -model clear-wsd-models/src/main/resources/models/ontonotes.bin
 ```
 
-#### Interactive Testing
+##### Interactive Testing
 `--loop` or `--itl` can be used to start an interactive command line test loop, where you can input sentences and see predictions.
 ```bash
 java -jar clear-wsd-cli-*.jar --loop -model path/to/saved/model.bin
 ```
+After the parser and model finish loading, you should then be able to enter test sentences and see predicted senses:
+```text
+Enter test input ("EXIT" to quit).
+> Call me Ishmael
 
+Call[Dub-29.3]
+me
+Ishmael
+
+> Call a cab
+
+Call[Get-13.5.1]
+a
+cab
+
+> Call for change
+
+Call[Order-60]
+for
+change
+
+```
 ## License
 
 Please refer to the `LICENSE.txt` in individual modules.
