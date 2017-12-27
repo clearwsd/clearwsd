@@ -16,9 +16,14 @@
 
 package io.github.clearwsd.models;
 
+import net.sf.extjwnl.data.Word;
+
 import org.junit.Test;
 
-import io.github.clearwsd.WordSenseClassifier;
+import edu.mit.jverbnet.data.IVerbClass;
+import io.github.clearwsd.DefaultSensePredictor;
+import io.github.clearwsd.SensePredictor;
+import io.github.clearwsd.corpus.ontonotes.OntoNotesSense;
 
 import static junit.framework.TestCase.assertNotNull;
 
@@ -35,20 +40,20 @@ public class ModelLoadingTest {
 
     @Test
     public void testSemlink() {
-        WordSenseClassifier classifier = WordSenseClassifier.load(this.getClass().getClassLoader().getResource(SEMLINK_PATH));
-        assertNotNull(classifier);
+        SensePredictor<IVerbClass> predictor = DefaultSensePredictor.loadFromResource(SEMLINK_PATH, null);
+        assertNotNull(predictor);
     }
 
     @Test
     public void testOntoNotes() {
-        WordSenseClassifier classifier = WordSenseClassifier.load(this.getClass().getClassLoader().getResource(ONTONOTES_PATH));
-        assertNotNull(classifier);
+        SensePredictor<OntoNotesSense> predictor = DefaultSensePredictor.loadFromResource(ONTONOTES_PATH, null);
+        assertNotNull(predictor);
     }
 
     @Test
     public void testSemcor() {
-        WordSenseClassifier classifier = WordSenseClassifier.load(this.getClass().getClassLoader().getResource(SEMCOR_PATH));
-        assertNotNull(classifier);
+        SensePredictor<Word> predictor = DefaultSensePredictor.loadFromResource(SEMCOR_PATH, null);
+        assertNotNull(predictor);
     }
 
 }
