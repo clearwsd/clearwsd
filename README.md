@@ -17,8 +17,8 @@ It is meant for use in both research and production settings. Main features incl
 To build ClearWSD, you will need JDK (Java) 8 and [Apache Maven](https://maven.apache.org/).
 On Mac/Linux, you can then build the project for CLI use:
 ```bash
-git clone https://github.com/jgung/clear-wsd.git
-cd clear-wsd
+git clone https://github.com/clearwsd/clearwsd.git
+cd clearwsd
 mvn package -P build-nlp4j-cli
 ```
 Alternatively (or additionally), for use as an API, install the package in your local Maven repo (`~/.m2/repository`), use
@@ -31,11 +31,11 @@ The easiest way to make use of ClearWSD in your project is through [Maven](https
 ClearWSD dependencies to your project's `pom.xml`.
 
 ClearWSD is composed of several modules. To try out ClearWSD in your project with no modifications, it is typically sufficient to
-include just two of these, the first being `clear-wsd-core`:
+include just two of these, the first being `clearwsd-core`:
 ```xml
 <dependency>
   <groupId>io.github.clearwsd</groupId>
-  <artifactId>clear-wsd-core</artifactId>
+  <artifactId>clearwsd-core</artifactId>
   <version>1.0.0</version>
 </dependency>
 ```
@@ -44,7 +44,7 @@ A wrapper for the [NLP4J](https://emorynlp.github.io/nlp4j/) dependency parser i
 ```xml
 <dependency>
   <groupId>io.github.clearwsd</groupId>
-  <artifactId>clear-wsd-nlp4j</artifactId>
+  <artifactId>clearwsd-nlp4j</artifactId>
   <version>1.0.0</version>
 </dependency>
 ```
@@ -52,7 +52,7 @@ For the [Stanford Parser](https://stanfordnlp.github.io/CoreNLP/) wrapper module
 ```xml
 <dependency>
   <groupId>io.github.clearwsd</groupId>
-  <artifactId>clear-wsd-stanford</artifactId>
+  <artifactId>clearwsd-stanford</artifactId>
   <version>1.0.0</version>
 </dependency>
 ```
@@ -61,7 +61,7 @@ If you want to use pre-trained word sense disambiguation models, just add the fo
 ```xml
 <dependency>
   <groupId>io.github.clearwsd</groupId>
-  <artifactId>clear-wsd-models</artifactId>
+  <artifactId>clearwsd-models</artifactId>
   <version>1.0.0</version>
 </dependency>
 ```
@@ -101,7 +101,7 @@ public class Test {
 ClearWSD provides a command-line interface for training, evaluation, and application of word sense disambiguation models.
 You can see a help message and available options with the following command (assuming you have already run `mvn package`):
 ```bash
-java -jar clear-wsd-cli-*.jar --help
+java -jar clearwsd-cli-*.jar --help
 ```
 
 ```text
@@ -158,7 +158,7 @@ Usage: WordSenseCLI [options]
 To train a new model, you must specify the path to a training data file with `-train`, as well as a path for the resulting saved
 model, using `-model`:
 ```bash
-java -jar clear-wsd-cli-*.jar -train path/to/training/file.txt -model path/to/save/model.bin
+java -jar clearwsd-cli-*.jar -train path/to/training/file.txt -model path/to/save/model.bin
 ```
 
 The default corpus (`Semlink`) expects files with an instance per line in the following format:
@@ -177,25 +177,25 @@ apply a trained model to raw text, or try out a model interactively by typing in
 ##### Cross Validation
 Specify the number of folds with `-cv`. `-cv 5`, for example, can be used for 5-fold cross validation.:
 ```bash
-java -jar clear-wsd-cli-*.jar -train path/to/training/file.txt -cv 5
+java -jar clearwsd-cli-*.jar -train path/to/training/file.txt -cv 5
 ```
 ##### Test Dataset
 Specify a test file with `-test`:
 ```bash
-java -jar clear-wsd-cli-*.jar -test path/to/test/file.txt -model path/to/trained/model.bin
+java -jar clearwsd-cli-*.jar -test path/to/test/file.txt -model path/to/trained/model.bin
 ```
 
 ##### Application
 To apply a trained model to new (raw) data, specify a path with `-input`. Optionally specify an output path with `-output`:
 ```bash
-java -jar clear-wsd-cli-*.jar -input path/to/raw/data.txt -output path/to/predictions.txt \
--model clear-wsd-models/src/main/resources/models/ontonotes.bin
+java -jar clearwsd-cli-*.jar -input path/to/raw/data.txt -output path/to/predictions.txt \
+-model clearwsd-models/src/main/resources/models/ontonotes.bin
 ```
 
 ##### Interactive Testing
 `--loop` or `--itl` can be used to start an interactive command line test loop, where you can input sentences and see predictions.
 ```bash
-java -jar clear-wsd-cli-*.jar --loop -model path/to/saved/model.bin
+java -jar clearwsd-cli-*.jar --loop -model path/to/saved/model.bin
 ```
 After the parser and model finish loading, you should then be able to enter test sentences and see predicted senses:
 ```text

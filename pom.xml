@@ -9,13 +9,13 @@
     </prerequisites>
 
     <groupId>io.github.clearwsd</groupId>
-    <artifactId>clear-wsd</artifactId>
+    <artifactId>clearwsd</artifactId>
     <version>1.0-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <name>ClearWSD</name>
     <description>ClearWSD is a library for performing word sense disambiguation using supervised machine learning.</description>
-    <url>https://github.com/jgung/clear-wsd</url>
+    <url>https://github.com/clearwsd/clearwsd</url>
 
     <licenses>
         <license>
@@ -29,18 +29,20 @@
             <id>jamesgung</id>
             <email>gungjm@gmail.com</email>
             <name>James Gung</name>
+            <organization>clearwsd</organization>
+            <organizationUrl>https://github.com/clearwsd/clearwsd</organizationUrl>
         </developer>
     </developers>
 
     <scm>
-        <connection>scm:git:https://github.com/jgung/clear-wsd.git</connection>
-        <developerConnection>scm:git:https://github.com/jgung/clear-wsd.git</developerConnection>
-        <url>https://github.com/jgung/clear-wsd</url>
+        <connection>scm:git:https://github.com/clearwsd/clearwsd.git</connection>
+        <developerConnection>scm:git:https://github.com/clearwsd/clearwsd.git</developerConnection>
+        <url>https://github.com/clearwsd/clearwsd</url>
     </scm>
 
     <issueManagement>
         <system>GitHub</system>
-        <url>https://github.com/jgung/clear-wsd/issues</url>
+        <url>https://github.com/clearwsd/clearwsd/issues</url>
     </issueManagement>
 
     <properties>
@@ -48,6 +50,7 @@
         <maven.compiler.target>1.8</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+        <gpg.keyname>clearwsd</gpg.keyname>
         <guava.version>23.0</guava.version>
         <lombok.version>1.16.18</lombok.version>
         <slf4j.version>1.7.25</slf4j.version>
@@ -56,12 +59,12 @@
     </properties>
 
     <modules>
-        <module>clear-wsd-api</module>
-        <module>clear-wsd-cli</module>
-        <module>clear-wsd-core</module>
-        <module>clear-wsd-models</module>
-        <module>clear-wsd-nlp4j</module>
-        <module>clear-wsd-stanford</module>
+        <module>clearwsd-api</module>
+        <module>clearwsd-cli</module>
+        <module>clearwsd-core</module>
+        <module>clearwsd-models</module>
+        <module>clearwsd-nlp4j</module>
+        <module>clearwsd-stanford</module>
     </modules>
 
     <dependencies>
@@ -99,33 +102,33 @@
         <dependencies>
             <dependency>
                 <groupId>io.github.clearwsd</groupId>
-                <artifactId>clear-wsd-api</artifactId>
+                <artifactId>clearwsd-api</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>io.github.clearwsd</groupId>
-                <artifactId>clear-wsd-cli</artifactId>
+                <artifactId>clearwsd-cli</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>io.github.clearwsd</groupId>
-                <artifactId>clear-wsd-core</artifactId>
+                <artifactId>clearwsd-core</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>io.github.clearwsd</groupId>
-                <artifactId>clear-wsd-models</artifactId>
+                <artifactId>clearwsd-models</artifactId>
                 <version>${project.version}</version>
                 <scope>provided</scope>
             </dependency>
             <dependency>
                 <groupId>io.github.clearwsd</groupId>
-                <artifactId>clear-wsd-nlp4j</artifactId>
+                <artifactId>clearwsd-nlp4j</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>io.github.clearwsd</groupId>
-                <artifactId>clear-wsd-stanford</artifactId>
+                <artifactId>clearwsd-stanford</artifactId>
                 <version>${project.version}</version>
             </dependency>
         </dependencies>
@@ -159,6 +162,24 @@
                                 <goals>
                                     <goal>jar</goal>
                                 </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-gpg-plugin</artifactId>
+                        <version>1.6</version>
+                        <executions>
+                            <execution>
+                                <id>sign-artifacts</id>
+                                <phase>verify</phase>
+                                <goals>
+                                    <goal>sign</goal>
+                                </goals>
+                                <configuration>
+                                    <keyname>${gpg.keyname}</keyname>
+                                    <passphraseServerId>${gpg.keyname}</passphraseServerId>
+                                </configuration>
                             </execution>
                         </executions>
                     </plugin>
