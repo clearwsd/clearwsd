@@ -189,13 +189,13 @@ java -jar clearwsd-cli-*.jar -test path/to/test/file.txt -model path/to/trained/
 To apply a trained model to new (raw) data, specify a path with `-input`. Optionally specify an output path with `-output`:
 ```bash
 java -jar clearwsd-cli-*.jar -input path/to/raw/data.txt -output path/to/predictions.txt \
--model clearwsd-models/src/main/resources/models/ontonotes.bin
+-model clearwsd-models/src/main/resources/models/nlp4j-ontonotes.bin
 ```
 
 ##### Interactive Testing
 `--loop` or `--itl` can be used to start an interactive command line test loop, where you can input sentences and see predictions.
 ```bash
-java -jar clearwsd-cli-*.jar --loop -model path/to/saved/model.bin
+java -jar clearwsd-cli-*.jar --loop -model clearwsd-models/src/main/resources/models/nlp4j-semlink.bin
 ```
 After the parser and model finish loading, you should then be able to enter test sentences and see predicted senses:
 ```text
