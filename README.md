@@ -19,11 +19,11 @@ On Mac/Linux, you can then build the project for CLI use:
 ```bash
 git clone https://github.com/clearwsd/clearwsd.git
 cd clearwsd
-mvn package -P build-nlp4j-cli
+mvn package -DskipTests -P build-nlp4j-cli
 ```
 Alternatively (or additionally), for use as an API, install the package in your local Maven repo (`~/.m2/repository`):
 ```bash
-mvn install -D skipTests
+mvn install -DskipTests
 ```
 
 ## API
