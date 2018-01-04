@@ -41,11 +41,7 @@ public class ConfusionMatrix {
     }
 
     public void add(String system, String gold, int count) {
-        Multiset<String> set = confusions.get(gold);
-        if (set == null) {
-            set = HashMultiset.create();
-            confusions.put(gold, set);
-        }
+        Multiset<String> set = confusions.computeIfAbsent(gold, k -> HashMultiset.create());
         set.add(system, count);
     }
 

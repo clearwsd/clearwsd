@@ -19,7 +19,6 @@ package io.github.clearwsd.feature.pipeline;
 import java.io.Serializable;
 import java.util.List;
 
-import io.github.clearwsd.classifier.SparseInstance;
 import io.github.clearwsd.type.NlpInstance;
 import io.github.clearwsd.classifier.SparseInstance;
 import io.github.clearwsd.feature.model.FeatureModel;

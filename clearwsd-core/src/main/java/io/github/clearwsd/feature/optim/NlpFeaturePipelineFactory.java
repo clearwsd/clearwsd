@@ -34,16 +34,6 @@ import io.github.clearwsd.feature.function.StringFeatureFunction;
 import io.github.clearwsd.feature.pipeline.DefaultFeaturePipeline;
 import io.github.clearwsd.feature.pipeline.FeaturePipeline;
 import io.github.clearwsd.type.NlpInstance;
-import io.github.clearwsd.feature.context.NlpContextFactory;
-import io.github.clearwsd.feature.extractor.StringExtractor;
-import io.github.clearwsd.feature.extractor.StringListExtractor;
-import io.github.clearwsd.feature.function.AggregateFeatureFunction;
-import io.github.clearwsd.feature.function.BiasFeatureFunction;
-import io.github.clearwsd.feature.function.FeatureFunction;
-import io.github.clearwsd.feature.function.MultiStringFeatureFunction;
-import io.github.clearwsd.feature.function.StringFeatureFunction;
-import io.github.clearwsd.feature.pipeline.DefaultFeaturePipeline;
-import io.github.clearwsd.feature.pipeline.FeaturePipeline;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
@@ -79,6 +69,14 @@ public class NlpFeaturePipelineFactory<I extends NlpInstance, O extends NlpInsta
 
     public NlpFeaturePipelineFactory<I, O> addBias() {
         factories.add(BiasFeatureFunction::new);
+        return this;
+    }
+
+    public NlpFeaturePipelineFactory<I, O> addFeatureFunctionFactory(NlpContextFactory<I, O> context,
+                                                                     StringExtractor<O> extractor,
+                                                                     boolean optional) {
+        factories.add(new SingleFeatureFunctionFactory(Collections.singletonList(context), Collections.singletonList(extractor),
+                optional));
         return this;
     }
 

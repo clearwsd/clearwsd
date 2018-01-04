@@ -50,6 +50,11 @@ public class Contexts {
         return new OffsetContextFactory<>(offsets);
     }
 
+    public static <T extends NlpInstance, S extends NlpSequence<T>> OffsetContextFactory<T, S> window(boolean concatenate,
+                                                                                                      Integer... offsets) {
+        return new OffsetContextFactory<>(concatenate, offsets);
+    }
+
     public static <T extends NlpInstance, S extends NlpSequence<T>> OffsetContextFactory<T, S> window(Collection<Integer> offsets) {
         return new OffsetContextFactory<>(new ArrayList<>(offsets));
     }

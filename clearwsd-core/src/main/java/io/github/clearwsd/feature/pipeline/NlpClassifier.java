@@ -25,13 +25,6 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.stream.Collectors;
 
-import io.github.clearwsd.classifier.Classifier;
-import io.github.clearwsd.classifier.DefaultSparseInstance;
-import io.github.clearwsd.classifier.DefaultSparseVector;
-import io.github.clearwsd.classifier.DummyClassifier;
-import io.github.clearwsd.classifier.Hyperparameter;
-import io.github.clearwsd.classifier.SparseClassifier;
-import io.github.clearwsd.classifier.SparseInstance;
 import io.github.clearwsd.type.NlpInstance;
 import io.github.clearwsd.classifier.Classifier;
 import io.github.clearwsd.classifier.DefaultSparseInstance;

@@ -37,6 +37,7 @@ import io.github.clearwsd.type.DepTree;
 import io.github.clearwsd.type.FeatureType;
 import io.github.clearwsd.type.DefaultDepNode;
 import io.github.clearwsd.type.DefaultDepTree;
+import lombok.Setter;
 
 /**
  * CoNLL-U-style dependency tree corpus reader.
@@ -150,6 +151,7 @@ public class CoNllDepTreeReader implements CorpusReader<DepTree> {
 
         private List<DepTree> treeCache;
         private BufferedReader reader;
+        @Setter
         private int cacheSize;
 
         private int index = 0;

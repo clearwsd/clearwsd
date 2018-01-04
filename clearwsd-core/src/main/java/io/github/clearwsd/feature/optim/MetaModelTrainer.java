@@ -28,14 +28,6 @@ import java.util.function.BiConsumer;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import io.github.clearwsd.classifier.Classifier;
-import io.github.clearwsd.classifier.ClassifierFactory;
-import io.github.clearwsd.classifier.DefaultHyperparameter;
-import io.github.clearwsd.classifier.Hyperparameter;
-import io.github.clearwsd.classifier.SparseClassifier;
-import io.github.clearwsd.feature.pipeline.DefaultFeaturePipeline;
-import io.github.clearwsd.feature.pipeline.FeaturePipeline;
-import io.github.clearwsd.feature.pipeline.NlpClassifier;
 import io.github.clearwsd.type.FeatureType;
 import io.github.clearwsd.type.NlpInstance;
 import io.github.clearwsd.classifier.Classifier;

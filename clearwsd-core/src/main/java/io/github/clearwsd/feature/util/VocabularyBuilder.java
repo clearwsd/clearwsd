@@ -24,8 +24,6 @@ import java.util.Map;
 
 import io.github.clearwsd.feature.model.BaseVocabulary;
 import io.github.clearwsd.feature.model.Vocabulary;
-import io.github.clearwsd.feature.model.BaseVocabulary;
-import io.github.clearwsd.feature.model.Vocabulary;
 import lombok.Getter;
 import lombok.experimental.Accessors;
 

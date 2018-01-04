@@ -16,7 +16,6 @@
 
 package io.github.clearwsd.feature.optim;
 
-import io.github.clearwsd.feature.pipeline.FeaturePipeline;
 import io.github.clearwsd.type.NlpInstance;
 import io.github.clearwsd.feature.pipeline.FeaturePipeline;
 

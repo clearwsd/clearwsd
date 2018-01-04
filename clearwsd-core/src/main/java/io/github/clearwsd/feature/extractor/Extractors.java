@@ -22,7 +22,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import io.github.clearwsd.feature.extractor.string.LowercaseFunction;
 import io.github.clearwsd.type.FeatureType;
 import io.github.clearwsd.type.NlpInstance;
 import io.github.clearwsd.feature.extractor.string.LowercaseFunction;

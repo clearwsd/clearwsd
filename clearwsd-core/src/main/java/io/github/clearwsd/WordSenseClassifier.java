@@ -53,7 +53,7 @@ public class WordSenseClassifier implements Classifier<NlpFocus<DepNode, DepTree
     private static final long serialVersionUID = -7555582268789530929L;
 
     private Classifier<NlpFocus<DepNode, DepTree>, String> classifier;
-    private SenseInventory senseInventory;
+    private SenseInventory<?> senseInventory;
     private LemmaDictionary predicateDictionary;
 
     public WordSenseClassifier(ObjectInputStream is) {

@@ -23,8 +23,6 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
-import static io.github.clearwsd.feature.util.FeatureUtils.FEATURE_ID_SEP;
-
 /**
  * String feature, containing an ID and a value.
  *

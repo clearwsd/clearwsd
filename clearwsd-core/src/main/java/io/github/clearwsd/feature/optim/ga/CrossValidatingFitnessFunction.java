@@ -21,7 +21,6 @@ import com.google.common.base.Preconditions;
 import java.util.List;
 import java.util.function.Function;
 
-import io.github.clearwsd.feature.pipeline.NlpClassifier;
 import io.github.clearwsd.type.NlpInstance;
 import io.github.clearwsd.eval.CrossValidation;
 import io.github.clearwsd.eval.CrossValidation.Fold;

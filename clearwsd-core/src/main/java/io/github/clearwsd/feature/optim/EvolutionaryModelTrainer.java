@@ -23,11 +23,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
-import io.github.clearwsd.classifier.Classifier;
-import io.github.clearwsd.classifier.Hyperparameter;
-import io.github.clearwsd.feature.optim.ga.CrossValidatingFitnessFunction;
-import io.github.clearwsd.feature.optim.ga.GeneticAlgorithm;
-import io.github.clearwsd.feature.pipeline.NlpClassifier;
 import io.github.clearwsd.type.NlpInstance;
 import io.github.clearwsd.classifier.Classifier;
 import io.github.clearwsd.classifier.Hyperparameter;

@@ -20,7 +20,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import io.github.clearwsd.feature.extractor.string.StringFunction;
 import io.github.clearwsd.type.NlpInstance;
 import io.github.clearwsd.feature.extractor.string.StringFunction;
 

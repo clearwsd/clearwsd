@@ -16,7 +16,6 @@
 
 package io.github.clearwsd.feature.annotator;
 
-import io.github.clearwsd.feature.extractor.FeatureExtractor;
 import io.github.clearwsd.type.NlpInstance;
 import io.github.clearwsd.type.NlpSequence;
 import io.github.clearwsd.feature.context.NlpContext;

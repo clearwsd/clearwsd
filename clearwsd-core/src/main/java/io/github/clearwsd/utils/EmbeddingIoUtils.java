@@ -36,8 +36,6 @@ import java.util.zip.GZIPInputStream;
 
 import lombok.extern.slf4j.Slf4j;
 
-import static io.github.clearwsd.utils.VectorMathUtils.normalize;
-
 /**
  * Utility class containing common IO-related methods for handling embeddings.
  *

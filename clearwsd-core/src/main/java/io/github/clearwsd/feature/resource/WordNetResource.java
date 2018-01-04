@@ -46,7 +46,7 @@ public class WordNetResource<K extends NlpInstance> implements FeatureResource<K
     @Getter
     private String key = WN_KEY;
     @Getter
-    private WordNetFacade wordNet;
+    private WordNetFacade<?> wordNet;
 
     public WordNetResource(WordNetFacade wordNet) {
         this.wordNet = wordNet;

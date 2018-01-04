@@ -32,8 +32,6 @@ import io.github.clearwsd.parser.NlpParser;
 import io.github.clearwsd.type.DepTree;
 import lombok.extern.slf4j.Slf4j;
 
-import static io.github.clearwsd.corpus.CoNllDepTreeReader.writeDependencyTrees;
-
 /**
  * Corpus reader over a plain text file. Text is segmented and tokenized, and dependency trees are produced.
  *

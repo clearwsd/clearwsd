@@ -94,11 +94,8 @@ public class ParsingSemlinkReader implements CorpusReader<NlpFocus<DepNode, DepT
 
                 DepTree depTree;
                 if (cacheTrees) {
-                    depTree = parseCache.get(instance.originalText());
-                    if (depTree == null) {
-                        depTree = dependencyParser.parse(tokenizer.tokenize(instance.originalText()));
-                        parseCache.put(instance.originalText(), depTree);
-                    }
+                    depTree = parseCache.computeIfAbsent(instance.originalText(),
+                            k -> dependencyParser.parse(tokenizer.tokenize(instance.originalText())));
                 } else {
                     depTree = dependencyParser.parse(tokenizer.tokenize(instance.originalText()));
                 }

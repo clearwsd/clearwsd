@@ -20,9 +20,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import io.github.clearwsd.feature.extractor.FeatureExtractor;
-import io.github.clearwsd.feature.extractor.StringExtractor;
-import io.github.clearwsd.feature.extractor.StringListExtractor;
 import io.github.clearwsd.type.NlpInstance;
 import io.github.clearwsd.feature.context.NlpContextFactory;
 import io.github.clearwsd.feature.extractor.FeatureExtractor;

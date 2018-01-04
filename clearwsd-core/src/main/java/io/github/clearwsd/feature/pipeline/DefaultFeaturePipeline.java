@@ -21,9 +21,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
 
-import io.github.clearwsd.classifier.DefaultSparseInstance;
-import io.github.clearwsd.classifier.SparseInstance;
-import io.github.clearwsd.classifier.SparseVectorBuilder;
 import io.github.clearwsd.type.FeatureType;
 import io.github.clearwsd.type.NlpInstance;
 import io.github.clearwsd.classifier.DefaultSparseInstance;

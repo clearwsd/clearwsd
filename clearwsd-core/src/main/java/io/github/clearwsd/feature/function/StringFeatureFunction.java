@@ -19,8 +19,6 @@ package io.github.clearwsd.feature.function;
 import java.util.ArrayList;
 import java.util.List;
 
-import io.github.clearwsd.feature.extractor.FeatureExtractor;
-import io.github.clearwsd.feature.extractor.StringExtractor;
 import io.github.clearwsd.type.NlpInstance;
 import io.github.clearwsd.feature.StringFeature;
 import io.github.clearwsd.feature.context.NlpContext;
