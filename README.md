@@ -14,14 +14,14 @@ It is meant for use in both research and production settings. Main features incl
 
 ## Setup/Installation
 
-To build ClearWSD, you will need JDK (Java) 8 and [Apache Maven](https://maven.apache.org/).
+To build ClearWSD, you will need [Java 8](http://www.oracle.com/technetwork/java/javase/overview/index.html) and [Apache Maven](https://maven.apache.org/).
 On Mac/Linux, you can then build the project for CLI use:
 ```bash
 git clone https://github.com/clearwsd/clearwsd.git
 cd clearwsd
 mvn package -P build-nlp4j-cli
 ```
-Alternatively (or additionally), for use as an API, install the package in your local Maven repo (`~/.m2/repository`), use
+Alternatively (or additionally), for use as an API, install the package in your local Maven repo (`~/.m2/repository`):
 ```bash
 mvn install -D skipTests
 ```
@@ -36,7 +36,7 @@ include just two of these, the first being `clearwsd-core`:
 <dependency>
   <groupId>io.github.clearwsd</groupId>
   <artifactId>clearwsd-core</artifactId>
-  <version>1.0.0</version>
+  <version>1.0-SNAPSHOT</version>
 </dependency>
 ```
 and the second being a parser module, used for pre-processing and feature extraction.
@@ -45,7 +45,7 @@ A wrapper for the [NLP4J](https://emorynlp.github.io/nlp4j/) dependency parser i
 <dependency>
   <groupId>io.github.clearwsd</groupId>
   <artifactId>clearwsd-nlp4j</artifactId>
-  <version>1.0.0</version>
+  <version>1.0-SNAPSHOT</version>
 </dependency>
 ```
 For the [Stanford Parser](https://stanfordnlp.github.io/CoreNLP/) wrapper module (GPL licensed), you can instead add the following dependency:
@@ -53,7 +53,7 @@ For the [Stanford Parser](https://stanfordnlp.github.io/CoreNLP/) wrapper module
 <dependency>
   <groupId>io.github.clearwsd</groupId>
   <artifactId>clearwsd-stanford</artifactId>
-  <version>1.0.0</version>
+  <version>1.0-SNAPSHOT</version>
 </dependency>
 ```
 
@@ -62,7 +62,7 @@ If you want to use pre-trained word sense disambiguation models, just add the fo
 <dependency>
   <groupId>io.github.clearwsd</groupId>
   <artifactId>clearwsd-models</artifactId>
-  <version>1.0.0</version>
+  <version>1.0-SNAPSHOT</version>
 </dependency>
 ```
 
@@ -99,7 +99,7 @@ public class Test {
 ## Command Line Interface
 
 ClearWSD provides a command-line interface for training, evaluation, and application of word sense disambiguation models.
-You can see a help message and available options with the following command (assuming you have already run `mvn package`):
+You can see a help message and available options with the following command (assuming you have already followed the CLI setup instructions):
 ```bash
 java -jar clearwsd-cli-*.jar --help
 ```
