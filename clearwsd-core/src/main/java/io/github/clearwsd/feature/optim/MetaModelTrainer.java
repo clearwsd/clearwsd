@@ -28,6 +28,7 @@ import java.util.function.BiConsumer;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import io.github.clearwsd.feature.function.FeatureFunction;
 import io.github.clearwsd.type.FeatureType;
 import io.github.clearwsd.type.NlpInstance;
 import io.github.clearwsd.classifier.Classifier;
@@ -95,7 +96,7 @@ public class MetaModelTrainer<U extends NlpInstance> implements Classifier<U, St
         }
     }
 
-    private final transient FeaturePipelineFactory<U> featureFactory;
+    private final transient FeatureFunctionFactory<U> featureFactory;
     private final transient ClassifierFactory<SparseClassifier> classifierFactory;
 
     @Setter
@@ -117,7 +118,7 @@ public class MetaModelTrainer<U extends NlpInstance> implements Classifier<U, St
 
     private NlpClassifier<U> classifier;
 
-    public MetaModelTrainer(FeaturePipelineFactory<U> featureFactory,
+    public MetaModelTrainer(FeatureFunctionFactory<U> featureFactory,
                             ClassifierFactory<SparseClassifier> classifierFactory) {
         this.featureFactory = featureFactory;
         this.classifierFactory = classifierFactory;
@@ -142,19 +143,20 @@ public class MetaModelTrainer<U extends NlpInstance> implements Classifier<U, St
         List<Fold<U>> folds = cv.createFolds(train, this.folds, ratio);
         int epochsNoChange = 0;
         for (int i = 1; i <= iterations && epochsNoChange < patience; ++i) {
-            FeaturePipeline<U> featureFunction = featureFactory.create();
-            NlpClassifier<U> classifier = new NlpClassifier<>(classifierFactory.create(), featureFunction);
+            FeatureFunction<U> featureFunction = featureFactory.create();
+            NlpClassifier<U> classifier = new NlpClassifier<>(classifierFactory.create(),
+                    new DefaultFeaturePipeline<>(featureFunction));
 
             Evaluation eval = new Evaluation(
                     parallel ? cv.crossValidateParallel(() -> new NlpClassifier<>(classifierFactory.create(),
-                            new DefaultFeaturePipeline<>(((DefaultFeaturePipeline<U>) featureFunction).features())), folds)
+                            new DefaultFeaturePipeline<>(featureFunction)), folds)
                             : cv.crossValidate(classifier, folds)
             );
 
             if (eval.f1() > best.f1() || result == null) {
                 epochsNoChange = 0;
                 best = eval;
-                result = featureFunction;
+                result = new DefaultFeaturePipeline<>(featureFunction);
                 if (verbose) {
                     log.debug("Iteration {}/{} (F1: {})", i, iterations, new DecimalFormat("#.###").format(best.f1()));
                 }

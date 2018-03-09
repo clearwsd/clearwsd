@@ -37,6 +37,8 @@ public class VocabularyBuilder implements Vocabulary {
 
     private static final long serialVersionUID = 4581175527928695153L;
 
+    public static final String DEFAULT = "<NONE>";
+
     @Getter
     private Map<String, Integer> counts = new HashMap<>();
     @Getter

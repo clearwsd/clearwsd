@@ -31,8 +31,6 @@ import io.github.clearwsd.feature.function.BiasFeatureFunction;
 import io.github.clearwsd.feature.function.FeatureFunction;
 import io.github.clearwsd.feature.function.MultiStringFeatureFunction;
 import io.github.clearwsd.feature.function.StringFeatureFunction;
-import io.github.clearwsd.feature.pipeline.DefaultFeaturePipeline;
-import io.github.clearwsd.feature.pipeline.FeaturePipeline;
 import io.github.clearwsd.type.NlpInstance;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -47,7 +45,7 @@ import lombok.experimental.Accessors;
 @Getter
 @Setter
 @Accessors(fluent = true)
-public class NlpFeaturePipelineFactory<I extends NlpInstance, O extends NlpInstance> implements FeaturePipelineFactory<I> {
+public class NlpFeaturePipelineFactory<I extends NlpInstance, O extends NlpInstance> implements FeatureFunctionFactory<I> {
 
     private List<FeatureFunctionFactory<I>> factories = new ArrayList<>();
 
@@ -58,13 +56,11 @@ public class NlpFeaturePipelineFactory<I extends NlpInstance, O extends NlpInsta
     }
 
     @Override
-    public FeaturePipeline<I> create() {
-        AggregateFeatureFunction<I> featureFunction = new AggregateFeatureFunction<>(factories.stream()
+    public FeatureFunction<I> create() {
+        return new AggregateFeatureFunction<>(factories.stream()
                 .map(FeatureFunctionFactory::create)
                 .filter(Objects::nonNull)
                 .collect(Collectors.toList()));
-
-        return new DefaultFeaturePipeline<>(featureFunction);
     }
 
     public NlpFeaturePipelineFactory<I, O> addBias() {

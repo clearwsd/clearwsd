@@ -88,6 +88,9 @@ public class DefaultFeaturePipeline<I extends NlpInstance> implements FeaturePip
         }
 
         model.features(featureVocab.build());
+        if (labelVocab.counts().size() == 0) {
+            labelVocab.index(VocabularyBuilder.DEFAULT);
+        }
         model.labels(labelVocab.build());
 
         return results;

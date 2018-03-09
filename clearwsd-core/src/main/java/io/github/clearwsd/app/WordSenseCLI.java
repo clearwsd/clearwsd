@@ -400,7 +400,7 @@ public abstract class WordSenseCLI {
         WordSenseAnnotator annotator = getAnnotator();
         List<DepTree> instances = getParseTrees(inputPath,
                 parsed(inputPath) ? new CoNllDepTreeReader() : new TextCorpusReader(getParser()));
-        log.info("Applying word sense annotator to {} instances", modelPath, instances.size());
+        log.info("Applying word sense annotator at {} to {} instances", modelPath, instances.size());
         instances.parallelStream().forEach(annotator::annotate);
         try (FileOutputStream fos = new FileOutputStream(outputPath)) {
             new ParsingSemlinkReader(getParser(), new WhitespaceTokenizer())
