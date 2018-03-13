@@ -19,6 +19,7 @@ package io.github.clearwsd.verbnet;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Sets;
+import com.google.common.io.ByteStreams;
 
 import java.io.File;
 import java.io.IOException;
@@ -27,6 +28,8 @@ import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -86,6 +89,7 @@ public class VerbNetSenseInventory implements SenseInventory<IVerbClass>, Serial
     private transient Map<String, IVerbClass> senseVnMap;
     private CountingSenseInventory countingSenseInventory = new CountingSenseInventory();
     private URL url;
+    private byte[] data; // we persist this as a byte[] for model loading when the URL is no longer valid
 
     /**
      * Initialize sense inventory from directory.
@@ -156,7 +160,24 @@ public class VerbNetSenseInventory implements SenseInventory<IVerbClass>, Serial
     }
 
     private void initialize() {
-        verbnet = new VerbIndex(url);
+        if (this.data == null) {
+            try {
+                this.data = ByteStreams.toByteArray(url.openStream());
+            } catch (IOException e) {
+                throw new RuntimeException("Error reading VerbNet XML: " + e.getMessage(), e);
+            }
+            verbnet = new VerbIndex(url);
+        } else {
+            try {
+                Path tmp = Files.createTempFile(getClass().getSimpleName(), getClass().getSimpleName());
+                Files.write(tmp, data);
+                tmp.toFile().deleteOnExit();
+                verbnet = new VerbIndex(tmp.toUri().toURL());
+            } catch (IOException e) {
+                throw new RuntimeException("Unable to read VerbNet: " + e.getMessage(), e);
+            }
+        }
+
         try {
             verbnet.open();
         } catch (IOException e) {

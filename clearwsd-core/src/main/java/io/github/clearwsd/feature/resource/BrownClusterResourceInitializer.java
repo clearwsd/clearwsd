@@ -48,10 +48,6 @@ public class BrownClusterResourceInitializer<K> extends TsvResourceInitializer<K
         super(key, path);
     }
 
-    public BrownClusterResourceInitializer(String key, String path) {
-        super(key, path);
-    }
-
     @Override
     protected void apply(List<String> fields, Multimap<String, String> multimap) {
         int count = Integer.parseInt(fields.get(2));

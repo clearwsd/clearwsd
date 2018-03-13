@@ -38,10 +38,6 @@ public class DefaultTsvResourceInitializer<K> extends TsvResourceInitializer<K> 
         super(key, path);
     }
 
-    public DefaultTsvResourceInitializer(String key, String path) {
-        super(key, path);
-    }
-
     @Override
     protected void apply(List<String> fields, Multimap<String, String> multimap) {
         String key = keyFunction.apply(fields.get(0));
