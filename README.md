@@ -15,6 +15,9 @@ It is meant for use in both research and production settings. Main features incl
 ## Setup/Installation
 
 To build ClearWSD, you will need [Java 8](http://www.oracle.com/technetwork/java/javase/overview/index.html) and [Apache Maven](https://maven.apache.org/).
+
+You will also need to set up [git-lfs](https://git-lfs.github.com/), which is used for storing the large pre-trained models. Without this, only pointers to the models will be cloned when you checkout the project, and you will see an error when the models are deserialized.
+
 On Mac/Linux, you can then build the project for CLI use:
 ```bash
 git clone https://github.com/clearwsd/clearwsd.git
