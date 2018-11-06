@@ -21,15 +21,14 @@ import com.google.common.base.Stopwatch;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.Document;
-import org.apache.lucene.index.IndexReader;
-import org.apache.lucene.queryParser.ParseException;
-import org.apache.lucene.queryParser.QueryParser;
+import org.apache.lucene.index.DirectoryReader;
+import org.apache.lucene.queryparser.classic.ParseException;
+import org.apache.lucene.queryparser.classic.QueryParser;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.ScoreDoc;
 import org.apache.lucene.search.TopDocs;
 import org.apache.lucene.store.FSDirectory;
-import org.apache.lucene.util.Version;
 
 import java.io.File;
 import java.io.IOException;
@@ -67,8 +66,8 @@ public class LuceneWrapper implements Serializable {
     private void initialize(File indexDir) {
         try {
             Stopwatch stopwatch = Stopwatch.createStarted();
-            indexSearcher = new IndexSearcher(IndexReader.open(FSDirectory.open(indexDir)));
-            analyzer = new StandardAnalyzer(Version.LUCENE_36);
+            indexSearcher = new IndexSearcher(DirectoryReader.open(FSDirectory.open(indexDir.toPath())));
+            analyzer = new StandardAnalyzer();
             log.info("Initialized lucene index at {} ({})", indexDir.getPath(), stopwatch.stop());
         } catch (IOException e) {
             throw new RuntimeException("Unable to locate Lucene index.", e);
@@ -80,7 +79,7 @@ public class LuceneWrapper implements Serializable {
             initialize(index);
         }
         Map<String, Integer> verbFreqs = new HashMap<>();
-        QueryParser queryParser = new QueryParser(Version.LUCENE_36, field, analyzer);
+        QueryParser queryParser = new QueryParser(field, analyzer);
         try {
             Query query = queryParser.parse(word);
             TopDocs topDocs = indexSearcher.search(query, maxSearch);
