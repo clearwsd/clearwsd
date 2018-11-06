@@ -24,13 +24,13 @@ import com.beust.jcommander.Parameter;
 import com.beust.jcommander.ParameterException;
 
 import org.apache.lucene.document.Document;
-import org.apache.lucene.index.IndexReader;
+import org.apache.lucene.index.DirectoryReader;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.store.FSDirectory;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -76,10 +76,10 @@ public class LuceneIndexReader {
     }
 
     private void run() throws IOException {
-        IndexSearcher indexSearcher = new IndexSearcher(IndexReader.open(FSDirectory.open(new File(indexPath))));
+        IndexSearcher indexSearcher = new IndexSearcher(DirectoryReader.open(FSDirectory.open(Paths.get(indexPath))));
         List<FieldList> fields = new ArrayList<>();
         Map<String, FieldList> fieldMap = new HashMap<>();
-        for (int i = 0; i < indexSearcher.maxDoc(); i++) {
+        for (int i = 0, maxDoc = indexSearcher.getIndexReader().maxDoc(); i < maxDoc; i++) {
             Document document = indexSearcher.doc(i);
             String key = document.get(keyField);
             if (key.isEmpty()) {
