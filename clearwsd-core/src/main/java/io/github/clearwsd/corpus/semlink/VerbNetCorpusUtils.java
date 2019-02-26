@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
@@ -240,6 +241,7 @@ public final class VerbNetCorpusUtils {
         Map<String, Multimap<Integer, Annotation>> anns = readAnnotations(annotationsPath);
         log.info("Writing annotations using source text at {} to {}", sourcePath, outPath);
 
+        AtomicInteger total = new AtomicInteger(0);
         try (PrintWriter out = new PrintWriter(Files.newOutputStream(outPath))) {
             try (Stream<Path> sourcePaths = Files.find(sourcePath, 999, (p, bfa) -> bfa.isRegularFile())) {
                 sourcePaths.forEach(path -> {
@@ -282,6 +284,7 @@ public final class VerbNetCorpusUtils {
 
                                 for (AnnotationLine line : result) {
                                     out.println(line.toString());
+                                    total.incrementAndGet();
                                 }
 
                                 out.flush();
@@ -296,6 +299,7 @@ public final class VerbNetCorpusUtils {
         } catch (IOException e) {
             throw new RuntimeException();
         }
+        log.info("Wrote {} annotations", total.get());
     }
 
     public static void main(String[] args) {

@@ -25,7 +25,7 @@ import java.util.Set;
  */
 public interface SenseInventory<T> {
 
-    String DEFAULT_SENSE = "NONE";
+    String DEFAULT_SENSE = "None";
 
     /**
      * Return all labels associated with a particular word form.
