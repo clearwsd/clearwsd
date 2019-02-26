@@ -83,10 +83,10 @@ public class MultiClassifier<U, V> implements Classifier<U, V> {
         int numCategories = trainSplits.keySet().size();
         int index = 1;
         for (String category : trainSplits.keySet()) {
-            log.debug("Training model for {} ({} of {})", category, index++, numCategories);
             ImmutableList<U> trainCat = trainSplits.get(category);
             ImmutableList<U> validCat = validSplits.get(category);
             Classifier<U, V> classifier = prototypeClassifier.get();
+            log.debug("Training model {} of {} for \"{}\"", index++, numCategories, category);
             classifier.train(trainCat, validCat);
             classifierMap.put(category, classifier);
         }

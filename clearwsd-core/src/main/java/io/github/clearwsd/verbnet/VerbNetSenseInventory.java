@@ -148,9 +148,6 @@ public class VerbNetSenseInventory implements SenseInventory<IVerbClass>, Serial
 
     @Override
     public void addSense(String lemma, String sense) {
-        if (!senseVnMap.containsKey(sense) && !countingSenseInventory.senses(lemma).contains(sense)) {
-            log.warn("Unrecognized sense: {}", sense);
-        }
         countingSenseInventory.addSense(lemma, sense);
     }
 

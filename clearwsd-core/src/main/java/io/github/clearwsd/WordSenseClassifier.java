@@ -16,16 +16,6 @@
 
 package io.github.clearwsd;
 
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.net.URL;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-import java.util.Set;
-import java.util.stream.Stream;
-
 import io.github.clearwsd.classifier.Classifier;
 import io.github.clearwsd.classifier.Hyperparameter;
 import io.github.clearwsd.type.DepNode;
@@ -34,9 +24,20 @@ import io.github.clearwsd.type.FeatureType;
 import io.github.clearwsd.type.NlpFocus;
 import io.github.clearwsd.utils.LemmaDictionary;
 import io.github.clearwsd.utils.SenseInventory;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.net.URL;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
+import java.util.Set;
+import java.util.stream.Stream;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.experimental.Accessors;
+import lombok.extern.slf4j.Slf4j;
 
 import static io.github.clearwsd.type.FeatureType.Predicate;
 
@@ -45,6 +46,7 @@ import static io.github.clearwsd.type.FeatureType.Predicate;
  *
  * @author jamesgung
  */
+@Slf4j
 @Getter
 @Accessors(fluent = true)
 @AllArgsConstructor
@@ -66,11 +68,11 @@ public class WordSenseClassifier implements Classifier<NlpFocus<DepNode, DepTree
         Set<String> options = senseInventory.senses(lemma);
         Map<String, Double> scores = classifier.score(instance);
         return scores.entrySet().stream()
-                .filter(e -> options.contains(e.getKey()))
-                .sorted((e1, e2) -> Double.compare(e2.getValue(), e1.getValue()))
-                .map(Map.Entry::getKey)
-                .findFirst() // get highest scoring sense for a given predicate
-                .orElse(senseInventory.defaultSense(lemma)); // or return the default sense for the predicate
+            .filter(e -> options.contains(e.getKey()))
+            .sorted((e1, e2) -> Double.compare(e2.getValue(), e1.getValue()))
+            .map(Map.Entry::getKey)
+            .findFirst() // get highest scoring sense for a given predicate
+            .orElse(senseInventory.defaultSense(lemma)); // or return the default sense for the predicate
     }
 
     @Override
@@ -81,10 +83,16 @@ public class WordSenseClassifier implements Classifier<NlpFocus<DepNode, DepTree
     @Override
     public void train(List<NlpFocus<DepNode, DepTree>> train, List<NlpFocus<DepNode, DepTree>> valid) {
         predicateDictionary.train(true);
+        Set<String> missingSenses = new HashSet<>();
         Stream.concat(train.stream(), valid.stream()).forEach(instance -> {
             String lemma = predicateDictionary.apply(instance.focus());
-            senseInventory.addSense(lemma, instance.focus().feature(FeatureType.Gold));
+            String sense = instance.focus().feature(FeatureType.Gold);
+            if (!senseInventory.hasSense(lemma, sense)) {
+                missingSenses.add(sense);
+            }
+            senseInventory.addSense(lemma, sense);
         });
+        log.warn("Missing senses: {}", String.join(", ", missingSenses));
         predicateDictionary.train(false);
         classifier.train(train, valid);
     }

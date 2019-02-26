@@ -39,6 +39,7 @@ import io.github.clearwsd.feature.model.FeatureModel;
 import io.github.clearwsd.feature.util.VocabularyBuilder;
 import lombok.Getter;
 import lombok.experimental.Accessors;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * NLP classifier that includes a {@link FeaturePipeline} used to convert
@@ -49,6 +50,7 @@ import lombok.experimental.Accessors;
  * @param <U> input type
  * @author jamesgung
  */
+@Slf4j
 @Getter
 @Accessors(fluent = true)
 public class NlpClassifier<U extends NlpInstance> implements Classifier<U, String> {
@@ -81,7 +83,10 @@ public class NlpClassifier<U extends NlpInstance> implements Classifier<U, Strin
         List<SparseInstance> validInstances = valid.stream()
                 .map(featurePipeline::process)
                 .collect(Collectors.toList());
-        if (featurePipeline.model().labels().indices().size() >= 2) {
+        int classes = featurePipeline.model().labels().indices().size();
+        if (classes >= 2) {
+            log.debug("Training {}-class model with {} train instances and {} validation instances",
+                classes, train.size(), valid.size());
             sparseClassifier.train(trainInstances, validInstances);
         } else {
             featurePipeline = new DummyPipeline<>(featurePipeline.model().labels().value(0));

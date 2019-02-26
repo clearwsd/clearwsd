@@ -44,6 +44,16 @@ public interface SenseInventory<T> {
     String defaultSense(String lemma);
 
     /**
+     * Check if the sense inventory has a sense for a given lemma.
+     *
+     * @param lemma base word
+     * @param sense sense of word
+     */
+    default boolean hasSense(String lemma, String sense) {
+        return senses(lemma).contains(sense);
+    }
+
+    /**
      * Add a sense to the sense inventory.
      *
      * @param lemma base word
