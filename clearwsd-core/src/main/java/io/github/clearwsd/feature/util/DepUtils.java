@@ -27,7 +27,7 @@ public class DepUtils {
     }
 
     public static boolean isAux(String rel) {
-        return "aux".equalsIgnoreCase(rel);
+        return rel.toLowerCase().startsWith("aux");
     }
 
 }
