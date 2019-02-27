@@ -102,7 +102,7 @@ public class ParsingSemlinkReader implements CorpusReader<NlpFocus<DepNode, DepT
 
                 DepNode focus = depTree.get(instance.token());
                 if (!instance.lemma().equalsIgnoreCase(focus.feature(Lemma))) {
-                    log.warn("Lemma mismatch ({} vs. {}) between annotation and parser output for instance: {}",
+                    log.trace("Lemma mismatch ({} vs. {}) between annotation and parser output for instance: {}",
                             instance.lemma(), focus.feature(Lemma), line);
                 }
                 focus.addFeature(Gold, instance.label());
