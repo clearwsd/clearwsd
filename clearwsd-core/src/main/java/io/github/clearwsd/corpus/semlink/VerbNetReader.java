@@ -137,7 +137,7 @@ public class VerbNetReader implements CorpusReader<NlpFocus<DepNode, DepTree>> {
                     .sentence(Integer.parseInt(subFields[1]))
                     .token(Integer.parseInt(subFields[2]))
                     .lemma(subFields[3])
-                    .label(subFields[4])
+                    .label(subFields[4].replaceAll("-\\S+", ""))
                     .originalText(fields[1]);
         }
 
