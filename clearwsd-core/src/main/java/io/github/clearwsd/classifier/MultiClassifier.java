@@ -86,7 +86,11 @@ public class MultiClassifier<U, V> implements Classifier<U, V> {
             ImmutableList<U> trainCat = trainSplits.get(category);
             ImmutableList<U> validCat = validSplits.get(category);
             Classifier<U, V> classifier = prototypeClassifier.get();
-            log.debug("Training model {} of {} for \"{}\"", index++, numCategories, category);
+            if (numCategories > 1) {
+                log.debug("Training model {} of {} for \"{}\"", index++, numCategories, category);
+            } else {
+                log.debug("Training model for \"{}\"", category);
+            }
             classifier.train(trainCat, validCat);
             classifierMap.put(category, classifier);
         }

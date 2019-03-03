@@ -18,7 +18,10 @@ package io.github.clearwsd.feature.context;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import io.github.clearwsd.type.NlpInstance;
@@ -34,12 +37,20 @@ public class Contexts {
     private Contexts() {
     }
 
+    public static DepChildPathContextFactory depPath(Map<String, List<List<String>>> exclusions) {
+        return new DepChildPathContextFactory(exclusions);
+    }
+
     public static DepChildrenContextFactory excludingDeps(Set<String> exclusions) {
         return new DepChildrenContextFactory(exclusions, new HashSet<>());
     }
 
     public static DepChildrenContextFactory includingDeps(Set<String> inclusions) {
         return new DepChildrenContextFactory(inclusions);
+    }
+
+    public static DepChildrenContextFactory includingDeps(Set<String> inclusions, int level) {
+        return new DepChildrenContextFactory(Collections.emptySet(), inclusions, level);
     }
 
     public static <T extends NlpInstance, S extends NlpSequence<T>> OffsetContextFactory<T, S> focus() {

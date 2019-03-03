@@ -233,7 +233,7 @@ public class PaClassifier implements SparseClassifier {
                 .max().orElse(0) + 1;
         Set<Integer> targets = instances.stream()
                 .map(SparseInstance::target)
-                .distinct().collect(Collectors.toSet());
+                .collect(Collectors.toSet());
         parameters = targets.stream().collect(Collectors.toMap(i -> i, i -> new float[features]));
         cachedParameters = targets.stream().collect(Collectors.toMap(i -> i, i -> new float[features]));
     }

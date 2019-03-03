@@ -136,9 +136,8 @@ public class VerbNetSenseInventory implements SenseInventory<IVerbClass>, Serial
                 .min(Comparator.comparingInt(IWordnetKey::getLexicalID));
         if (wnKey.isPresent()) {
             Optional<IMember> member = verbnet.getMembers(wnKey.get()).stream()
-                    .sorted((m1, m2) -> Comparator.<String>naturalOrder()
-                            .compare(m1.getVerbClass().getID(), m2.getVerbClass().getID()))
-                    .findFirst();
+                    .min((m1, m2) -> Comparator.<String>naturalOrder()
+                    .compare(m1.getVerbClass().getID(), m2.getVerbClass().getID()));
             if (member.isPresent()) {
                 return getIdNumber(getRoot(member.get().getVerbClass()).getID());
             }

@@ -16,14 +16,6 @@
 
 package io.github.clearwsd;
 
-import io.github.clearwsd.classifier.Classifier;
-import io.github.clearwsd.classifier.Hyperparameter;
-import io.github.clearwsd.type.DepNode;
-import io.github.clearwsd.type.DepTree;
-import io.github.clearwsd.type.FeatureType;
-import io.github.clearwsd.type.NlpFocus;
-import io.github.clearwsd.utils.LemmaDictionary;
-import io.github.clearwsd.utils.SenseInventory;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -34,6 +26,15 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 import java.util.stream.Stream;
+
+import io.github.clearwsd.classifier.Classifier;
+import io.github.clearwsd.classifier.Hyperparameter;
+import io.github.clearwsd.type.DepNode;
+import io.github.clearwsd.type.DepTree;
+import io.github.clearwsd.type.FeatureType;
+import io.github.clearwsd.type.NlpFocus;
+import io.github.clearwsd.utils.LemmaDictionary;
+import io.github.clearwsd.utils.SenseInventory;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.experimental.Accessors;
@@ -88,11 +89,13 @@ public class WordSenseClassifier implements Classifier<NlpFocus<DepNode, DepTree
             String lemma = predicateDictionary.apply(instance.focus());
             String sense = instance.focus().feature(FeatureType.Gold);
             if (!senseInventory.hasSense(lemma, sense)) {
-                missingSenses.add(sense);
+                missingSenses.add(lemma + "-" + sense);
             }
             senseInventory.addSense(lemma, sense);
         });
-        log.warn("Missing senses: {}", String.join(", ", missingSenses));
+        if (missingSenses.size() > 0) {
+            log.warn("Missing senses: {}", String.join(", ", missingSenses));
+        }
         predicateDictionary.train(false);
         classifier.train(train, valid);
     }

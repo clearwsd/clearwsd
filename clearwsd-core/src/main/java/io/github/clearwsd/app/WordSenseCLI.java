@@ -65,11 +65,11 @@ import io.github.clearwsd.type.FeatureType;
 import io.github.clearwsd.type.NlpFocus;
 import io.github.clearwsd.type.NlpInstance;
 import io.github.clearwsd.utils.CountingSenseInventory;
+import io.github.clearwsd.utils.ExtJwnlSenseInventory;
 import io.github.clearwsd.utils.InteractiveTestLoop;
 import io.github.clearwsd.utils.LemmaDictionary;
 import io.github.clearwsd.utils.OntoNotesSenseInventory;
 import io.github.clearwsd.utils.SenseInventory;
-import io.github.clearwsd.utils.ExtJwnlSenseInventory;
 import io.github.clearwsd.verbnet.DefaultPredicateAnnotator;
 import io.github.clearwsd.verbnet.DefaultVerbNetClassifier;
 import io.github.clearwsd.verbnet.VerbNetSenseInventory;
@@ -341,12 +341,27 @@ public abstract class WordSenseCLI {
         log.info("Performing {}-fold cross validation on {} instances in training corpus at {}", folds,
                 trainInstances.size(), trainPath);
         CrossValidation<NlpFocus<DepNode, DepTree>> cv = new CrossValidation<>(seed, i -> i.feature(FeatureType.Gold));
-        List<Evaluation> evaluations = cv.crossValidate(newClassifier(), cv.createFolds(trainInstances, folds, trainPer));
+        List<Predictions<NlpFocus<DepNode, DepTree>>> evaluations = cv.crossValidate(newClassifier(),
+                cv.createFolds(trainInstances, folds, trainPer),
+                instance -> instance.sequence().tokens().stream()
+                        .map(token -> token == instance.focus() ? "{" + token.feature(Text) + "}" : token.feature(Text))
+                        .collect(Collectors.joining(" ")));
         int index = 0;
-        for (Evaluation evaluation : evaluations) {
-            log.info("Fold {} results:\n{}", index++, evaluation);
+        for (Predictions<NlpFocus<DepNode, DepTree>> evaluation : evaluations) {
+            log.info("Fold {} results:\n{}", index++, evaluation.evaluation());
+            if (outputMisses && evaluation.incorrect().size() > 0) {
+                String missesFile = new File(trainPath).getAbsolutePath() + "." + index + ".misses.txt";
+                log.info("Writing missed predictions to {}", missesFile);
+                try {
+                    Files.write(Paths.get(missesFile), evaluation.print(evaluation.incorrect(), false)
+                            .getBytes(Charset.defaultCharset()));
+                } catch (IOException e) {
+                    log.warn("An error occurred while writing misses to {}:", missesFile, e);
+                }
+            }
         }
-        log.info("Overall {}-fold cross validation results on corpus at {}:\n{}", folds, trainPath, new Evaluation(evaluations));
+        Evaluation overall = new Evaluation(evaluations.stream().map(Predictions::evaluation).collect(Collectors.toList()));
+        log.info("Overall {}-fold cross validation results on corpus at {}:\n{}", folds, trainPath, overall);
     }
 
     private void evaluate() {

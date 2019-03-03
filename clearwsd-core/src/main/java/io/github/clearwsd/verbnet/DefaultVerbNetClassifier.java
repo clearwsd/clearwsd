@@ -16,7 +16,7 @@
 
 package io.github.clearwsd.verbnet;
 
-import com.google.common.collect.Lists;
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Sets;
 
 import java.io.IOException;
@@ -26,6 +26,7 @@ import java.io.Serializable;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -45,7 +46,6 @@ import io.github.clearwsd.feature.annotator.DepNodeListAnnotator;
 import io.github.clearwsd.feature.annotator.ListAnnotator;
 import io.github.clearwsd.feature.context.DepChildrenContextFactory;
 import io.github.clearwsd.feature.context.DepContextFactory;
-import io.github.clearwsd.feature.extractor.Extractors;
 import io.github.clearwsd.feature.extractor.StringExtractor;
 import io.github.clearwsd.feature.extractor.StringListExtractor;
 import io.github.clearwsd.feature.extractor.string.LowercaseFunction;
@@ -66,15 +66,14 @@ import io.github.clearwsd.type.FeatureType;
 import io.github.clearwsd.type.NlpFocus;
 import lombok.extern.slf4j.Slf4j;
 
+import static com.google.common.collect.Lists.newArrayList;
+import static io.github.clearwsd.feature.context.Contexts.depPath;
 import static io.github.clearwsd.feature.context.Contexts.excludingDeps;
-import static io.github.clearwsd.feature.context.Contexts.focus;
 import static io.github.clearwsd.feature.context.Contexts.head;
-import static io.github.clearwsd.feature.context.Contexts.includingDeps;
 import static io.github.clearwsd.feature.context.Contexts.window;
 import static io.github.clearwsd.feature.extractor.Extractors.concat;
 import static io.github.clearwsd.feature.extractor.Extractors.form;
 import static io.github.clearwsd.feature.extractor.Extractors.lemma;
-import static io.github.clearwsd.feature.extractor.Extractors.listConcat;
 import static io.github.clearwsd.feature.extractor.Extractors.listLookup;
 import static io.github.clearwsd.feature.extractor.Extractors.lookup;
 import static io.github.clearwsd.feature.extractor.Extractors.lowerForm;
@@ -107,7 +106,7 @@ public class DefaultVerbNetClassifier implements Classifier<NlpFocus<DepNode, De
             "cluster-10000");
     private Set<String> includedRels = Sets.newHashSet("dobj");
     private Set<String> excludedRels = Sets.newHashSet("punct");
-    private Set<Integer> offsets = Sets.newHashSet(-2, -1, 0, 1, 2);
+    private Set<Integer> offsets = Sets.newHashSet(-2, -1, 1, 2);
 
     private AnnotatingClassifier<NlpFocus<DepNode, DepTree>> classifier;
     private FeatureResourceManager resources;
@@ -201,7 +200,6 @@ public class DefaultVerbNetClassifier implements Classifier<NlpFocus<DepNode, De
 
     private FeaturePipeline<NlpFocus<DepNode, DepTree>> initializeFeatures() {
         // basic extractors
-        StringExtractor<DepNode> text = lowerForm();
         StringExtractor<DepNode> lemma = lowerLemma();
         StringExtractor<DepNode> dep = lookup(Dep);
         StringExtractor<DepNode> pos = lookup(Pos);
@@ -209,21 +207,26 @@ public class DefaultVerbNetClassifier implements Classifier<NlpFocus<DepNode, De
         // semantic extractors applied to focus and arguments
         Set<String> keys = new HashSet<>(clusters);
         keys.add(BWC_KEY);
-        StringListExtractor<DepNode> clusterExtractors = listConcat(Extractors.listLookup(keys), dep);
         // semantic extractors applied only to arguments
-        List<StringListExtractor<DepNode>> filteredDepExtractors = Lists.newArrayList(clusterExtractors);
-        filteredDepExtractors.add(listLookup(DDN_KEY));
-        filteredDepExtractors.add(listLookup(WN_KEY));
+        List<StringListExtractor<DepNode>> filteredDepExtractors = newArrayList(
+                listLookup(keys),
+                listLookup(DDN_KEY),
+                listLookup(WN_KEY));
 
         DepContextFactory depContexts = excludingDeps(excludedRels);
 
+        Map<String, List<List<String>>> paths = ImmutableMap.of(
+                "obj", Collections.singletonList(newArrayList("prep", "pobj")),
+                "dobj", Collections.singletonList(newArrayList("dobj")));
+
+        DepContextFactory objects = depPath(paths);
+
         List<FeatureFunction<NlpFocus<DepNode, DepTree>>> features = Arrays.asList(
                 cross(function(depContexts, concat(pos, dep))),
-                function(window(offsets), Arrays.asList(text, lemma, pos)),
+                function(window(offsets), Arrays.asList(lemma, pos)),
                 function(depContexts, concat(dep, Arrays.asList(lemma, pos))),
                 function(depContexts, dep),
-                function(includingDeps(includedRels), filteredDepExtractors),
-                function(focus(), clusterExtractors),
+                function(objects, filteredDepExtractors),
                 function(head(), Arrays.asList(dep, lemma, pos)),
                 bias());
 

@@ -85,7 +85,7 @@ public class NlpClassifier<U extends NlpInstance> implements Classifier<U, Strin
                 .collect(Collectors.toList());
         int classes = featurePipeline.model().labels().indices().size();
         if (classes >= 2) {
-            log.debug("Training {}-class model with {} train instances and {} validation instances",
+            log.trace("Training {}-class model with {} train instances and {} validation instances",
                 classes, train.size(), valid.size());
             sparseClassifier.train(trainInstances, validInstances);
         } else {

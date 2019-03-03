@@ -30,6 +30,7 @@ import io.github.clearwsd.type.NlpFocus;
 import io.github.clearwsd.corpus.CoNllDepTreeReader;
 import io.github.clearwsd.corpus.CorpusReader;
 import io.github.clearwsd.type.DefaultNlpFocus;
+import io.github.clearwsd.utils.SenseInventory;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -59,7 +60,12 @@ public class VerbNetReader implements CorpusReader<NlpFocus<DepNode, DepTree>> {
                     .filter(t -> t.feature(Gold) != null)
                     .collect(Collectors.toList())) {
                 NlpFocus<DepNode, DepTree> instance = new DefaultNlpFocus<>(index++, focus, tree);
-                instance.addFeature(Gold, focus.feature(Gold));
+
+                String label = focus.feature(Gold);
+                if (label.equals(SenseInventory.DEFAULT_SENSE)) {
+                    continue;
+                }
+                instance.addFeature(Gold, label);
                 results.add(instance);
             }
         }
