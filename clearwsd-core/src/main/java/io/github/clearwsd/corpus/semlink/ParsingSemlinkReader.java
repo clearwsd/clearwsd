@@ -17,6 +17,7 @@
 package io.github.clearwsd.corpus.semlink;
 
 
+import io.github.clearwsd.utils.SenseInventory;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -108,6 +109,10 @@ public class ParsingSemlinkReader implements CorpusReader<NlpFocus<DepNode, DepT
                         instance.lemma(), focus.feature(Lemma), line);
                 }
                 if (!filter.isEmpty() && !filter.contains(instance.lemma())) {
+                    continue;
+                }
+
+                if (instance.label().equals(SenseInventory.DEFAULT_SENSE)) {
                     continue;
                 }
 
