@@ -24,9 +24,11 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import io.github.clearwsd.corpus.CorpusReader;
@@ -78,7 +80,7 @@ public class ParsingSemlinkReader implements CorpusReader<NlpFocus<DepNode, DepT
     }
 
     @Override
-    public List<NlpFocus<DepNode, DepTree>> readInstances(InputStream inputStream) {
+    public List<NlpFocus<DepNode, DepTree>> readInstances(InputStream inputStream, Set<String> filter) {
         Map<String, DepTree> parseCache = new HashMap<>();
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream))) {
             VerbNetInstanceParser parser = new VerbNetInstanceParser();
@@ -95,7 +97,7 @@ public class ParsingSemlinkReader implements CorpusReader<NlpFocus<DepNode, DepT
                 DepTree depTree;
                 if (cacheTrees) {
                     depTree = parseCache.computeIfAbsent(instance.originalText(),
-                            k -> dependencyParser.parse(tokenizer.tokenize(instance.originalText())));
+                        k -> dependencyParser.parse(tokenizer.tokenize(instance.originalText())));
                 } else {
                     depTree = dependencyParser.parse(tokenizer.tokenize(instance.originalText()));
                 }
@@ -103,8 +105,12 @@ public class ParsingSemlinkReader implements CorpusReader<NlpFocus<DepNode, DepT
                 DepNode focus = depTree.get(instance.token());
                 if (!instance.lemma().equalsIgnoreCase(focus.feature(Lemma))) {
                     log.trace("Lemma mismatch ({} vs. {}) between annotation and parser output for instance: {}",
-                            instance.lemma(), focus.feature(Lemma), line);
+                        instance.lemma(), focus.feature(Lemma), line);
                 }
+                if (!filter.isEmpty() && !filter.contains(instance.lemma())) {
+                    continue;
+                }
+
                 focus.addFeature(Gold, instance.label());
                 focus.addFeature(Predicate, instance.lemma());
 
@@ -121,6 +127,11 @@ public class ParsingSemlinkReader implements CorpusReader<NlpFocus<DepNode, DepT
         } catch (IOException e) {
             throw new RuntimeException("Error reading annotations.", e);
         }
+    }
+
+    @Override
+    public List<NlpFocus<DepNode, DepTree>> readInstances(InputStream inputStream) {
+        return readInstances(inputStream, Collections.emptySet());
     }
 
     @Override

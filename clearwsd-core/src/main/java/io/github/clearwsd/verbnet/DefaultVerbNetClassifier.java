@@ -204,20 +204,17 @@ public class DefaultVerbNetClassifier implements Classifier<NlpFocus<DepNode, De
         StringExtractor<DepNode> dep = lookup(Dep);
         StringExtractor<DepNode> pos = lookup(Pos);
 
-        // semantic extractors applied to focus and arguments
-        Set<String> keys = new HashSet<>(clusters);
-        keys.add(BWC_KEY);
         // semantic extractors applied only to arguments
         List<StringListExtractor<DepNode>> filteredDepExtractors = newArrayList(
-                listLookup(keys),
+                listLookup(new HashSet<>(clusters)),
+                listLookup(BWC_KEY),
                 listLookup(DDN_KEY),
                 listLookup(WN_KEY));
 
         DepContextFactory depContexts = excludingDeps(excludedRels);
 
         Map<String, List<List<String>>> paths = ImmutableMap.of(
-                "obj", Collections.singletonList(newArrayList("prep", "pobj")),
-                "dobj", Collections.singletonList(newArrayList("dobj")));
+            "dobj", Collections.singletonList(newArrayList("dobj")));
 
         DepContextFactory objects = depPath(paths);
 

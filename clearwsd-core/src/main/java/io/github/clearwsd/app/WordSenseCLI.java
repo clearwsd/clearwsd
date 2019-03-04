@@ -36,6 +36,7 @@ import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.function.BiFunction;
@@ -215,6 +216,9 @@ public abstract class WordSenseCLI {
     private SenseInventoryType senseInventory;
     @Parameter(names = "-inventoryPath", description = "Sense inventory path (optional)")
     private String senseInventoryPath;
+
+    @Parameter(names = "-lemmas", description = "Optional comma-separated list of lemmas to include, filtering out rest")
+    private Set<String> lemmas = new HashSet<>();
 
     private WordSenseClassifier classifier;
     private NlpParser parser;
@@ -479,14 +483,11 @@ public abstract class WordSenseCLI {
     }
 
     private <T extends NlpInstance> List<T> getParseTrees(String path, CorpusReader<T> reader) {
-        return parseSafe(path, reader, reparse || !parsed(path));
-    }
-
-    private <T extends NlpInstance> List<T> parseSafe(String inputPath, CorpusReader<T> reader, boolean save) {
-        try (InputStream inputStream = new FileInputStream(inputPath)) {
-            List<T> instances = reader.readInstances(inputStream);
+        boolean save = reparse || !parsed(path);
+        try (InputStream inputStream = new FileInputStream(path)) {
+            List<T> instances = reader.readInstances(inputStream, lemmas);
             if (save) {
-                String outputFilePath = new File(inputPath + parseSuffix).getAbsolutePath();
+                String outputFilePath = new File(path + parseSuffix).getAbsolutePath();
                 try (OutputStream outputStream = new FileOutputStream(outputFilePath)) {
                     log.info("Saving parsed instances to {}", outputFilePath);
                     reader.writeInstances(instances, outputStream);
@@ -496,9 +497,9 @@ public abstract class WordSenseCLI {
             }
             return instances;
         } catch (FileNotFoundException e) {
-            throw new RuntimeException("Unable to locate input file at " + inputPath, e);
+            throw new RuntimeException("Unable to locate input file at " + path, e);
         } catch (Exception e) {
-            throw new RuntimeException("Error while parsing file at " + inputPath, e);
+            throw new RuntimeException("Error while parsing file at " + path, e);
         }
     }
 

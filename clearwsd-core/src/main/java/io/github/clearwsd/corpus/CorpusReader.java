@@ -22,6 +22,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import io.github.clearwsd.type.NlpInstance;
+import java.util.Set;
 
 /**
  * Corpus reader/writer.
@@ -38,6 +39,17 @@ public interface CorpusReader<T extends NlpInstance> {
      * @return list of instances
      */
     List<T> readInstances(InputStream inputStream);
+
+    /**
+     * Read all instances from a given {@link InputStream}.
+     *
+     * @param inputStream instance input stream
+     * @param filter optional set of types to filter by
+     * @return list of instances
+     */
+    default List<T> readInstances(InputStream inputStream, Set<String> filter) {
+        return readInstances(inputStream);
+    }
 
     /**
      * Write a list of instances to a given output stream.
