@@ -94,6 +94,12 @@ public class ParsingSemlinkReader implements CorpusReader<NlpFocus<DepNode, DepT
                     continue;
                 }
                 VerbNetReader.VerbNetInstance instance = parser.parse(line);
+                if (!filter.isEmpty() && !filter.contains(instance.lemma())) {
+                    continue;
+                }
+                if (instance.label().equals(SenseInventory.DEFAULT_SENSE)) {
+                    continue;
+                }
 
                 DepTree depTree;
                 if (cacheTrees) {
@@ -108,13 +114,7 @@ public class ParsingSemlinkReader implements CorpusReader<NlpFocus<DepNode, DepT
                     log.trace("Lemma mismatch ({} vs. {}) between annotation and parser output for instance: {}",
                         instance.lemma(), focus.feature(Lemma), line);
                 }
-                if (!filter.isEmpty() && !filter.contains(instance.lemma())) {
-                    continue;
-                }
 
-                if (instance.label().equals(SenseInventory.DEFAULT_SENSE)) {
-                    continue;
-                }
 
                 focus.addFeature(Gold, instance.label());
                 focus.addFeature(Predicate, instance.lemma());
