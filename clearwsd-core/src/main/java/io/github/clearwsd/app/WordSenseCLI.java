@@ -34,6 +34,7 @@ import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -50,6 +51,7 @@ import io.github.clearwsd.WordSenseAnnotator;
 import io.github.clearwsd.WordSenseClassifier;
 import io.github.clearwsd.corpus.CoNllDepTreeReader;
 import io.github.clearwsd.corpus.CorpusReader;
+import io.github.clearwsd.corpus.LemmaMappingCorpusReader;
 import io.github.clearwsd.corpus.TextCorpusReader;
 import io.github.clearwsd.corpus.semeval.ParsingSemevalReader;
 import io.github.clearwsd.corpus.semeval.SemevalReader;
@@ -220,6 +222,10 @@ public abstract class WordSenseCLI {
     @Parameter(names = "-lemmas", description = "Optional comma-separated list of lemmas to include, filtering out rest")
     private Set<String> lemmas = new HashSet<>();
 
+    @Parameter(names = "-mappings", description = "Optional path to a 3-column CSV mappings file (lemma,original-sense,"
+            + "mapped-sense)")
+    private String mappingsPath;
+
     private WordSenseClassifier classifier;
     private NlpParser parser;
     private Pattern depPattern;
@@ -316,11 +322,9 @@ public abstract class WordSenseCLI {
         if (trainPath == null) {
             return;
         }
-        List<NlpFocus<DepNode, DepTree>> trainInstances = getParseTrees(trainPath, parsed(trainPath)
-                ? corpusType.corpusReader(getKeyPath(trainPath)) : corpusType.corpusParser(getKeyPath(trainPath), getParser()));
+        List<NlpFocus<DepNode, DepTree>> trainInstances = getParseTrees(trainPath, getCorpusReader(trainPath));
         List<NlpFocus<DepNode, DepTree>> validInstances = validPath == null ? new ArrayList<>()
-                : getParseTrees(validPath, parsed(validPath) ? corpusType.corpusReader(getKeyPath(validPath))
-                : corpusType.corpusParser(getKeyPath(validPath), getParser()));
+                : getParseTrees(validPath, getCorpusReader(validPath));
         classifier = newClassifier();
         log.debug("Training classifier on {} instances from corpus at {}", trainInstances.size(), trainPath);
         classifier.train(trainInstances, validInstances);
@@ -340,8 +344,7 @@ public abstract class WordSenseCLI {
         Preconditions.checkState(trainPer < 1 && trainPer > 0,
                 "Percentage of training data must be between 0 and 1 (got %f). "
                         + "Please set ratio of percentage of training instances per fold (e.g. \"-per 0.8\")", trainPer);
-        List<NlpFocus<DepNode, DepTree>> trainInstances = getParseTrees(trainPath, parsed(trainPath)
-                ? corpusType.corpusReader(getKeyPath(trainPath)) : corpusType.corpusParser(getKeyPath(trainPath), getParser()));
+        List<NlpFocus<DepNode, DepTree>> trainInstances = getParseTrees(trainPath, getCorpusReader(trainPath));
         log.info("Performing {}-fold cross validation on {} instances in training corpus at {}", folds,
                 trainInstances.size(), trainPath);
         CrossValidation<NlpFocus<DepNode, DepTree>> cv = new CrossValidation<>(seed, i -> i.feature(FeatureType.Gold));
@@ -375,8 +378,7 @@ public abstract class WordSenseCLI {
         if (classifier == null) {
             classifier = loadClassifier();
         }
-        List<NlpFocus<DepNode, DepTree>> testInstances = getParseTrees(testPath, parsed(testPath)
-                ? corpusType.corpusReader(getKeyPath(testPath)) : corpusType.corpusParser(getKeyPath(testPath), getParser()));
+        List<NlpFocus<DepNode, DepTree>> testInstances = getParseTrees(testPath, getCorpusReader(testPath));
         evaluate(testInstances, testPath);
     }
 
@@ -435,6 +437,20 @@ public abstract class WordSenseCLI {
         }
         NlpParser parser = new DefaultSensePredictor(getAnnotator(), getParser());
         InteractiveTestLoop.test(parser, Sense.name());
+    }
+
+    private CorpusReader<NlpFocus<DepNode, DepTree>> getCorpusReader(String path) {
+        CorpusReader<NlpFocus<DepNode, DepTree>> reader;
+        if (parsed(path)) {
+            reader = corpusType.corpusReader(getKeyPath(trainPath));
+        } else {
+            reader = corpusType.corpusParser(getKeyPath(trainPath), getParser());
+        }
+        if (null != mappingsPath) {
+            Path mappingPath = Paths.get(mappingsPath);
+            reader = new LemmaMappingCorpusReader(reader, LemmaMappingCorpusReader.loadMappings(mappingPath));
+        }
+        return reader;
     }
 
     private NlpParser getParser() {

@@ -16,13 +16,6 @@
 
 package io.github.clearwsd.corpus.semlink;
 
-import io.github.clearwsd.corpus.CoNllDepTreeReader;
-import io.github.clearwsd.corpus.CorpusReader;
-import io.github.clearwsd.type.DefaultNlpFocus;
-import io.github.clearwsd.type.DepNode;
-import io.github.clearwsd.type.DepTree;
-import io.github.clearwsd.type.NlpFocus;
-import io.github.clearwsd.utils.SenseInventory;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintWriter;
@@ -32,6 +25,14 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
+
+import io.github.clearwsd.corpus.CoNllDepTreeReader;
+import io.github.clearwsd.corpus.CorpusReader;
+import io.github.clearwsd.type.DefaultNlpFocus;
+import io.github.clearwsd.type.DepNode;
+import io.github.clearwsd.type.DepTree;
+import io.github.clearwsd.type.NlpFocus;
+import io.github.clearwsd.utils.SenseInventory;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;

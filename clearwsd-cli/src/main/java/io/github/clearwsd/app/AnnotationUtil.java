@@ -26,11 +26,12 @@ public class AnnotationUtil {
             put("make", Sets.newHashSet("make", "makes", "made", "making"));
             put("take", Sets.newHashSet("take", "takes", "take", "took", "taking", "taken"));
             put("run", Sets.newHashSet("run", "ran", "running"));
+            put("come", Sets.newHashSet("come", "coming", "came"));
         }
     };
 
     public static void main(String[] args) throws Throwable {
-        String lemma = "run";
+        String lemma = "come";
         String outputPath = "data/verbnet/" + lemma + "-aug.txt";
         Scanner scanner = new Scanner(System.in);
         StanfordTokenizer tokenizer = new StanfordTokenizer();
