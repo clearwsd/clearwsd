@@ -28,6 +28,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -82,7 +83,7 @@ public class MultiClassifier<U, V> implements Classifier<U, V> {
         ImmutableListMultimap<String, U> validSplits = Multimaps.index(valid, keyFunction::apply);
         int numCategories = trainSplits.keySet().size();
         int index = 1;
-        for (String category : trainSplits.keySet()) {
+        for (String category : trainSplits.keySet().stream().sorted(String::compareTo).collect(Collectors.toList())) {
             ImmutableList<U> trainCat = trainSplits.get(category);
             ImmutableList<U> validCat = validSplits.get(category);
             Classifier<U, V> classifier = prototypeClassifier.get();
