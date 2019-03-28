@@ -1527,7 +1527,7 @@
     </VNCLASS>
     <VNCLASS xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" ID="adopt-93" xsi:noNamespaceSchemaLocation="vn_schema-3.xsd">
         <MEMBERS>
-            <MEMBER name="abide-by" wn="abide_by%2:41:00" grouping="abide.03"/>
+            <MEMBER name="abide_by" wn="abide_by%2:41:00" grouping="abide.03"/>
             <MEMBER name="assume" wn="assume%2:41:00 assume%2:30:00 assume%2:38:00" grouping="assume.02"/>
             <MEMBER name="adopt" wn="adopt%2:40:02" grouping="adopt.01"/>
             <MEMBER name="follow" wn="follow%2:41:00 follow%2:40:00" grouping="follow.03"/>
@@ -3027,7 +3027,7 @@
             </VNSUBCLASS>
         </SUBCLASSES>
     </VNCLASS>
-    
+
     <VNCLASS xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" ID="amuse-31.1" xsi:noNamespaceSchemaLocation="vn_schema-3.xsd">
         <MEMBERS>
             <MEMBER name="abash" wn="abash%2:37:00" grouping=""/>
@@ -3464,7 +3464,7 @@
         </FRAMES>
         <SUBCLASSES/>
     </VNCLASS>
-    
+
     <VNCLASS xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" ID="animal_sounds-38" xsi:noNamespaceSchemaLocation="vn_schema-3.xsd">
         <MEMBERS>
             <MEMBER name="baa" wn="baa%2:32:00" grouping=""/>
@@ -4438,7 +4438,7 @@
         </FRAMES>
         <SUBCLASSES/>
     </VNCLASS>
-    
+
     <VNCLASS xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" ID="assuming_position-50" xsi:noNamespaceSchemaLocation="vn_schema-3.xsd">
         <MEMBERS>
             <!--individual verbs specify what spatial position Pos refers to, and specifies what kind of motion is happening during the event for Agent to assume this position-->
@@ -4698,7 +4698,7 @@
             </VNSUBCLASS>
         </SUBCLASSES>
     </VNCLASS>
-    
+
     <VNCLASS xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" ID="attend-107.4" xsi:noNamespaceSchemaLocation="vn_schema-3.xsd">
         <MEMBERS/>
         <THEMROLES>
@@ -4785,7 +4785,7 @@
             </VNSUBCLASS>
         </SUBCLASSES>
     </VNCLASS>
-    
+
     <VNCLASS xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" ID="avoid-52" xsi:noNamespaceSchemaLocation="vn_schema-3.xsd">
         <MEMBERS>
             <MEMBER name="avoid" wn="avoid%2:32:00 avoid%2:41:01 avoid%2:41:03 avoid%2:34:00" grouping="avoid.01"/>
@@ -4929,9 +4929,9 @@
             <MEMBER name="recuse" wn="recuse%2:32:00" grouping=""/>
             <MEMBER name="remove" wn="remove%2:30:00 remove%2:41:00 remove%2:40:00 remove%2:41:02 remove%2:38:00" grouping="remove.01"/>
             <MEMBER name="shanghai" wn="shanghai%2:35:00" grouping=""/>
-            <MEMBER name="turn-away" wn="" grouping=""/>
-            <MEMBER name="turn-back" wn="" grouping=""/>
-            <MEMBER name="turn-out" wn="" grouping=""/>
+            <MEMBER name="turn_away" wn="" grouping=""/>
+            <MEMBER name="turn_back" wn="" grouping=""/>
+            <MEMBER name="turn_out" wn="" grouping=""/>
             <MEMBER name="boot" wn="boot%2:35:00" grouping="boot.03"/>
         </MEMBERS>
         <THEMROLES>
@@ -6500,7 +6500,7 @@
             </VNSUBCLASS>
         </SUBCLASSES>
     </VNCLASS>
-    
+
     <VNCLASS xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" ID="beg-58.2" xsi:noNamespaceSchemaLocation="vn_schema-3.xsd">
         <MEMBERS>
             <MEMBER name="request" wn="request%2:32:13 request%2:32:01 request%2:32:02" grouping="request.01"/>
@@ -7622,7 +7622,7 @@
         </FRAMES>
         <SUBCLASSES/>
     </VNCLASS>
-    
+
     <VNCLASS xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" ID="berry-13.7" xsi:noNamespaceSchemaLocation="vn_schema-3.xsd">
         <MEMBERS>
             <MEMBER name="antique" wn="antique%2:40:00" grouping=""/>
@@ -11650,7 +11650,7 @@
         </FRAMES>
         <SUBCLASSES/>
     </VNCLASS>
-    
+
     <VNCLASS xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" ID="bump-18.4" xsi:noNamespaceSchemaLocation="vn_schema-3.xsd">
         <MEMBERS>
             <MEMBER name="hit" wn="hit%2:35:01" grouping="hit.01"/>
@@ -12073,7 +12073,7 @@
         </FRAMES>
         <SUBCLASSES/>
     </VNCLASS>
-    
+
     <VNCLASS xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" ID="calibratable_cos-45.6.1" xsi:noNamespaceSchemaLocation="vn_schema-3.xsd">
         <MEMBERS>
             <MEMBER name="build" wn="" grouping="build.02" features="+increase"/>
@@ -12233,7 +12233,7 @@
                     <MEMBER name="explode" wn="explode%2:30:02" grouping="explode.03" features="+increase"/>
                     <MEMBER name="fall" wn="fall%2:30:06" grouping="fall.04" features="+decrease"/>
                     <MEMBER name="fall_away" wn="fall_away%2:30:00" grouping="fall.02" features="+decrease"/>
-                    <MEMBER name="fall-off" wn="" grouping="" features="+decrease"/>
+                    <MEMBER name="fall_off" wn="" grouping="" features="+decrease"/>
                     <MEMBER name="fluctuate" wn="fluctuate%2:30:00" grouping="fluctuate.01" features="+fluctuate"/>
                     <MEMBER name="gain" wn="gain%2:30:00" grouping="gain.02" features="+increase"/>
                     <MEMBER name="go_down" wn="go_down%2:30:00" grouping="go.02" features="+decrease"/>
@@ -12710,7 +12710,7 @@
             </VNSUBCLASS>
         </SUBCLASSES>
     </VNCLASS>
-    
+
     <VNCLASS xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" ID="calve-28.1" xsi:noNamespaceSchemaLocation="vn_schema-3.xsd">
         <MEMBERS>
             <!--Each member specifies the Patient-->
@@ -13290,7 +13290,7 @@
             </VNSUBCLASS>
         </SUBCLASSES>
     </VNCLASS>
-    
+
     <VNCLASS xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" ID="carry-11.4" xsi:noNamespaceSchemaLocation="vn_schema-3.xsd">
         <!--the lexical entry for "carry" should have a "support" predicate and allow the interpretation in which there is no motion - perhaps another class?-->
         <MEMBERS>
@@ -14636,7 +14636,7 @@
                 <MEMBERS>
                     <MEMBER name="advance" wn="" grouping=""/>
                     <MEMBER name="balloon" wn="" grouping="balloon.01 balloon.02"/>
-                    <MEMBER name="build-up" wn="" grouping=""/>
+                    <MEMBER name="build_up" wn="" grouping=""/>
                     <MEMBER name="decrease" wn="" grouping="decrease.01"/>
                     <MEMBER name="diminish" wn="" grouping="diminish.01"/>
                     <MEMBER name="increase" wn="" grouping="increase.01"/>
@@ -15226,7 +15226,7 @@
         </FRAMES>
         <SUBCLASSES/>
     </VNCLASS>
-    
+
     <VNCLASS xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" ID="characterize-29.2" xsi:noNamespaceSchemaLocation="vn_schema-3.xsd">
         <MEMBERS>
             <MEMBER name="count" wn="count%2:31:00" grouping="count.03"/>
@@ -16355,7 +16355,7 @@
             </VNSUBCLASS>
         </SUBCLASSES>
     </VNCLASS>
-    
+
     <VNCLASS xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" ID="chew-39.2" xsi:noNamespaceSchemaLocation="vn_schema-3.xsd">
         <MEMBERS/>
         <THEMROLES>
@@ -17717,7 +17717,7 @@
             </VNSUBCLASS>
         </SUBCLASSES>
     </VNCLASS>
-    
+
     <VNCLASS xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" ID="classify-29.10" xsi:noNamespaceSchemaLocation="vn_schema-3.xsd">
         <MEMBERS>
             <MEMBER name="classify" wn="classify%2:31:00" grouping="classify.01"/>
@@ -18768,7 +18768,7 @@
         </FRAMES>
         <SUBCLASSES/>
     </VNCLASS>
-    
+
     <VNCLASS xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" ID="compel-59.1" xsi:noNamespaceSchemaLocation="vn_schema-3.xsd">
         <MEMBERS>
             <MEMBER name="arm-twist" wn="" grouping=""/>
@@ -19570,8 +19570,8 @@
         <MEMBERS>
             <MEMBER name="accomplish" wn="accomplish%2:36:00 accomplish%2:41:00" grouping="accomplish.01"/>
             <MEMBER name="achieve" wn="achieve%2:41:00" grouping="achieve.01"/>
-            <MEMBER name="bring-off" wn="" grouping="bring.08"/>
-            <MEMBER name="pull-off" wn="" grouping="pull.04"/>
+            <MEMBER name="bring_off" wn="" grouping="bring.08"/>
+            <MEMBER name="pull_off" wn="" grouping="pull.04"/>
         </MEMBERS>
         <THEMROLES>
             <THEMROLE type="Agent">
@@ -20297,7 +20297,7 @@
             </VNSUBCLASS>
         </SUBCLASSES>
     </VNCLASS>
-    
+
     <VNCLASS xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" ID="concealment-16" xsi:noNamespaceSchemaLocation="vn_schema-3.xsd">
         <MEMBERS>
             <MEMBER name="block" wn="block%2:39:00" grouping="block.01"/>
@@ -20678,7 +20678,7 @@
         </FRAMES>
         <SUBCLASSES/>
     </VNCLASS>
-    
+
     <VNCLASS xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" ID="confess-37.10" xsi:noNamespaceSchemaLocation="vn_schema-3.xsd">
         <MEMBERS>
             <MEMBER name="confess" wn="confess%2:32:00 confess%2:32:01" grouping="confess.01 confess.02"/>
@@ -22821,7 +22821,7 @@
             </VNSUBCLASS>
         </SUBCLASSES>
     </VNCLASS>
-    
+
     <VNCLASS xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" ID="contain-15.4" xsi:noNamespaceSchemaLocation="vn_schema-3.xsd">
         <MEMBERS>
             <MEMBER name="contain" wn="contain%2:42:00 contain%2:42:13 contain%2:42:14" grouping="contain.01"/>
@@ -23217,7 +23217,7 @@
         </FRAMES>
         <SUBCLASSES/>
     </VNCLASS>
-    
+
     <VNCLASS xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" ID="contribute-13.2" xsi:noNamespaceSchemaLocation="vn_schema-3.xsd">
         <MEMBERS>
             <MEMBER name="betroth" wn="betroth%2:32:00" grouping="betroth.01"/>
@@ -23228,15 +23228,15 @@
             <MEMBER name="resign" wn="" grouping=""/>
             <MEMBER name="restore" wn="restore%2:40:00" grouping="restore.02"/>
             <MEMBER name="gift" wn="gift%2:40:00" grouping="gift.02"/>
-            <MEMBER name="give-away" wn="" grouping="give.01 give.02"/>
-            <MEMBER name="give-out" wn="" grouping="give.01 give.02"/>
-            <MEMBER name="give-up" wn="" grouping="give.01 give.02"/>
+            <MEMBER name="give_away" wn="" grouping="give.01 give.02"/>
+            <MEMBER name="give_out" wn="" grouping="give.01 give.02"/>
+            <MEMBER name="give_up" wn="" grouping="give.01 give.02"/>
             <MEMBER name="hand_out" wn="hand_out%2:40:00" grouping=""/>
             <MEMBER name="pass_out" wn="pass_out%2:40:00" grouping=""/>
             <MEMBER name="shell_out" wn="shell_out%2:40:00" grouping=""/>
             <MEMBER name="abnegate" wn="abnegate%2:33:00" grouping=""/>
-            <MEMBER name="turn-in" wn="" grouping=""/>
-            <MEMBER name="turn-over" wn="" grouping=""/>
+            <MEMBER name="turn_in" wn="" grouping=""/>
+            <MEMBER name="turn_over" wn="" grouping=""/>
         </MEMBERS>
         <THEMROLES>
             <THEMROLE type="Agent">
@@ -24167,7 +24167,7 @@
             </VNSUBCLASS>
         </SUBCLASSES>
     </VNCLASS>
-    
+
     <VNCLASS xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" ID="cooking-45.3" xsi:noNamespaceSchemaLocation="vn_schema-3.xsd">
         <MEMBERS>
             <!--Members specify the Form (grilled vs boiled, etc) of the Patient as a result of the action-->
@@ -26115,7 +26115,7 @@
             </VNSUBCLASS>
         </SUBCLASSES>
     </VNCLASS>
-    
+
     <VNCLASS xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" ID="cost-54.2" xsi:noNamespaceSchemaLocation="vn_schema-3.xsd">
         <MEMBERS>
             <MEMBER name="carry" wn="?carry%2:42:13" grouping="carry.02"/>
@@ -26509,7 +26509,7 @@
             <MEMBER name="reorganize" wn="reorganize%2:41:00 reorganize%2:41:01" grouping="reorganize.01"/>
             <MEMBER name="style" wn="style%2:36:00" grouping="style.01"/>
             <MEMBER name="synthesize" wn="synthesize%2:31:00" grouping="synthesize.01"/>
-            <MEMBER name="turn-out" wn="" grouping=""/>
+            <MEMBER name="turn_out" wn="" grouping=""/>
         </MEMBERS>
         <THEMROLES>
             <THEMROLE type="Agent">
@@ -26903,7 +26903,7 @@
             </VNSUBCLASS>
         </SUBCLASSES>
     </VNCLASS>
-    
+
     <VNCLASS xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" ID="curtsey-40.3.3" xsi:noNamespaceSchemaLocation="vn_schema-3.xsd">
         <MEMBERS>
             <!--Each verb adds a manner predicate indicating how the Agent expresses the greeting, something like manner(during(E),Gesture,Agent)-->
@@ -29164,7 +29164,7 @@
         </FRAMES>
         <SUBCLASSES/>
     </VNCLASS>
-    
+
     <VNCLASS xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" ID="deprive-10.6.2" xsi:noNamespaceSchemaLocation="vn_schema-3.xsd">
         <MEMBERS>
             <MEMBER name="burgle" wn="" grouping=""/>
@@ -29322,7 +29322,7 @@
         </FRAMES>
         <SUBCLASSES/>
     </VNCLASS>
-    
+
     <VNCLASS xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" ID="destroy-44" xsi:noNamespaceSchemaLocation="vn_schema-3.xsd">
         <MEMBERS>
             <MEMBER name="annihilate" wn="annihilate%2:30:00" grouping=""/>
@@ -30738,7 +30738,7 @@
             </VNSUBCLASS>
         </SUBCLASSES>
     </VNCLASS>
-    
+
     <VNCLASS xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" ID="disfunction-105.2.2" xsi:noNamespaceSchemaLocation="vn_schema-3.xsd">
         <MEMBERS>
             <MEMBER name="croak" wn="croak%2:30:00" grouping="croak.01"/>
@@ -32648,7 +32648,7 @@
         </FRAMES>
         <SUBCLASSES/>
     </VNCLASS>
-    
+
     <VNCLASS xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" ID="encounter-30.5" xsi:noNamespaceSchemaLocation="vn_schema-3.xsd">
         <MEMBERS>
             <MEMBER name="chance_across" wn="" grouping=""/>
@@ -32787,7 +32787,7 @@
             <MEMBER name="produce" wn="produce%2:36:03" grouping="produce.01"/>
             <MEMBER name="raise" wn="raise%2:32:00 raise%2:36:06 raise%2:32:06" grouping="raise.03"/>
             <MEMBER name="return" wn="return%2:36:00" grouping="return.02"/>
-            <MEMBER name="set-in_motion" wn="set_in_motion%2:35:05" grouping="set.06"/>
+            <MEMBER name="set_in_motion" wn="set_in_motion%2:35:05" grouping="set.06"/>
             <MEMBER name="set_off" wn="set_off%2:32:00 set_off%2:36:00" grouping=""/>
             <MEMBER name="shape" wn="shape%2:31:00" grouping="shape.02"/>
             <MEMBER name="sire" wn="" grouping=""/>
@@ -33533,7 +33533,7 @@
             </VNSUBCLASS>
         </SUBCLASSES>
     </VNCLASS>
-    
+
     <VNCLASS xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" ID="escape-51.1" xsi:noNamespaceSchemaLocation="vn_schema-3.xsd">
         <MEMBERS>
             <MEMBER name="cut" wn="cut%2:38:13 cut%2:38:12" grouping="cut.04"/>
@@ -34066,7 +34066,7 @@
             </VNSUBCLASS>
         </SUBCLASSES>
     </VNCLASS>
-    
+
     <VNCLASS xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" ID="establish-55.5" xsi:noNamespaceSchemaLocation="vn_schema-3.xsd">
         <MEMBERS>
             <MEMBER name="bring" wn="" grouping="bring.02"/>
@@ -35095,7 +35095,7 @@
             </VNSUBCLASS>
         </SUBCLASSES>
     </VNCLASS>
-    
+
     <VNCLASS xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" ID="exhale-40.1.3" xsi:noNamespaceSchemaLocation="vn_schema-3.xsd">
         <MEMBERS/>
         <THEMROLES>
@@ -35966,7 +35966,7 @@
             </VNSUBCLASS>
         </SUBCLASSES>
     </VNCLASS>
-    
+
     <VNCLASS xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" ID="fire-10.10" xsi:noNamespaceSchemaLocation="vn_schema-3.xsd">
         <MEMBERS>
             <MEMBER name="fire" wn="fire%2:41:00" grouping="fire.02"/>
@@ -37100,7 +37100,7 @@
             </VNSUBCLASS>
         </SUBCLASSES>
     </VNCLASS>
-    
+
     <VNCLASS xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" ID="free-10.6.3" xsi:noNamespaceSchemaLocation="vn_schema-3.xsd">
         <MEMBERS>
             <MEMBER name="alleviate" wn="" grouping=""/>
@@ -37297,7 +37297,7 @@
             </VNSUBCLASS>
         </SUBCLASSES>
     </VNCLASS>
-    
+
     <VNCLASS xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" ID="free-80" xsi:noNamespaceSchemaLocation="vn_schema-3.xsd">
         <MEMBERS>
             <MEMBER name="alleviate" wn="" grouping=""/>
@@ -37494,7 +37494,7 @@
             </VNSUBCLASS>
         </SUBCLASSES>
     </VNCLASS>
-    
+
     <VNCLASS xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" ID="fulfilling-13.4.1" xsi:noNamespaceSchemaLocation="vn_schema-3.xsd">
         <MEMBERS>
             <MEMBER name="issue" wn="issue%2:41:00" grouping="issue.01"/>
@@ -38213,7 +38213,7 @@
         <MEMBERS>
             <MEMBER name="accord" wn="accord%2:40:00" grouping=""/>
             <MEMBER name="devolve" wn="devolve%2:41:02" grouping="devolve.01"/>
-            <MEMBER name="portion-out" wn="portion%2:40:00" grouping=""/>
+            <MEMBER name="portion_out" wn="portion%2:40:00" grouping=""/>
             <MEMBER name="ration" wn="ration%2:40:00" grouping=""/>
         </MEMBERS>
         <THEMROLES>
@@ -39146,7 +39146,7 @@
     <VNCLASS xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" ID="give-13.1" xsi:noNamespaceSchemaLocation="vn_schema-3.xsd">
         <MEMBERS>
             <MEMBER name="deal" wn="deal%2:40:01 deal%2:40:02 deal%2:40:07         deal%2:40:06" grouping="deal.04"/>
-            <MEMBER name="give-back" wn="" grouping="give.01 give.02"/>
+            <MEMBER name="give_back" wn="" grouping="give.01 give.02"/>
             <MEMBER name="lend" wn="lend%2:40:00" grouping="lend.02"/>
             <MEMBER name="loan" wn="loan%2:40:00" grouping=""/>
             <MEMBER name="pass" wn="pass%2:40:00 pass%2:40:01 pass%2:40:13 pass%2:38:04" grouping="pass.04"/>
@@ -39664,7 +39664,7 @@
             <!-- end -1 -->
         </SUBCLASSES>
     </VNCLASS>
-    
+
     <VNCLASS xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" ID="gobble-39.3" xsi:noNamespaceSchemaLocation="vn_schema-3.xsd">
         <MEMBERS/>
         <THEMROLES>
@@ -46308,7 +46308,7 @@
         </FRAMES>
         <SUBCLASSES/>
     </VNCLASS>
-    
+
     <VNCLASS xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" ID="intend-61.2" xsi:noNamespaceSchemaLocation="vn_schema-3.xsd">
         <MEMBERS>
             <MEMBER name="aim" wn="" grouping=""/>
@@ -46502,13 +46502,13 @@
     </VNCLASS>
     <VNCLASS xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" ID="interact-36.6" xsi:noNamespaceSchemaLocation="vn_schema-3.xsd">
         <MEMBERS>
-            <MEMBER name="follow-up" wn="" grouping="follow.06"/>
-            <MEMBER name="follow-through" wn="" grouping="follow.06"/>
-            <MEMBER name="go-steady" wn="go_steady%2:41:00" grouping=""/>
-            <MEMBER name="go-out" wn="go_out%2:41:00" grouping=""/>
+            <MEMBER name="follow_up" wn="" grouping="follow.06"/>
+            <MEMBER name="follow_through" wn="" grouping="follow.06"/>
+            <MEMBER name="go_steady" wn="go_steady%2:41:00" grouping=""/>
+            <MEMBER name="go_out" wn="go_out%2:41:00" grouping=""/>
             <MEMBER name="interact" wn="interact%2:41:00" grouping=""/>
-            <MEMBER name="hook-up" wn="" grouping="hook.04"/>
-            <MEMBER name="split-up" wn="split_up%2:41:01" grouping="split.03"/>
+            <MEMBER name="hook_up" wn="" grouping="hook.04"/>
+            <MEMBER name="split_up" wn="split_up%2:41:01" grouping="split.03"/>
         </MEMBERS>
         <THEMROLES>
             <THEMROLE type="Agent">
@@ -47184,7 +47184,7 @@
         </FRAMES>
         <SUBCLASSES/>
     </VNCLASS>
-    
+
     <VNCLASS xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" ID="judgment-33.1" xsi:noNamespaceSchemaLocation="vn_schema-3.xsd">
         <MEMBERS>
             <MEMBER name="abuse" wn="abuse%2:41:00 abuse%2:30:00 abuse%2:32:00" grouping="abuse.01"/>
@@ -47754,7 +47754,7 @@
         </FRAMES>
         <SUBCLASSES/>
     </VNCLASS>
-    
+
     <VNCLASS xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" ID="learn-14" xsi:noNamespaceSchemaLocation="vn_schema-3.xsd">
         <MEMBERS/>
         <THEMROLES>
@@ -48426,7 +48426,7 @@
             </VNSUBCLASS>
         </SUBCLASSES>
     </VNCLASS>
-    
+
     <VNCLASS xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" ID="lecture-37.11" xsi:noNamespaceSchemaLocation="vn_schema-3.xsd">
         <MEMBERS/>
         <THEMROLES>
@@ -49720,7 +49720,7 @@
             </VNSUBCLASS>
         </SUBCLASSES>
     </VNCLASS>
-    
+
     <VNCLASS xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" ID="lure-59.3" xsi:noNamespaceSchemaLocation="vn_schema-3.xsd">
         <MEMBERS>
             <MEMBER name="allure" wn="allure%2:32:00" grouping=""/>
@@ -51615,7 +51615,7 @@
             </VNSUBCLASS>
         </SUBCLASSES>
     </VNCLASS>
-    
+
     <VNCLASS xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" ID="meet-36.3" xsi:noNamespaceSchemaLocation="vn_schema-3.xsd">
         <MEMBERS/>
         <THEMROLES>
@@ -53285,7 +53285,7 @@
             <VNSUBCLASS ID="murder-42.1-1">
                 <MEMBERS>
                     <MEMBER name="kill" wn="kill%2:35:00 kill%2:35:01                 kill%2:42:00 kill%2:35:02" grouping="kill.01"/>
-                    <MEMBER name="kill-off" wn="kill_off%2:35:00" grouping="kill.01"/>
+                    <MEMBER name="kill_off" wn="kill_off%2:35:00" grouping="kill.01"/>
                 </MEMBERS>
                 <THEMROLES>
                     <THEMROLE type="Instrument">
@@ -54554,7 +54554,7 @@
             </VNSUBCLASS>
         </SUBCLASSES>
     </VNCLASS>
-    
+
     <VNCLASS xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" ID="occur-48.3" xsi:noNamespaceSchemaLocation="vn_schema-3.xsd">
         <MEMBERS>
             <MEMBER name="go_on" wn="" grouping=""/>
@@ -54805,7 +54805,7 @@
         </FRAMES>
         <SUBCLASSES/>
     </VNCLASS>
-    
+
     <VNCLASS xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" ID="order-58.3" xsi:noNamespaceSchemaLocation="vn_schema-3.xsd">
         <MEMBERS>
             <MEMBER name="announce" wn="announce%2:32:02" grouping="announce.01"/>
@@ -55330,8 +55330,8 @@
             <MEMBER name="treble" wn="" grouping=""/>
             <MEMBER name="trip" wn="trip%2:36:00" grouping="trip.03"/>
             <MEMBER name="triple" wn="triple%2:30:00" grouping="triple.01"/>
-            <MEMBER name="turn-on" wn="" grouping=""/>
-            <MEMBER name="turn-off" wn="" grouping=""/>
+            <MEMBER name="turn_on" wn="" grouping=""/>
+            <MEMBER name="turn_off" wn="" grouping=""/>
             <MEMBER name="ulcerate" wn="ulcerate%2:30:00 ulcerate%2:29:00" grouping=""/>
             <MEMBER name="unionize" wn="unionize%2:41:00" grouping=""/>
             <MEMBER name="upload" wn="" grouping=""/>
@@ -56803,7 +56803,7 @@
             </VNSUBCLASS>
         </SUBCLASSES>
     </VNCLASS>
-    
+
     <VNCLASS xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" ID="pit-10.7" xsi:noNamespaceSchemaLocation="vn_schema-3.xsd">
         <MEMBERS>
             <MEMBER name="bark" wn="bark%2:35:00" grouping="bark.03"/>
@@ -57239,7 +57239,7 @@
             </VNSUBCLASS>
         </SUBCLASSES>
     </VNCLASS>
-    
+
     <VNCLASS xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" ID="pocket-9.10" xsi:noNamespaceSchemaLocation="vn_schema-3.xsd">
         <MEMBERS>
             <MEMBER name="archive" wn="archive%2:35:00" grouping=""/>
@@ -59731,7 +59731,7 @@
             </VNSUBCLASS>
         </SUBCLASSES>
     </VNCLASS>
-    
+
     <VNCLASS xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" ID="push-12" xsi:noNamespaceSchemaLocation="vn_schema-3.xsd">
         <MEMBERS>
             <MEMBER name="heave" wn="heave%2:35:01" grouping="heave.01"/>
@@ -60227,7 +60227,7 @@
                 <MEMBERS>
                     <MEMBER name="apply" wn="apply%2:35:00" grouping="apply.03"/>
                     <MEMBER name="bury" wn="bury%2:39:00 bury%2:41:00                 bury%2:35:00 bury%2:35:02 bury%2:35:01" grouping="bury.01                 bury.02"/>
-                    <MEMBER name="build-in" wn="build_in%2:30:00" grouping="build.05"/>
+                    <MEMBER name="build_in" wn="build_in%2:30:00" grouping="build.05"/>
                     <MEMBER name="deposit" wn="deposit%2:40:00" grouping="deposit.02"/>
                     <MEMBER name="embed" wn="embed%2:35:00" grouping="embed.01"/>
                     <MEMBER name="insert" wn="insert%2:35:00" grouping="insert.01"/>
@@ -60364,7 +60364,7 @@
             </VNSUBCLASS>
         </SUBCLASSES>
     </VNCLASS>
-    
+
     <VNCLASS xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" ID="put_direction-9.4" xsi:noNamespaceSchemaLocation="vn_schema-3.xsd">
         <MEMBERS>
             <!--Direction for this class is "against gravity"-->
@@ -61182,7 +61182,7 @@
             </VNSUBCLASS>
         </SUBCLASSES>
     </VNCLASS>
-    
+
     <VNCLASS xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" ID="reflexive_appearance-48.1.2" xsi:noNamespaceSchemaLocation="vn_schema-3.xsd">
         <MEMBERS>
             <MEMBER name="announce" wn="" grouping=""/>
@@ -61735,7 +61735,7 @@
             <MEMBER name="decline" wn="" grouping=""/>
             <MEMBER name="rebuff" wn="" grouping=""/>
             <MEMBER name="refuse" wn="" grouping=""/>
-            <MEMBER name="turn-down" wn="" grouping=""/>
+            <MEMBER name="turn_down" wn="" grouping=""/>
         </MEMBERS>
         <THEMROLES>
             <THEMROLE type="Agent">
@@ -62151,8 +62151,8 @@
             <MEMBER name="bloody" wn="" grouping=""/>
             <MEMBER name="botch" wn="" grouping=""/>
             <MEMBER name="bowdlerize" wn="" grouping=""/>
-            <MEMBER name="bring-out" wn="" grouping=""/>
-            <MEMBER name="bring-up" wn="" grouping=""/>
+            <MEMBER name="bring_out" wn="" grouping=""/>
+            <MEMBER name="bring_up" wn="" grouping=""/>
             <MEMBER name="bungle" wn="" grouping=""/>
             <MEMBER name="capacitate" wn="" grouping="capacitate.01 capacitate.02"/>
             <MEMBER name="carbonify" wn="" grouping=""/>
@@ -62281,8 +62281,8 @@
             <MEMBER name="traumatize" wn="" grouping=""/>
             <MEMBER name="truncate" wn="" grouping=""/>
             <MEMBER name="trivialize" wn="trivialize%2:32:00" grouping=""/>
-            <MEMBER name="turn-up" wn="" grouping=""/>
-            <MEMBER name="turn-down" wn="" grouping=""/>
+            <MEMBER name="turn_up" wn="" grouping=""/>
+            <MEMBER name="turn_down" wn="" grouping=""/>
             <MEMBER name="underfeed" wn="" grouping=""/>
             <MEMBER name="urbanize" wn="" grouping=""/>
             <MEMBER name="ventilate" wn="" grouping=""/>
@@ -62460,7 +62460,7 @@
             <MEMBER name="abolish" wn="abolish%2:41:00" grouping="abolish.01"/>
             <MEMBER name="abstract" wn="abstract%2:40:00" grouping="abstract.02"/>
             <MEMBER name="cull" wn="cull%2:40:00 cull%2:35:00" grouping=""/>
-            <MEMBER name="cut-off" wn="" grouping="cut.06"/>
+            <MEMBER name="cut_off" wn="" grouping="cut.06"/>
             <MEMBER name="deburr" wn="" grouping=""/>
             <MEMBER name="deduct" wn="deduct%2:31:01 deduct%2:40:00" grouping="deduct.01"/>
             <MEMBER name="delete" wn="delete%2:35:00 delete%2:32:00" grouping="delete.01"/>
@@ -62627,7 +62627,7 @@
         </FRAMES>
         <SUBCLASSES/>
     </VNCLASS>
-    
+
     <VNCLASS xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" ID="render-29.90" xsi:noNamespaceSchemaLocation="vn_schema-3.xsd">
         <MEMBERS>
             <MEMBER name="drive" wn="drive%2:35:00" grouping="drive.02"/>
@@ -62845,7 +62845,7 @@
             </VNSUBCLASS>
         </SUBCLASSES>
     </VNCLASS>
-    
+
     <VNCLASS xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" ID="representation-110.1" xsi:noNamespaceSchemaLocation="vn_schema-3.xsd">
         <MEMBERS>
             <MEMBER name="be" wn="be%2:42:08 be%2:42:06" grouping="be.01"/>
@@ -62925,7 +62925,7 @@
         </FRAMES>
         <SUBCLASSES/>
     </VNCLASS>
-    
+
     <VNCLASS xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" ID="require-103" xsi:noNamespaceSchemaLocation="vn_schema-3.xsd">
         <MEMBERS>
             <MEMBER name="take" wn="take%2:42:00" grouping="take.07"/>
@@ -63159,7 +63159,7 @@
             </VNSUBCLASS>
         </SUBCLASSES>
     </VNCLASS>
-    
+
     <VNCLASS xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" ID="resign-10.11" xsi:noNamespaceSchemaLocation="vn_schema-3.xsd">
         <MEMBERS>
             <MEMBER name="leave_office" wn="leave_office%2:41:00" grouping=""/>
@@ -63497,7 +63497,7 @@
         </FRAMES>
         <SUBCLASSES/>
     </VNCLASS>
-    
+
     <VNCLASS xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" ID="result-27.2" xsi:noNamespaceSchemaLocation="vn_schema-3.xsd">
         <MEMBERS>
             <MEMBER name="cause" wn="" grouping=""/>
@@ -63962,7 +63962,7 @@
         </FRAMES>
         <SUBCLASSES/>
     </VNCLASS>
-    
+
     <VNCLASS xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" ID="roll-51.3.1" xsi:noNamespaceSchemaLocation="vn_schema-3.xsd">
         <MEMBERS>
             <!--Each member also adds a manner predicate such as manner(during(E),Theme,running)-->
@@ -64428,7 +64428,7 @@
         </FRAMES>
         <SUBCLASSES/>
     </VNCLASS>
-    
+
     <VNCLASS xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" ID="rotate-51.9.1" xsi:noNamespaceSchemaLocation="vn_schema-3.xsd">
         <MEMBERS/>
         <THEMROLES>
@@ -64602,7 +64602,7 @@
             </VNSUBCLASS>
         </SUBCLASSES>
     </VNCLASS>
-    
+
     <VNCLASS xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" ID="rummage-35.5" xsi:noNamespaceSchemaLocation="vn_schema-3.xsd">
         <MEMBERS>
             <MEMBER name="bore" wn="bore%2:35:00" grouping=""/>
@@ -65694,7 +65694,7 @@
             </VNSUBCLASS>
         </SUBCLASSES>
     </VNCLASS>
-    
+
     <VNCLASS xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" ID="rush-53.2" xsi:noNamespaceSchemaLocation="vn_schema-3.xsd">
         <MEMBERS>
             <MEMBER name="hasten" wn="hasten%2:30:00 hasten%2:41:00" grouping="hasten.01"/>
@@ -67712,7 +67712,7 @@
             </VNSUBCLASS>
         </SUBCLASSES>
     </VNCLASS>
-    
+
     <VNCLASS xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" ID="search-35.2" xsi:noNamespaceSchemaLocation="vn_schema-3.xsd">
         <MEMBERS>
             <MEMBER name="advertise" wn="advertise%2:32:00" grouping="advertise.01"/>
@@ -70524,7 +70524,7 @@
             </VNSUBCLASS>
         </SUBCLASSES>
     </VNCLASS>
-    
+
     <VNCLASS xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" ID="sound_emission-43.2" xsi:noNamespaceSchemaLocation="vn_schema-3.xsd">
         <MEMBERS>
             <MEMBER name="babble" wn="babble%2:39:00" grouping="babble.02"/>
@@ -70898,7 +70898,7 @@
         </FRAMES>
         <SUBCLASSES/>
     </VNCLASS>
-    
+
     <VNCLASS xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" ID="sound_existence-47.4" xsi:noNamespaceSchemaLocation="vn_schema-3.xsd">
         <MEMBERS>
             <!--Each member adds a predicate for the quality of the sound-->
@@ -71950,7 +71950,7 @@
             </VNSUBCLASS>
         </SUBCLASSES>
     </VNCLASS>
-    
+
     <VNCLASS xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" ID="spend_time-104" xsi:noNamespaceSchemaLocation="vn_schema-3.xsd">
         <MEMBERS>
             <MEMBER name="kill" wn="" grouping=""/>
@@ -72087,7 +72087,7 @@
         </FRAMES>
         <SUBCLASSES/>
     </VNCLASS>
-    
+
     <VNCLASS xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" ID="split-23.2" xsi:noNamespaceSchemaLocation="vn_schema-3.xsd">
         <MEMBERS>
             <MEMBER name="blow" wn="blow%2:38:00 blow%2:38:03" grouping="blow.01"/>
@@ -73329,7 +73329,7 @@
             </VNSUBCLASS>
         </SUBCLASSES>
     </VNCLASS>
-    
+
     <VNCLASS xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" ID="stimulate-59.4" xsi:noNamespaceSchemaLocation="vn_schema-3.xsd">
         <MEMBERS>
             <MEMBER name="incite" wn="incite%2:36:00" grouping="incite.01"/>
@@ -73737,7 +73737,7 @@
             </VNSUBCLASS>
         </SUBCLASSES>
     </VNCLASS>
-    
+
     <VNCLASS xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" ID="subjugate-42.3" xsi:noNamespaceSchemaLocation="vn_schema-3.xsd">
         <MEMBERS>
             <MEMBER name="disenfranchise" wn="disenfranchise%2:41:00" grouping=""/>
@@ -75406,7 +75406,7 @@
                     <MEMBER name="boost" wn="" grouping="boost.01 boost.02"/>
                     <MEMBER name="buttress" wn="" grouping=""/>
                     <MEMBER name="buoy" wn="" grouping="buoy.01"/>
-                    <MEMBER name="hold-up" wn="" grouping="hold.03"/>
+                    <MEMBER name="hold_up" wn="" grouping="hold.03"/>
                     <MEMBER name="reinforce" wn="" grouping="reinforce.01"/>
                     <MEMBER name="strengthen" wn="" grouping="strengthen.01"/>
                     <MEMBER name="support" wn="" grouping="support.01"/>
@@ -80779,7 +80779,7 @@
         </FRAMES>
         <SUBCLASSES/>
     </VNCLASS>
-    
+
     <VNCLASS xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" ID="try-61.1" xsi:noNamespaceSchemaLocation="vn_schema-3.xsd">
         <MEMBERS>
             <MEMBER name="try" wn="try%2:41:00" grouping="try.01"/>
@@ -81482,7 +81482,7 @@
             </VNSUBCLASS>
         </SUBCLASSES>
     </VNCLASS>
-    
+
     <VNCLASS xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" ID="use-105.1" xsi:noNamespaceSchemaLocation="vn_schema-3.xsd">
         <MEMBERS>
             <MEMBER name="use" wn="use%2:34:01" grouping="use.01"/>
@@ -81626,7 +81626,7 @@
         </FRAMES>
         <SUBCLASSES/>
     </VNCLASS>
-    
+
     <VNCLASS xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" ID="vehicle-51.4.1" xsi:noNamespaceSchemaLocation="vn_schema-3.xsd">
         <MEMBERS>
             <MEMBER name="balloon" wn="balloon%2:38:00" grouping="balloon.03"/>
