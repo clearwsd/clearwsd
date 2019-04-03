@@ -16,13 +16,10 @@
 
 package io.github.clearwsd;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import io.github.clearwsd.parser.NlpParser;
-import io.github.clearwsd.type.DepNode;
 import io.github.clearwsd.type.DepTree;
-import io.github.clearwsd.type.FeatureType;
 
 /**
  * Parser wrapper that applies word sense annotations via a {@link WordSenseAnnotator} to inputs following parsing.
@@ -38,17 +35,7 @@ public class DefaultSensePredictor<T> extends BaseSensePredictor<T> {
     @Override
     public List<SensePrediction<T>> predict(List<String> sentence) {
         DepTree depTree = parse(sentence);
-        List<SensePrediction<T>> predictions = new ArrayList<>();
-        for (DepNode token : depTree) {
-            String sense = token.feature(FeatureType.Sense);
-            if (sense != null) {
-                predictions.add(new DefaultSensePrediction<>(
-                        token.index(),
-                        token.feature(FeatureType.Text),
-                        sense, senseInventory().getSense(sense)));
-            }
-        }
-        return predictions;
+        return predict(depTree);
     }
 
     /**

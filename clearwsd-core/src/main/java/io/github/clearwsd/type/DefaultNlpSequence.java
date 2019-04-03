@@ -16,16 +16,12 @@
 
 package io.github.clearwsd.type;
 
-import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import javax.annotation.Nonnull;
-
-import io.github.clearwsd.type.NlpInstance;
-import io.github.clearwsd.type.NlpSequence;
 import lombok.Getter;
 import lombok.experimental.Accessors;
+import lombok.experimental.Delegate;
 
 /**
  * Default {@link NlpSequence} implementation.
@@ -36,27 +32,12 @@ import lombok.experimental.Accessors;
 @Accessors(fluent = true)
 public class DefaultNlpSequence<T extends NlpInstance> extends DefaultNlpInstance implements NlpSequence<T> {
 
+    @Delegate
     private List<T> tokens;
 
     public DefaultNlpSequence(int index, List<T> tokens) {
         super(index);
         this.tokens = tokens;
-    }
-
-    @Override
-    public T get(int index) {
-        return tokens.get(index);
-    }
-
-    @Override
-    public int size() {
-        return tokens.size();
-    }
-
-    @Nonnull
-    @Override
-    public Iterator<T> iterator() {
-        return tokens.iterator();
     }
 
     @Override
