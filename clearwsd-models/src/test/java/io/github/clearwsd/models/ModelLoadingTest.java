@@ -37,7 +37,7 @@ public class ModelLoadingTest {
     private static final String SEMLINK_PATH = "models/nlp4j-semlink.bin";
     private static final String ONTONOTES_PATH = "models/nlp4j-ontonotes.bin";
     private static final String SEMCOR_PATH = "models/nlp4j-semcor.bin";
-    private static final String VERBNET_PATH = "models/nlp4j-verbnet-1.3.bin";
+    private static final String VERBNET_PATH = "models/nlp4j-verbnet-3.3.bin";
 
     @Test
     public void testSemlink() {
