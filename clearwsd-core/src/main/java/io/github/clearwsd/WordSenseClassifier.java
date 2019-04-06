@@ -19,7 +19,9 @@ package io.github.clearwsd;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.net.MalformedURLException;
 import java.net.URL;
+import java.nio.file.Paths;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -69,11 +71,11 @@ public class WordSenseClassifier implements Classifier<NlpFocus<DepNode, DepTree
         Set<String> options = senseInventory.senses(lemma);
         Map<String, Double> scores = classifier.score(instance);
         return scores.entrySet().stream()
-            .filter(e -> options.contains(e.getKey()))
-            .sorted((e1, e2) -> Double.compare(e2.getValue(), e1.getValue()))
-            .map(Map.Entry::getKey)
-            .findFirst() // get highest scoring sense for a given predicate
-            .orElse(senseInventory.defaultSense(lemma)); // or return the default sense for the predicate
+                .filter(e -> options.contains(e.getKey()))
+                .sorted((e1, e2) -> Double.compare(e2.getValue(), e1.getValue()))
+                .map(Map.Entry::getKey)
+                .findFirst() // get highest scoring sense for a given predicate
+                .orElse(senseInventory.defaultSense(lemma)); // or return the default sense for the predicate
     }
 
     @Override
@@ -154,7 +156,15 @@ public class WordSenseClassifier implements Classifier<NlpFocus<DepNode, DepTree
      * @return initialized word sense classifier
      */
     public static WordSenseClassifier loadFromResource(String resource) {
-        return load(WordSenseClassifier.class.getClassLoader().getResource(resource));
+        URL url = WordSenseClassifier.class.getClassLoader().getResource(resource);
+        if (null == url) {
+            try {
+                url = Paths.get(resource).toUri().toURL();
+            } catch (MalformedURLException e) {
+                throw new RuntimeException(e);
+            }
+        }
+        return load(url);
     }
 
 }

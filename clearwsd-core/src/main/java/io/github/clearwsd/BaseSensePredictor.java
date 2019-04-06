@@ -33,7 +33,7 @@ import lombok.AllArgsConstructor;
  * @author jamesgung
  */
 @AllArgsConstructor
-public abstract class BaseSensePredictor<T> implements NlpParser, SensePredictor<T> {
+public abstract class BaseSensePredictor<T> implements ParsingSensePredictor<T> {
 
     protected WordSenseAnnotator annotator;
     protected NlpParser dependencyParser;
