@@ -119,7 +119,7 @@ public class VerbNetSenseInventory implements SenseInventory<IVerbClass>, Serial
      * Initialize sense inventory with default VerbNet from classpath resources.
      */
     public VerbNetSenseInventory() {
-        this(VerbNetSenseInventory.class.getClassLoader().getResource("vn3.3.xml"));
+        this(VerbNetSenseInventory.class.getClassLoader().getResource("vn3.3.1.xml"));
     }
 
     @Override
