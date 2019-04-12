@@ -17,35 +17,35 @@
 package io.github.clearwsd.verbnet;
 
 import com.google.common.collect.HashMultimap;
+import com.google.common.collect.LinkedHashMultimap;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Sets;
 import com.google.common.io.ByteStreams;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import edu.mit.jverbnet.data.IMember;
-import edu.mit.jverbnet.data.IVerbClass;
-import edu.mit.jverbnet.data.IWordnetKey;
-import edu.mit.jverbnet.index.IVerbIndex;
-import edu.mit.jverbnet.index.VerbIndex;
 import io.github.clearwsd.utils.CountingSenseInventory;
 import io.github.clearwsd.utils.SenseInventory;
+import io.github.clearwsd.verbnet.xml.VerbNet;
+import io.github.clearwsd.verbnet.xml.VerbNetClass;
+import io.github.clearwsd.verbnet.xml.VerbNetFactory;
+import io.github.clearwsd.verbnet.xml.VerbNetMember;
+import io.github.clearwsd.verbnet.xml.WordNetKey;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
@@ -55,7 +55,7 @@ import lombok.extern.slf4j.Slf4j;
  * @author jamesgung
  */
 @Slf4j
-public class VerbNetSenseInventory implements SenseInventory<IVerbClass>, Serializable {
+public class VerbNetSenseInventory implements SenseInventory<VerbNetClass>, Serializable {
 
     private static final long serialVersionUID = 410274561044821035L;
 
@@ -82,11 +82,12 @@ public class VerbNetSenseInventory implements SenseInventory<IVerbClass>, Serial
     }
 
     @Getter
-    private transient IVerbIndex verbnet;
+    private transient VerbNet verbnet;
 
-    private transient Multimap<String, IVerbClass> lemmaVnMap;
-    private transient Multimap<String, IWordnetKey> lemmaWnMap;
-    private transient Map<String, IVerbClass> senseVnMap;
+    private transient Multimap<String, VerbNetClass> lemmaVnMap;
+    private transient Multimap<String, WordNetKey> lemmaWnMap;
+    private transient Multimap<WordNetKey, VerbNetMember> wordNetMemberMap;
+    private transient Map<String, VerbNetClass> senseVnMap;
     private CountingSenseInventory countingSenseInventory = new CountingSenseInventory();
     private URL url;
     private byte[] data; // we persist this as a byte[] for model loading when the URL is no longer valid
@@ -125,21 +126,19 @@ public class VerbNetSenseInventory implements SenseInventory<IVerbClass>, Serial
     @Override
     public Set<String> senses(String lemma) {
         return Sets.union(lemmaVnMap.get(lemma).stream()
-                .map(cls -> getIdNumber(cls.getID()))
+                .map(cls -> getIdNumber(cls.id()))
                 .collect(Collectors.toSet()), countingSenseInventory.senses(lemma));
     }
 
     @Override
     public String defaultSense(String lemma) {
         // TODO: find principled option for selecting default sense
-        Optional<IWordnetKey> wnKey = lemmaWnMap.get(lemma).stream()
-                .min(Comparator.comparingInt(IWordnetKey::getLexicalID));
+        Optional<WordNetKey> wnKey = lemmaWnMap.get(lemma).stream()
+                .min(Comparator.comparingInt(WordNetKey::lexicalId));
         if (wnKey.isPresent()) {
-            Optional<IMember> member = verbnet.getMembers(wnKey.get()).stream()
-                    .min((m1, m2) -> Comparator.<String>naturalOrder()
-                    .compare(m1.getVerbClass().getID(), m2.getVerbClass().getID()));
+            Optional<VerbNetMember> member = wordNetMemberMap.get(wnKey.get()).stream().findFirst();
             if (member.isPresent()) {
-                return getIdNumber(getRoot(member.get().getVerbClass()).getID());
+                return getIdNumber(getRoot(member.get().verbClass()).id());
             }
         }
         return countingSenseInventory.defaultSense(lemma);
@@ -151,66 +150,54 @@ public class VerbNetSenseInventory implements SenseInventory<IVerbClass>, Serial
     }
 
     @Override
-    public IVerbClass getSense(String id) {
+    public VerbNetClass getSense(String id) {
         return senseVnMap.get(id);
     }
 
     private void initialize() {
         if (this.data == null) {
-            try {
-                this.data = ByteStreams.toByteArray(url.openStream());
+            try (InputStream inputStream = url.openStream()) {
+                this.data = ByteStreams.toByteArray(inputStream);
             } catch (IOException e) {
                 throw new RuntimeException("Error reading VerbNet XML: " + e.getMessage(), e);
             }
-            verbnet = new VerbIndex(url);
+            verbnet = VerbNetFactory.readVerbNet(new ByteArrayInputStream(data));
         } else {
-            try {
-                Path tmp = Files.createTempFile(getClass().getSimpleName(), getClass().getSimpleName());
-                Files.write(tmp, data);
-                tmp.toFile().deleteOnExit();
-                verbnet = new VerbIndex(tmp.toUri().toURL());
-            } catch (IOException e) {
-                throw new RuntimeException("Unable to read VerbNet: " + e.getMessage(), e);
-            }
+            verbnet = VerbNetFactory.readVerbNet(new ByteArrayInputStream(data));
         }
 
-        try {
-            verbnet.open();
-        } catch (IOException e) {
-            throw new RuntimeException("Error loading VerbNet dictionary: " + e.getMessage(), e);
-        }
-        Iterator<IVerbClass> clsIterator = verbnet.iterator();
         lemmaVnMap = HashMultimap.create();
         lemmaWnMap = HashMultimap.create();
         senseVnMap = new HashMap<>();
-        while (clsIterator.hasNext()) {
-            IVerbClass cls = clsIterator.next();
-            if (null != cls.getParent()) { // skip sub-classes, we'll handle them recursively
-                continue;
-            }
-            senseVnMap.put(getIdNumber(cls.getID()), cls);
-            for (IVerbClass subcls : getAllSubclasses(cls)) {
-                for (IMember member : subcls.getMembers()) {
-                    String name = getBaseForm(member.getName());
+        wordNetMemberMap = LinkedHashMultimap.create();
+
+        for (VerbNetClass cls : verbnet.classes()) {
+            senseVnMap.put(getIdNumber(cls.id()), cls);
+            for (VerbNetClass subcls : getAllSubclasses(cls)) {
+                for (VerbNetMember member : subcls.members()) {
+                    String name = getBaseForm(member.name());
                     lemmaVnMap.put(name, cls);
-                    lemmaWnMap.putAll(name, member.getWordnetTypes().keySet());
+                    lemmaWnMap.putAll(name, member.wn());
+                    for (WordNetKey key : member.wn()) {
+                        wordNetMemberMap.put(key, member);
+                    }
                 }
             }
         }
     }
 
-    private Set<IVerbClass> getAllSubclasses(IVerbClass cls) {
-        Set<IVerbClass> subclasses = new HashSet<>();
+    private Set<VerbNetClass> getAllSubclasses(VerbNetClass cls) {
+        Set<VerbNetClass> subclasses = new HashSet<>();
         subclasses.add(cls);
-        for (IVerbClass subclass : cls.getSubclasses()) {
+        for (VerbNetClass subclass : cls.subclasses()) {
             subclasses.addAll(getAllSubclasses(subclass));
         }
         return subclasses;
     }
 
-    private IVerbClass getRoot(IVerbClass cls) {
-        while (cls.getParent() != null) {
-            cls = cls.getParent();
+    private VerbNetClass getRoot(VerbNetClass cls) {
+        while (cls.parentClass().isPresent()) {
+            cls = cls.parentClass().get();
         }
         return cls;
     }

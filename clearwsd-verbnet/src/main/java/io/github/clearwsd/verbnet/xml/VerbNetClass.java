@@ -2,6 +2,7 @@ package io.github.clearwsd.verbnet.xml;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -11,6 +12,7 @@ import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
 
 /**
@@ -19,6 +21,7 @@ import lombok.experimental.Accessors;
  * @author jgung
  */
 @Data
+@EqualsAndHashCode(of = "id")
 @Accessors(fluent = true)
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlRootElement(name = "VNCLS")
@@ -42,5 +45,11 @@ public class VerbNetClass {
     @XmlElementWrapper(name = "SUBCLASSES")
     @XmlElement(name = "VNSUBCLASS", required = true)
     private List<VerbNetClass> subclasses = new ArrayList<>();
+
+    private VerbNetClass parentClass;
+
+    public Optional<VerbNetClass> parentClass() {
+        return Optional.ofNullable(parentClass);
+    }
 
 }

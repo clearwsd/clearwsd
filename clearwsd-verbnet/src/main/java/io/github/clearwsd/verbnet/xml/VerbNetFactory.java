@@ -39,11 +39,23 @@ public class VerbNetFactory {
             SAXParserFactory parserFactory = SAXParserFactory.newInstance();
             parserFactory.setFeature(LOAD_EXTERNAL_DTD, false);
             SAXSource source = new SAXSource(parserFactory.newSAXParser().getXMLReader(), new InputSource(inputStream));
-            return (VerbNet) JAXBContext.newInstance(VerbNet.class,
+            VerbNet verbNet = (VerbNet) JAXBContext.newInstance(VerbNet.class,
                     Adjective.class, Adverb.class, NounPhrase.class, Preposition.class, Lexical.class, Verb.class)
                     .createUnmarshaller().unmarshal(source);
+            verbNet.classes().forEach(VerbNetFactory::setPointers);
+            return verbNet;
         } catch (Exception e) {
             throw new RuntimeException("An error occurred while reading VerbNet XML files", e);
+        }
+    }
+
+    private static void setPointers(VerbNetClass parent) {
+        for (VerbNetMember member : parent.members()) {
+            member.verbClass(parent);
+        }
+        for (VerbNetClass verbNetClass : parent.subclasses()) {
+            verbNetClass.parentClass(parent);
+            setPointers(verbNetClass);
         }
     }
 

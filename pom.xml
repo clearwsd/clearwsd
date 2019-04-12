@@ -132,6 +132,11 @@
                 <artifactId>clearwsd-stanford</artifactId>
                 <version>${project.version}</version>
             </dependency>
+            <dependency>
+                <groupId>io.github.clearwsd</groupId>
+                <artifactId>clearwsd-verbnet</artifactId>
+                <version>${project.version}</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 

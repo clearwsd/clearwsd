@@ -1,5 +1,8 @@
 package io.github.clearwsd.verbnet.xml;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -26,8 +29,8 @@ public class VerbNetMember {
     private String name;
 
     @XmlAttribute(name = "wn", required = true)
-    @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
-    private String wn;
+    @XmlJavaTypeAdapter(WordNetKey.WordNetKeyAdapter.class)
+    private List<WordNetKey> wn = new ArrayList<>();
 
     @XmlAttribute(name = "features")
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
@@ -40,5 +43,11 @@ public class VerbNetMember {
     @XmlAttribute(name = "verbnet_key")
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
     private String verbnetKey = "";
+
+    private VerbNetClass verbClass;
+
+    public VerbNetClass verbClass() {
+        return verbClass;
+    }
 
 }

@@ -14,6 +14,7 @@ import io.github.clearwsd.verbnet.xml.VerbNetMember;
 import io.github.clearwsd.verbnet.xml.VerbNetThematicRole;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 
 /**
  * VerbNet reader unit tests.
@@ -44,8 +45,8 @@ public class VerbNetTest {
         assertEquals("die", die.name());
         assertEquals("build#3", build.verbnetKey());
         assertEquals("die#2", die.verbnetKey());
-        assertEquals("", build.wn());
-        assertEquals("", die.wn());
+        assertNull(build.wn());
+        assertNull(die.wn());
     }
 
     @Test
