@@ -16,8 +16,10 @@ import lombok.experimental.Accessors;
 @Data
 @Accessors(fluent = true)
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlRootElement(name = "ARG")
+@XmlRootElement(name = SemanticArgument.ROOT_NAME)
 public class SemanticArgument {
+
+    static final String ROOT_NAME = "ARG";
 
     @XmlAttribute(name = "type", required = true)
     private String type;

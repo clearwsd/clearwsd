@@ -17,13 +17,15 @@ import lombok.experimental.Accessors;
 @Data
 @Accessors(fluent = true)
 @XmlAccessorType(XmlAccessType.PROPERTY)
-@XmlRootElement(name = "THEMROLE")
+@XmlRootElement(name = VerbNetThematicRole.ROOT_NAME)
 public class VerbNetThematicRole {
+
+    static final String ROOT_NAME = "THEMROLE";
 
     @XmlAttribute(name = "type", required = true)
     private String type;
 
-    @XmlElement(name = "SELRESTRS", required = true)
+    @XmlElement(name = SelectionalRestrictions.ROOT_NAME, required = true)
     private SelectionalRestrictions selectionalRestrictions;
 
 }

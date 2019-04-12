@@ -20,13 +20,15 @@ import lombok.experimental.Accessors;
 @Data
 @Accessors(fluent = true)
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlRootElement(name = "SYNRESTRS")
+@XmlRootElement(name = SyntacticRestrictions.ROOT_NAME)
 public class SyntacticRestrictions {
+
+    static final String ROOT_NAME = "SYNRESTRS";
 
     @XmlAttribute(name = "logic")
     private String logic = "";
 
-    @XmlElement(name = "SYNRESTR")
+    @XmlElement(name = SyntacticRestriction.ROOT_NAME)
     private List<SyntacticRestriction> syntacticRestrictions = new ArrayList<>();
 
 }

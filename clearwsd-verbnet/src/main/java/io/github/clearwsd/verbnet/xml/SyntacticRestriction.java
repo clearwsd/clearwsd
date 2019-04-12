@@ -16,8 +16,10 @@ import lombok.experimental.Accessors;
 @Data
 @Accessors(fluent = true)
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlRootElement(name = "SYNRESTR")
+@XmlRootElement(name = SyntacticRestriction.ROOT_NAME)
 public class SyntacticRestriction {
+
+    static final String ROOT_NAME = "SYNRESTR";
 
     @XmlAttribute(name = "type", required = true)
     private String type;

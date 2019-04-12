@@ -23,8 +23,10 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @Accessors(fluent = true)
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlRootElement(name = "PRED")
+@XmlRootElement(name = SemanticPredicate.ROOT_NAME)
 public class SemanticPredicate {
+
+    static final String ROOT_NAME = "PRED";
 
     @XmlAttribute(name = "bool")
     private String bool = "";
@@ -33,7 +35,7 @@ public class SemanticPredicate {
     private String value;
 
     @XmlElementWrapper(name = "ARGS")
-    @XmlElement(name = "ARG", required = true)
+    @XmlElement(name = SemanticArgument.ROOT_NAME, required = true)
     private List<SemanticArgument> semanticArguments = new ArrayList<>();
 
 }

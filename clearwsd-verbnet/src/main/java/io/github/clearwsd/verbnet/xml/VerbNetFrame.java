@@ -24,14 +24,16 @@ import lombok.experimental.Accessors;
 @Data
 @Accessors(fluent = true)
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlRootElement(name = "FRAME")
+@XmlRootElement(name = VerbNetFrame.ROOT_NAME)
 public class VerbNetFrame {
+
+    static final String ROOT_NAME = "FRAME";
 
     @XmlElement(name = "DESCRIPTION", required = true)
     private FrameDescription description;
 
     @XmlElementWrapper(name = "EXAMPLES")
-    @XmlElement(name = "EXAMPLE", required = true)
+    @XmlElement(name = FrameExample.ROOT_NAME, required = true)
     private List<FrameExample> examples = new ArrayList<>();
 
     @XmlElementWrapper(name = "SYNTAX")
@@ -39,7 +41,7 @@ public class VerbNetFrame {
     private List<Syntax> syntax = new ArrayList<>();
 
     @XmlElementWrapper(name = "SEMANTICS")
-    @XmlElement(name = "PRED", required = true)
+    @XmlElement(name = SemanticPredicate.ROOT_NAME, required = true)
     private List<SemanticPredicate> predicates = new ArrayList<>();
 
     @Data
@@ -59,9 +61,9 @@ public class VerbNetFrame {
 
         @XmlAttribute(name = "value", required = true)
         private String value;
-        @XmlElement(name = "SYNRESTRS")
+        @XmlElement(name = SyntacticRestrictions.ROOT_NAME)
         private SyntacticRestrictions syntacticRestrictions;
-        @XmlElement(name = "SELRESTRS")
+        @XmlElement(name = SelectionalRestriction.ROOT_NAME)
         private SelectionalRestrictions selectionalRestrictions;
 
         public NounPhrase() {
@@ -100,7 +102,7 @@ public class VerbNetFrame {
     @XmlRootElement(name = "PREP")
     public static class Preposition extends Syntax {
 
-        @XmlElement(name = "SELRESTRS")
+        @XmlElement(name = SelectionalRestrictions.ROOT_NAME)
         private SelectionalRestrictions selectionalRestrictions;
         @XmlAttribute(name = "value")
         private String value;

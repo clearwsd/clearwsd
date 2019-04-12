@@ -24,22 +24,24 @@ import lombok.experimental.Accessors;
 @EqualsAndHashCode(of = "id")
 @Accessors(fluent = true)
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlRootElement(name = "VNCLS")
+@XmlRootElement(name = VerbNetClass.ROOT_NAME)
 public class VerbNetClass {
+
+    static final String ROOT_NAME = "VNCLASS";
 
     @XmlAttribute(name = "ID", required = true)
     private String id;
 
     @XmlElementWrapper(name = "MEMBERS")
-    @XmlElement(name = "MEMBER", required = true)
+    @XmlElement(name = VerbNetMember.ROOT_NAME, required = true)
     private List<VerbNetMember> members = new ArrayList<>();
 
     @XmlElementWrapper(name = "THEMROLES")
-    @XmlElement(name = "THEMROLE", required = true)
+    @XmlElement(name = VerbNetThematicRole.ROOT_NAME, required = true)
     private List<VerbNetThematicRole> thematicRoles = new ArrayList<>();
 
     @XmlElementWrapper(name = "FRAMES")
-    @XmlElement(name = "FRAME", required = true)
+    @XmlElement(name =VerbNetFrame.ROOT_NAME, required = true)
     private List<VerbNetFrame> frames = new ArrayList<>();
 
     @XmlElementWrapper(name = "SUBCLASSES")

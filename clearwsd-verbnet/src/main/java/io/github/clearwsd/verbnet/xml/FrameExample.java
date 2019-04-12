@@ -18,8 +18,10 @@ import lombok.experimental.Accessors;
 @Data
 @Accessors(fluent = true)
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlRootElement(name = "EXAMPLE")
+@XmlRootElement(name = FrameExample.ROOT_NAME)
 public class FrameExample {
+
+    static final String ROOT_NAME = "EXAMPLE";
 
     @XmlValue
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)

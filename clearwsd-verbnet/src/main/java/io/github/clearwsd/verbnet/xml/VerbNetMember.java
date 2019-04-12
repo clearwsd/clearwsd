@@ -21,8 +21,10 @@ import lombok.experimental.Accessors;
 @Data
 @Accessors(fluent = true)
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlRootElement(name = "MEMBER")
+@XmlRootElement(name = VerbNetMember.ROOT_NAME)
 public class VerbNetMember {
+
+    static final String ROOT_NAME = "MEMBER";
 
     @XmlAttribute(name = "name", required = true)
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)

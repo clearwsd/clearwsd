@@ -22,7 +22,7 @@ import lombok.experimental.Accessors;
 @XmlRootElement(name = "VERBNET")
 public class VerbNet {
 
-    @XmlElement(name = "VNCLASS", required = true)
+    @XmlElement(name = VerbNetClass.ROOT_NAME, required = true)
     private List<VerbNetClass> classes = new ArrayList<>();
 
 }
