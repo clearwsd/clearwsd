@@ -65,6 +65,7 @@
         <module>clearwsd-models</module>
         <module>clearwsd-nlp4j</module>
         <module>clearwsd-stanford</module>
+        <module>clearwsd-verbnet</module>
     </modules>
 
     <dependencies>
