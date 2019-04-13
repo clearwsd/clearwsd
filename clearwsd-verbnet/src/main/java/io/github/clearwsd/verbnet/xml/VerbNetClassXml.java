@@ -3,6 +3,7 @@ package io.github.clearwsd.verbnet.xml;
 import io.github.clearwsd.verbnet.ThematicRole;
 import io.github.clearwsd.verbnet.VerbNetClass;
 import io.github.clearwsd.verbnet.VerbNetFrame;
+import io.github.clearwsd.verbnet.VerbNetId;
 import io.github.clearwsd.verbnet.VerbNetMember;
 import java.util.ArrayList;
 import java.util.List;
@@ -14,6 +15,8 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.adapters.XmlAdapter;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
@@ -24,7 +27,7 @@ import lombok.experimental.Accessors;
  * @author jgung
  */
 @Data
-@EqualsAndHashCode(of = "id")
+@EqualsAndHashCode(of = "verbNetId")
 @Accessors(fluent = true)
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlRootElement(name = VerbNetClassXml.ROOT_NAME)
@@ -33,7 +36,8 @@ public class VerbNetClassXml implements VerbNetClass {
     static final String ROOT_NAME = "VNCLASS";
 
     @XmlAttribute(name = "ID", required = true)
-    private String id;
+    @XmlJavaTypeAdapter(VerbNetIdXmlAdapter.class)
+    private VerbNetId verbNetId;
 
     @XmlElementWrapper(name = "MEMBERS")
     @XmlElement(name = VerbNetMemberXml.ROOT_NAME, required = true)
@@ -51,7 +55,7 @@ public class VerbNetClassXml implements VerbNetClass {
     @XmlElement(name = "VNSUBCLASS", required = true)
     private List<VerbNetClassXml> children = new ArrayList<>();
 
-    private VerbNetClassXml parentClass;
+    private transient VerbNetClass parentClass;
 
     @Override
     public List<VerbNetMember> members() {
@@ -83,6 +87,25 @@ public class VerbNetClassXml implements VerbNetClass {
 
     public Optional<VerbNetClass> parentClass() {
         return Optional.ofNullable(parentClass);
+    }
+
+    public static class VerbNetIdXmlAdapter extends XmlAdapter<String, VerbNetId> {
+
+        @Override
+        public VerbNetId unmarshal(String value) {
+            if (null == value) {
+                return null;
+            }
+            return VerbNetId.parse(value);
+        }
+
+        @Override
+        public String marshal(VerbNetId value) {
+            if (null == value) {
+                return null;
+            }
+            return value.toString();
+        }
     }
 
 }

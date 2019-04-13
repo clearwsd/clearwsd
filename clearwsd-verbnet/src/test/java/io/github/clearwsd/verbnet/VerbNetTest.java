@@ -1,11 +1,8 @@
 package io.github.clearwsd.verbnet;
 
-import io.github.clearwsd.verbnet.xml.SelectionalRestrictionsXml;
 import io.github.clearwsd.verbnet.xml.VerbNetClassXml;
-import io.github.clearwsd.verbnet.xml.VerbNetXmlFactory;
 import io.github.clearwsd.verbnet.xml.VerbNetFrameXml;
-import io.github.clearwsd.verbnet.xml.VerbNetThematicRoleXml;
-import io.github.clearwsd.verbnet.xml.VerbNetXml;
+import io.github.clearwsd.verbnet.xml.VerbNetXmlFactory;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -18,7 +15,7 @@ import static org.junit.Assert.assertEquals;
  */
 public class VerbNetTest {
 
-    private static VerbNetXml verbNet;
+    private static VerbIndex verbNet;
 
     @BeforeClass
     public static void init() {
@@ -28,7 +25,7 @@ public class VerbNetTest {
 
     @Test
     public void testMembers() {
-        VerbNetClassXml verbNetClass = verbNet.classes().get(0);
+        VerbNetClass verbNetClass = verbNet.roots().get(0);
         assertEquals(2, verbNetClass.members().size());
         VerbNetMember build = verbNetClass.members().get(0);
         VerbNetMember die = verbNetClass.members().get(1);
@@ -46,25 +43,25 @@ public class VerbNetTest {
 
     @Test
     public void testThematicRoles() {
-        VerbNetClassXml beginClass = verbNet.classes().get(1);
-        assertEquals(3, beginClass.thematicRoles().size());
-        VerbNetThematicRoleXml agent = beginClass.thematicRoles().get(0);
-        VerbNetThematicRoleXml theme = beginClass.thematicRoles().get(1);
-        VerbNetThematicRoleXml instrument = beginClass.thematicRoles().get(2);
+        VerbNetClass beginClass = verbNet.roots().get(1);
+        assertEquals(3, beginClass.roles().size());
+        ThematicRole agent = beginClass.roles().get(0);
+        ThematicRole theme = beginClass.roles().get(1);
+        ThematicRole instrument = beginClass.roles().get(2);
         assertEquals("Agent", agent.type());
         assertEquals("Theme", theme.type());
         assertEquals("Instrument", instrument.type());
-        SelectionalRestrictionsXml selRels = agent.restrictions();
+        SelResDescription selRels = agent.restrictions();
         assertEquals("or", selRels.logic());
-        assertEquals("+", selRels.selectionalRestriction().get(0).value());
-        assertEquals("animate", selRels.selectionalRestriction().get(0).type());
-        assertEquals("+", selRels.selectionalRestriction().get(1).value());
-        assertEquals("organization", selRels.selectionalRestriction().get(1).type());
+        assertEquals("+", selRels.restrictions().get(0).value());
+        assertEquals("animate", selRels.restrictions().get(0).type());
+        assertEquals("+", selRels.restrictions().get(1).value());
+        assertEquals("organization", selRels.restrictions().get(1).type());
     }
 
     @Test
     public void testFrames() {
-        VerbNetClassXml verbNetClass = verbNet.classes().get(0);
+        VerbNetClass verbNetClass = verbNet.roots().get(0);
         assertEquals(3, verbNetClass.frames().size());
 
         VerbNetFrame frame = verbNetClass.frames().get(0);

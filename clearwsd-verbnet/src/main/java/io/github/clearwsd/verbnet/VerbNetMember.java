@@ -1,6 +1,5 @@
 package io.github.clearwsd.verbnet;
 
-import io.github.clearwsd.verbnet.xml.VerbNetClassXml;
 import io.github.clearwsd.verbnet.xml.WordNetKey;
 import java.util.List;
 
@@ -21,6 +20,6 @@ public interface VerbNetMember {
 
     String verbnetKey();
 
-    VerbNetClassXml verbClass();
+    VerbNetClass verbClass();
 
 }

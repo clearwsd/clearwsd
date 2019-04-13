@@ -1,5 +1,6 @@
 package io.github.clearwsd.verbnet.xml;
 
+import io.github.clearwsd.verbnet.VerbNetClass;
 import io.github.clearwsd.verbnet.VerbNetMember;
 import java.util.ArrayList;
 import java.util.List;
@@ -51,9 +52,9 @@ public class VerbNetMemberXml implements VerbNetMember {
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
     private String verbnetKey = "";
 
-    private VerbNetClassXml verbClass;
+    private transient VerbNetClass verbClass;
 
-    public VerbNetClassXml verbClass() {
+    public VerbNetClass verbClass() {
         return verbClass;
     }
 

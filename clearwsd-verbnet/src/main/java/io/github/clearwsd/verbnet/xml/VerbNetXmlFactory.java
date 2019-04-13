@@ -1,5 +1,7 @@
 package io.github.clearwsd.verbnet.xml;
 
+import io.github.clearwsd.verbnet.DefaultVerbIndex;
+import io.github.clearwsd.verbnet.VerbIndex;
 import io.github.clearwsd.verbnet.VerbNetClass;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -33,7 +35,7 @@ public class VerbNetXmlFactory {
      * @param inputStream VerbNetXml XML file input stream
      * @return VerbNetXml classes
      */
-    public static VerbNetXml readVerbNet(InputStream inputStream) {
+    public static VerbIndex readVerbNet(InputStream inputStream) {
         try {
             SAXParserFactory parserFactory = SAXParserFactory.newInstance();
             parserFactory.setFeature(LOAD_EXTERNAL_DTD, false);
@@ -42,7 +44,7 @@ public class VerbNetXmlFactory {
                 Adjective.class, Adverb.class, NounPhrase.class, Preposition.class, Lexical.class, Verb.class)
                 .createUnmarshaller().unmarshal(source);
             verbNet.classes().forEach(VerbNetXmlFactory::setPointers);
-            return verbNet;
+            return new DefaultVerbIndex(verbNet.verbClasses());
         } catch (Exception e) {
             throw new RuntimeException("An error occurred while reading VerbNetXml XML files", e);
         }
@@ -59,11 +61,11 @@ public class VerbNetXmlFactory {
     }
 
     public static void main(String[] args) throws FileNotFoundException {
-        VerbNetXml verbNet = readVerbNet(new FileInputStream("src/main/resources/vn3.3.1.xml"));
-        for (VerbNetClassXml cls : verbNet.classes()) {
-            System.out.println(cls.id());
+        VerbIndex verbNet = readVerbNet(new FileInputStream("src/main/resources/vn3.3.1.xml"));
+        for (VerbNetClass cls : verbNet.roots()) {
+            System.out.println(cls.verbNetId());
             for (VerbNetClass vncls : cls.subclasses()) {
-                System.out.println(vncls.id());
+                System.out.println(vncls.verbNetId());
                 vncls.members().forEach(System.out::println);
             }
         }
