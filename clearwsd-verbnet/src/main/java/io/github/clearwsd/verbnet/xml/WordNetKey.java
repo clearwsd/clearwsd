@@ -7,9 +7,7 @@ import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
-
 import javax.xml.bind.annotation.adapters.XmlAdapter;
-
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -33,7 +31,7 @@ public class WordNetKey {
     private SynsetType type;
     private int lexicalFileNumber;
     private int lexicalId;
-    private boolean uncertain = false;
+    private boolean uncertain;
 
     public static class WordNetKeyAdapter extends XmlAdapter<String, List<WordNetKey>> {
 
@@ -43,10 +41,10 @@ public class WordNetKey {
                 return new ArrayList<>();
             }
             return Arrays.stream(value.split("\\s+"))
-                    .map(WordNetKey::parseWordNetKey)
-                    .filter(Optional::isPresent)
-                    .map(Optional::get)
-                    .collect(Collectors.toList());
+                .map(WordNetKey::parseWordNetKey)
+                .filter(Optional::isPresent)
+                .map(Optional::get)
+                .collect(Collectors.toList());
         }
 
         @Override
@@ -55,8 +53,8 @@ public class WordNetKey {
                 return null;
             }
             return value.stream()
-                    .map(key -> String.format("%s%%%s:%d:%d", key.lemma, key.type.ordinal(), key.lexicalFileNumber, key.lexicalId))
-                    .collect(Collectors.joining(" "));
+                .map(key -> String.format("%s%%%s:%d:%d", key.lemma, key.type.ordinal(), key.lexicalFileNumber, key.lexicalId))
+                .collect(Collectors.joining(" "));
         }
     }
 
@@ -69,7 +67,7 @@ public class WordNetKey {
         String lemma = matcher.group(1);
         SynsetType type = SynsetType.values()[Math.max(Integer.parseInt(matcher.group(2)), SynsetType.OTHER.ordinal())];
         return Optional.of(new WordNetKey(lemma, type, Integer.parseInt(matcher.group(3)), Integer.parseInt(matcher.group(4)),
-                key.startsWith("?")));
+            key.startsWith("?")));
     }
 
     public enum SynsetType {

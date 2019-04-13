@@ -1,17 +1,13 @@
 package io.github.clearwsd.verbnet;
 
+import io.github.clearwsd.verbnet.xml.SelectionalRestrictionsXml;
+import io.github.clearwsd.verbnet.xml.VerbNetClassXml;
+import io.github.clearwsd.verbnet.xml.VerbNetXmlFactory;
+import io.github.clearwsd.verbnet.xml.VerbNetFrameXml;
+import io.github.clearwsd.verbnet.xml.VerbNetThematicRoleXml;
+import io.github.clearwsd.verbnet.xml.VerbNetXml;
 import org.junit.BeforeClass;
 import org.junit.Test;
-
-import io.github.clearwsd.verbnet.xml.SelectionalRestrictions;
-import io.github.clearwsd.verbnet.xml.SemanticArgument;
-import io.github.clearwsd.verbnet.xml.SemanticPredicate;
-import io.github.clearwsd.verbnet.xml.VerbNet;
-import io.github.clearwsd.verbnet.xml.VerbNetClass;
-import io.github.clearwsd.verbnet.xml.VerbNetFactory;
-import io.github.clearwsd.verbnet.xml.VerbNetFrame;
-import io.github.clearwsd.verbnet.xml.VerbNetMember;
-import io.github.clearwsd.verbnet.xml.VerbNetThematicRole;
 
 import static org.junit.Assert.assertEquals;
 
@@ -22,17 +18,17 @@ import static org.junit.Assert.assertEquals;
  */
 public class VerbNetTest {
 
-    private static VerbNet verbNet;
+    private static VerbNetXml verbNet;
 
     @BeforeClass
     public static void init() {
-        verbNet = VerbNetFactory.readVerbNet(VerbNetClass.class.getClassLoader()
-                .getResourceAsStream("verbnet-test.xml"));
+        verbNet = VerbNetXmlFactory.readVerbNet(VerbNetClassXml.class.getClassLoader()
+            .getResourceAsStream("verbnet-test.xml"));
     }
 
     @Test
     public void testMembers() {
-        VerbNetClass verbNetClass = verbNet.classes().get(0);
+        VerbNetClassXml verbNetClass = verbNet.classes().get(0);
         assertEquals(2, verbNetClass.members().size());
         VerbNetMember build = verbNetClass.members().get(0);
         VerbNetMember die = verbNetClass.members().get(1);
@@ -50,15 +46,15 @@ public class VerbNetTest {
 
     @Test
     public void testThematicRoles() {
-        VerbNetClass beginClass = verbNet.classes().get(1);
+        VerbNetClassXml beginClass = verbNet.classes().get(1);
         assertEquals(3, beginClass.thematicRoles().size());
-        VerbNetThematicRole agent = beginClass.thematicRoles().get(0);
-        VerbNetThematicRole theme = beginClass.thematicRoles().get(1);
-        VerbNetThematicRole instrument = beginClass.thematicRoles().get(2);
+        VerbNetThematicRoleXml agent = beginClass.thematicRoles().get(0);
+        VerbNetThematicRoleXml theme = beginClass.thematicRoles().get(1);
+        VerbNetThematicRoleXml instrument = beginClass.thematicRoles().get(2);
         assertEquals("Agent", agent.type());
         assertEquals("Theme", theme.type());
         assertEquals("Instrument", instrument.type());
-        SelectionalRestrictions selRels = agent.selectionalRestrictions();
+        SelectionalRestrictionsXml selRels = agent.restrictions();
         assertEquals("or", selRels.logic());
         assertEquals("+", selRels.selectionalRestriction().get(0).value());
         assertEquals("animate", selRels.selectionalRestriction().get(0).type());
@@ -68,19 +64,19 @@ public class VerbNetTest {
 
     @Test
     public void testFrames() {
-        VerbNetClass verbNetClass = verbNet.classes().get(0);
+        VerbNetClassXml verbNetClass = verbNet.classes().get(0);
         assertEquals(3, verbNetClass.frames().size());
 
         VerbNetFrame frame = verbNetClass.frames().get(0);
-        assertEquals("The price of oil soared.", frame.examples().get(0).value());
+        assertEquals("The price of oil soared.", frame.examples().get(0));
         assertEquals("2.13.5", frame.description().descriptionNumber());
         assertEquals("NP.attribute V", frame.description().primary());
         assertEquals("Intransitive; Attribute Subject", frame.description().secondary());
         assertEquals("", frame.description().xtag());
 
         assertEquals(4, frame.syntax().size());
-        VerbNetFrame.NounPhrase patient = (VerbNetFrame.NounPhrase) frame.syntax().get(2);
-        assertEquals("NP", patient.type());
+        VerbNetFrameXml.NounPhrase patient = (VerbNetFrameXml.NounPhrase) frame.syntax().get(2);
+        assertEquals(SyntaxType.NP, patient.type());
         assertEquals("Patient", patient.value());
 
         assertEquals(5, frame.predicates().size());

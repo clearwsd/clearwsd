@@ -21,7 +21,11 @@ import com.google.common.collect.LinkedHashMultimap;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Sets;
 import com.google.common.io.ByteStreams;
-
+import io.github.clearwsd.utils.CountingSenseInventory;
+import io.github.clearwsd.utils.SenseInventory;
+import io.github.clearwsd.verbnet.xml.VerbNetXml;
+import io.github.clearwsd.verbnet.xml.VerbNetXmlFactory;
+import io.github.clearwsd.verbnet.xml.WordNetKey;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
@@ -38,19 +42,11 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
-
-import io.github.clearwsd.utils.CountingSenseInventory;
-import io.github.clearwsd.utils.SenseInventory;
-import io.github.clearwsd.verbnet.xml.VerbNet;
-import io.github.clearwsd.verbnet.xml.VerbNetClass;
-import io.github.clearwsd.verbnet.xml.VerbNetFactory;
-import io.github.clearwsd.verbnet.xml.VerbNetMember;
-import io.github.clearwsd.verbnet.xml.WordNetKey;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
 /**
- * VerbNet XML-based {@link SenseInventory} implementation.
+ * VerbNetXml XML-based {@link SenseInventory} implementation.
  *
  * @author jamesgung
  */
@@ -71,10 +67,10 @@ public class VerbNetSenseInventory implements SenseInventory<VerbNetClass>, Seri
     }
 
     /**
-     * Get the numbered portion of a VerbNet class string, (e.g. "confront-98" --&gt; "98").
+     * Get the numbered portion of a VerbNetXml class string, (e.g. "confront-98" --&gt; "98").
      *
-     * @param id VerbNet class id
-     * @return VerbNet class number
+     * @param id VerbNetXml class id
+     * @return VerbNetXml class number
      */
     public static String getIdNumber(String id) {
         int hyphenIndex = id.indexOf("-");
@@ -82,7 +78,7 @@ public class VerbNetSenseInventory implements SenseInventory<VerbNetClass>, Seri
     }
 
     @Getter
-    private transient VerbNet verbnet;
+    private transient VerbNetXml verbnet;
 
     private transient Multimap<String, VerbNetClass> lemmaVnMap;
     private transient Multimap<String, WordNetKey> lemmaWnMap;
@@ -95,21 +91,21 @@ public class VerbNetSenseInventory implements SenseInventory<VerbNetClass>, Seri
     /**
      * Initialize sense inventory from directory.
      *
-     * @param path VerbNet XML directory
+     * @param path VerbNetXml XML directory
      */
     public VerbNetSenseInventory(File path) {
         try {
             this.url = path.toURI().toURL();
             initialize();
         } catch (MalformedURLException e) {
-            throw new RuntimeException("Error initializing VerbNet sense inventory: " + e.getMessage(), e);
+            throw new RuntimeException("Error initializing VerbNetXml sense inventory: " + e.getMessage(), e);
         }
     }
 
     /**
      * Initialize sense inventory from {@link URL} (possibly on classpath).
      *
-     * @param url VerbNet XML URL
+     * @param url VerbNetXml XML URL
      */
     public VerbNetSenseInventory(URL url) {
         this.url = url;
@@ -117,7 +113,7 @@ public class VerbNetSenseInventory implements SenseInventory<VerbNetClass>, Seri
     }
 
     /**
-     * Initialize sense inventory with default VerbNet from classpath resources.
+     * Initialize sense inventory with default VerbNetXml from classpath resources.
      */
     public VerbNetSenseInventory() {
         this(VerbNetSenseInventory.class.getClassLoader().getResource("vn3.3.1.xml"));
@@ -126,15 +122,15 @@ public class VerbNetSenseInventory implements SenseInventory<VerbNetClass>, Seri
     @Override
     public Set<String> senses(String lemma) {
         return Sets.union(lemmaVnMap.get(lemma).stream()
-                .map(cls -> getIdNumber(cls.id()))
-                .collect(Collectors.toSet()), countingSenseInventory.senses(lemma));
+            .map(cls -> getIdNumber(cls.id()))
+            .collect(Collectors.toSet()), countingSenseInventory.senses(lemma));
     }
 
     @Override
     public String defaultSense(String lemma) {
         // TODO: find principled option for selecting default sense
         Optional<WordNetKey> wnKey = lemmaWnMap.get(lemma).stream()
-                .min(Comparator.comparingInt(WordNetKey::lexicalId));
+            .min(Comparator.comparingInt(WordNetKey::lexicalId));
         if (wnKey.isPresent()) {
             Optional<VerbNetMember> member = wordNetMemberMap.get(wnKey.get()).stream().findFirst();
             if (member.isPresent()) {
@@ -159,11 +155,11 @@ public class VerbNetSenseInventory implements SenseInventory<VerbNetClass>, Seri
             try (InputStream inputStream = url.openStream()) {
                 this.data = ByteStreams.toByteArray(inputStream);
             } catch (IOException e) {
-                throw new RuntimeException("Error reading VerbNet XML: " + e.getMessage(), e);
+                throw new RuntimeException("Error reading VerbNetXml XML: " + e.getMessage(), e);
             }
-            verbnet = VerbNetFactory.readVerbNet(new ByteArrayInputStream(data));
+            verbnet = VerbNetXmlFactory.readVerbNet(new ByteArrayInputStream(data));
         } else {
-            verbnet = VerbNetFactory.readVerbNet(new ByteArrayInputStream(data));
+            verbnet = VerbNetXmlFactory.readVerbNet(new ByteArrayInputStream(data));
         }
 
         lemmaVnMap = HashMultimap.create();

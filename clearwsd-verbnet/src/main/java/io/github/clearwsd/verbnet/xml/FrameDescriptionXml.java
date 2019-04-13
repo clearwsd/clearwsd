@@ -1,25 +1,25 @@
 package io.github.clearwsd.verbnet.xml;
 
+import io.github.clearwsd.verbnet.FrameDescription;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-
 import lombok.Data;
 import lombok.experimental.Accessors;
 
 /**
- * VerbNet frame description.
+ * XML binding implementation of {@link FrameDescription}.
  *
  * @author jgung
  */
 @Data
 @Accessors(fluent = true)
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlRootElement(name = FrameDescription.ROOT_NAME)
-public class FrameDescription {
+@XmlRootElement(name = FrameDescriptionXml.ROOT_NAME)
+public class FrameDescriptionXml implements FrameDescription {
 
     static final String ROOT_NAME = "DESCRIPTION";
 
