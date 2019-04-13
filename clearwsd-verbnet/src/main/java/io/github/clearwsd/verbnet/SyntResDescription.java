@@ -19,13 +19,19 @@ package io.github.clearwsd.verbnet;
 import java.util.List;
 
 /**
- * Syntactic restrictions description.
+ * Collection of {@link SyntRes} linked by a given logical relation.
  *
  * @author jamesgung
  */
 public interface SyntResDescription {
 
+    /**
+     * Logical relation, e.g. "and" or "or".
+     */
     String logic();
 
+    /**
+     * Collection of syntactic restrictions linked by the logical relation, {@link SyntResDescription#logic()}.
+     */
     List<SyntRes> restrictions();
 }

@@ -25,12 +25,24 @@ import java.util.List;
  */
 public interface VerbNetFrame {
 
+    /**
+     * Provides a human-readable description and identifying information for this {@link VerbNetFrame}.
+     */
     FrameDescription description();
 
+    /**
+     * Return a list of example sentences for this {@link VerbNetFrame}.
+     */
     List<String> examples();
 
+    /**
+     * Return the {@link SyntacticPhrase syntactic phrases} for this {@link VerbNetFrame}.
+     */
     List<SyntacticPhrase> syntax();
 
+    /**
+     * Return the {@link SemanticPredicate semantic predicates} associated with this {@link VerbNetFrame}.
+     */
     List<SemanticPredicate> predicates();
 
 }

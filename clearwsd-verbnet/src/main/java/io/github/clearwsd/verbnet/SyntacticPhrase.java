@@ -23,6 +23,9 @@ package io.github.clearwsd.verbnet;
  */
 public interface SyntacticPhrase {
 
+    /**
+     * The syntactic type for this constituent within a VerbNet frame, e.g. "NP".
+     */
     SyntaxType type();
 
 }

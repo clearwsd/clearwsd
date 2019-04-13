@@ -17,14 +17,20 @@
 package io.github.clearwsd.verbnet;
 
 /**
- * VerbNet selectional restriction.
+ * VerbNet selectional restriction, which provides more information about the nature of a given thematic role.
  *
  * @author jgung
  */
 public interface SelRes {
 
+    /**
+     * Type of selectional restriction, e.g. "concrete".
+     */
     String type();
 
+    /**
+     * Value of selectional restriction, e.g. "+" or "-".
+     */
     String value();
 
 }

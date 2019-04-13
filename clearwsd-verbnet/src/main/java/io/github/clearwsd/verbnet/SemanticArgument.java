@@ -17,14 +17,20 @@
 package io.github.clearwsd.verbnet;
 
 /**
- * Verbnet semantic predicate argument.
+ * Argument of a VerbNet semantic predicate.
  *
  * @author jgung
  */
 public interface SemanticArgument {
 
+    /**
+     * Type of argument, e.g. "ThemRole".
+     */
     String type();
 
+    /**
+     * Value of argument, e.g. "Patient".
+     */
     String value();
 
 }

@@ -17,14 +17,20 @@
 package io.github.clearwsd.verbnet;
 
 /**
- * VerbNet thematic role.
+ * VerbNet thematic role, which defines the semantic relationship between a predicate and an argument.
  *
  * @author jgung
  */
 public interface ThematicRole {
 
+    /**
+     * Type of thematic role, e.g. "Agent" or "Patient".
+     */
     String type();
 
+    /**
+     * Selectional restrictions further refining the nature of this thematic role.
+     */
     SelResDescription restrictions();
 
 }

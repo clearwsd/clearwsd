@@ -17,14 +17,20 @@
 package io.github.clearwsd.verbnet;
 
 /**
- * VerbNet syntactic restriction.
+ * VerbNet syntactic restriction, refining the syntactic behavior of a given constituent within a VerbNet frame.
  *
  * @author jgung
  */
 public interface SyntRes {
 
+    /**
+     * Type of syntactic restriction, e.g. "that_comp".
+     */
     String type();
 
+    /**
+     * Truth value of syntactic restriction, e.g. "+" or "-".
+     */
     String value();
 
 }

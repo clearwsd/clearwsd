@@ -127,7 +127,7 @@ public class DefaultVerbIndex implements VerbIndex {
     }
 
     @Override
-    public Set<WordNetKey> getWordNetKeysByLemma(String lemma) {
+    public Set<WordNetKey> getWordNetKeysByLemma(@NonNull String lemma) {
         return lemmaWnMap.get(getBaseForm(lemma));
     }
 

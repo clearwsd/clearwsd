@@ -19,16 +19,25 @@ package io.github.clearwsd.verbnet;
 import java.util.List;
 
 /**
- * VerbNet semantic predicate.
+ * VerbNet semantic predicate, providing underlying components of meaning for an event, its participants and sub-events.
  *
  * @author jgung
  */
 public interface SemanticPredicate {
 
+    /**
+     * Truth value for this semantic predicate, e.g. "!".
+     */
     String bool();
 
+    /**
+     * Value of this semantic predicate, e.g. "has_possession".
+     */
     String value();
 
+    /**
+     * Collection of arguments of this semantic predicate.
+     */
     List<SemanticArgument> semanticArguments();
 
 }

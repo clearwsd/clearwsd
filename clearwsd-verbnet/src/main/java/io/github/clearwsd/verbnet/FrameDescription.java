@@ -23,12 +23,24 @@ package io.github.clearwsd.verbnet;
  */
 public interface FrameDescription {
 
+    /**
+     * Returns the primary type for this frame, e.g. "NP.attribute V".
+     */
     String primary();
 
+    /**
+     * Returns the secondary type for this frame, e.g. "Intransitive; Attribute Subject".
+     */
     String secondary();
 
+    /**
+     * Returns the description number for this frame, e.g. "2.13.5".
+     */
     String descriptionNumber();
 
+    /**
+     * Returns the xtag for this frame, e.g. "0.2".
+     */
     String xtag();
 
 }

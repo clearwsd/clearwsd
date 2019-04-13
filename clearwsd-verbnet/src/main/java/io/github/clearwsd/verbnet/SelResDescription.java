@@ -19,16 +19,25 @@ package io.github.clearwsd.verbnet;
 import java.util.List;
 
 /**
- * VerbNet selectional restrictions description.
+ * Collection of VerbNet selectional restrictions aligned by some logical relation.
  *
  * @author jgung
  */
 public interface SelResDescription {
 
+    /**
+     * Logical relation, such as "and" or "or.
+     */
     String logic();
 
+    /**
+     * Raw selectional restrictions.
+     */
     List<SelRes> restrictions();
 
+    /**
+     * {@link SelResDescription Sub-descriptions} hierarchically linked by logical relation.
+     */
     List<SelResDescription> descriptions();
 
 }
