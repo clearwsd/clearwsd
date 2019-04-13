@@ -7,6 +7,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 /**
  * VerbNet reader unit tests.
@@ -59,10 +60,10 @@ public class VerbNetTest {
         assertEquals("Theme", theme.type());
         assertEquals("Instrument", instrument.type());
         SelResDescription selRels = agent.restrictions();
-        assertEquals("or", selRels.logic());
-        assertEquals("+", selRels.restrictions().get(0).value());
+        assertEquals(LogicalRelation.OR, selRels.logic());
+        assertTrue(selRels.restrictions().get(0).value());
         assertEquals("animate", selRels.restrictions().get(0).type());
-        assertEquals("+", selRels.restrictions().get(1).value());
+        assertTrue(selRels.restrictions().get(1).value());
         assertEquals("organization", selRels.restrictions().get(1).type());
     }
 
@@ -85,7 +86,7 @@ public class VerbNetTest {
 
         assertEquals(5, frame.predicates().size());
         SemanticPredicate semanticPredicate = frame.predicates().get(1);
-        assertEquals("change_value", semanticPredicate.value());
+        assertEquals("change_value", semanticPredicate.type());
 
         assertEquals(5, semanticPredicate.semanticArguments().size());
         SemanticArgument verbSpecific = semanticPredicate.semanticArguments().get(2);

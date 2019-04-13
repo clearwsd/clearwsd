@@ -18,12 +18,8 @@ package io.github.clearwsd.verbnet.xml;
 
 import io.github.clearwsd.verbnet.DefaultVerbIndex;
 import io.github.clearwsd.verbnet.VerbIndex;
-import io.github.clearwsd.verbnet.VerbNetClass;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.InputStream;
 import javax.xml.bind.JAXBContext;
-import javax.xml.bind.annotation.XmlRegistry;
 import javax.xml.parsers.SAXParserFactory;
 import javax.xml.transform.sax.SAXSource;
 import org.xml.sax.InputSource;

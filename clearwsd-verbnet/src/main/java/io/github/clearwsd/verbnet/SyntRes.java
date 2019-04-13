@@ -29,8 +29,8 @@ public interface SyntRes {
     String type();
 
     /**
-     * Truth value of syntactic restriction, e.g. "+" or "-".
+     * Truth value of syntactic restriction.
      */
-    String value();
+    boolean value();
 
 }

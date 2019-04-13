@@ -17,10 +17,12 @@
 package io.github.clearwsd.verbnet.xml;
 
 import io.github.clearwsd.verbnet.SelRes;
+import io.github.clearwsd.verbnet.xml.util.BooleanAdapterXmlAdapter;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
@@ -40,6 +42,12 @@ public class SelectionalRestrictionXml implements SelRes {
     @XmlAttribute(name = "type", required = true)
     private String type;
     @XmlAttribute(name = "Value", required = true)
-    private String value;
+    @XmlJavaTypeAdapter(BooleanAdapterXmlAdapter.class)
+    private Boolean value;
+
+    @Override
+    public boolean value() {
+        return value;
+    }
 
 }

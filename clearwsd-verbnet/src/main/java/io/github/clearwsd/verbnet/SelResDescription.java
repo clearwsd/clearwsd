@@ -28,7 +28,7 @@ public interface SelResDescription {
     /**
      * Logical relation, such as "and" or "or.
      */
-    String logic();
+    LogicalRelation logic();
 
     /**
      * Raw selectional restrictions.

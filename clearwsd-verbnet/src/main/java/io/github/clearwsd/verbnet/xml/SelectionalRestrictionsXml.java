@@ -16,8 +16,10 @@
 
 package io.github.clearwsd.verbnet.xml;
 
+import io.github.clearwsd.verbnet.LogicalRelation;
 import io.github.clearwsd.verbnet.SelRes;
 import io.github.clearwsd.verbnet.SelResDescription;
+import io.github.clearwsd.verbnet.xml.util.LogicAdapterXmlAdapter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -26,6 +28,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
@@ -43,7 +46,8 @@ public class SelectionalRestrictionsXml implements SelResDescription {
     static final String ROOT_NAME = "SELRESTRS";
 
     @XmlAttribute(name = "logic")
-    private String logic = "";
+    @XmlJavaTypeAdapter(LogicAdapterXmlAdapter.class)
+    private LogicalRelation logic;
 
     @XmlElement(name = SelectionalRestrictionXml.ROOT_NAME)
     private List<SelectionalRestrictionXml> selectionalRestriction = new ArrayList<>();

@@ -28,7 +28,7 @@ public interface SyntResDescription {
     /**
      * Logical relation, e.g. "and" or "or".
      */
-    String logic();
+    LogicalRelation logic();
 
     /**
      * Collection of syntactic restrictions linked by the logical relation, {@link SyntResDescription#logic()}.

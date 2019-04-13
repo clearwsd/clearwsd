@@ -16,28 +16,14 @@
 
 package io.github.clearwsd.verbnet;
 
-import java.util.List;
-
 /**
- * VerbNet semantic predicate, providing underlying components of meaning for an event, its participants and sub-events.
+ * Selectional restriction logical relation.
  *
- * @author jgung
+ * @author jamesgung
  */
-public interface SemanticPredicate {
+public enum LogicalRelation {
 
-    /**
-     * Truth value for this semantic predicate: TRUE, FALSE, or UNCERTAIN.
-     */
-    PredicatePolarity polarity();
-
-    /**
-     * Type of this semantic predicate, e.g. "has_possession".
-     */
-    String type();
-
-    /**
-     * Collection of arguments of this semantic predicate.
-     */
-    List<SemanticArgument> semanticArguments();
+    AND,
+    OR
 
 }

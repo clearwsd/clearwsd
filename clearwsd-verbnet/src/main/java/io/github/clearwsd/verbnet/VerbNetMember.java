@@ -37,8 +37,8 @@ public interface VerbNetMember {
     List<WordNetKey> wn();
 
     /**
-     * Returns any member-specific features applicable in {@link SemanticPredicate semantic predicates} for the VerbNet class,
-     * e.g. "+increase".
+     * Returns any member-specific features applicable in {@link SemanticPredicate semantic predicates} for the VerbNet class, e.g.
+     * "+increase".
      */
     String features();
 

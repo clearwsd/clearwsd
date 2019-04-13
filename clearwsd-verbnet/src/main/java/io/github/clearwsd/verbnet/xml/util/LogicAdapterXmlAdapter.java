@@ -14,30 +14,26 @@
  * limitations under the License.
  */
 
-package io.github.clearwsd.verbnet;
+package io.github.clearwsd.verbnet.xml.util;
 
-import java.util.List;
+import io.github.clearwsd.verbnet.LogicalRelation;
+import javax.xml.bind.annotation.adapters.XmlAdapter;
 
 /**
- * VerbNet semantic predicate, providing underlying components of meaning for an event, its participants and sub-events.
+ * VerbNet logical relation XML adapter.
  *
- * @author jgung
+ * @author jamesgung
  */
-public interface SemanticPredicate {
+public class LogicAdapterXmlAdapter extends XmlAdapter<String, LogicalRelation> {
 
-    /**
-     * Truth value for this semantic predicate: TRUE, FALSE, or UNCERTAIN.
-     */
-    PredicatePolarity polarity();
+    @Override
+    public LogicalRelation unmarshal(String value) {
+        return "OR".equals(value.toUpperCase()) ? LogicalRelation.OR : LogicalRelation.AND;
+    }
 
-    /**
-     * Type of this semantic predicate, e.g. "has_possession".
-     */
-    String type();
-
-    /**
-     * Collection of arguments of this semantic predicate.
-     */
-    List<SemanticArgument> semanticArguments();
+    @Override
+    public String marshal(LogicalRelation value) {
+        return value == LogicalRelation.OR ? "or" : null;
+    }
 
 }

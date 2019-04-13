@@ -29,8 +29,8 @@ public interface SelRes {
     String type();
 
     /**
-     * Value of selectional restriction, e.g. "+" or "-".
+     * Truth of selectional restriction.
      */
-    String value();
+    boolean value();
 
 }
