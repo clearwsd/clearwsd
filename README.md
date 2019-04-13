@@ -198,28 +198,40 @@ java -jar clearwsd-cli-*.jar -input path/to/raw/data.txt -output path/to/predict
 ##### Interactive Testing
 `--loop` or `--itl` can be used to start an interactive command line test loop, where you can input sentences and see predictions.
 ```bash
-java -jar clearwsd-cli-*.jar --loop -model clearwsd-models/src/main/resources/models/nlp4j-semlink.bin
+java -jar clearwsd-cli-*.jar --loop -model clearwsd-models/src/main/resources/models/nlp4j-verbnet-3.3.bin
 ```
 After the parser and model finish loading, you should then be able to enter test sentences and see predicted senses:
 ```text
 Enter test input ("EXIT" to quit).
-> Call me Ishmael
+> please take notes
 
-Call[Dub-29.3]
-me
-Ishmael
+Please
+take[25.2]
+notes
 
-> Call a cab
+> Take the train home.
 
-Call[Get-13.5.1]
-a
-cab
+Take[51.4.3]
+the
+train
+home
 
-> Call for change
+> Take on the government
 
-Call[Order-60]
-for
-change
+Take[98]
+on
+the
+government
+
+> Take the money out of the vault
+
+Take[13.5.1]
+the
+money
+out
+of
+the
+vault
 
 ```
 ## License
