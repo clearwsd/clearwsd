@@ -20,7 +20,14 @@ public class VerbNetTest {
     @BeforeClass
     public static void init() {
         verbNet = VerbNetXmlFactory.readVerbNet(VerbNetClassXml.class.getClassLoader()
-            .getResourceAsStream("verbnet-test.xml"));
+            .getResourceAsStream("vn_test.xml"));
+    }
+
+    @Test
+    public void loadVerbNet() {
+        VerbIndex verbIndex = VerbNetXmlFactory.readVerbNet(VerbNetClassXml.class.getClassLoader()
+            .getResourceAsStream("vn_3.3.xml"));
+        assertEquals(327, verbIndex.roots().size());
     }
 
     @Test

@@ -40,7 +40,6 @@ import static io.github.clearwsd.verbnet.xml.VerbNetFrameXml.Verb;
  *
  * @author jgung
  */
-@XmlRegistry
 public class VerbNetXmlFactory {
 
     private static final String LOAD_EXTERNAL_DTD = "http://apache.org/xml/features/nonvalidating/load-external-dtd";
@@ -73,17 +72,6 @@ public class VerbNetXmlFactory {
         for (VerbNetClassXml verbNetClass : parent.children()) {
             verbNetClass.parentClass(parent);
             setPointers(verbNetClass);
-        }
-    }
-
-    public static void main(String[] args) throws FileNotFoundException {
-        VerbIndex verbNet = readVerbNet(new FileInputStream("src/main/resources/vn3.3.1.xml"));
-        for (VerbNetClass cls : verbNet.roots()) {
-            System.out.println(cls.verbNetId());
-            for (VerbNetClass vncls : cls.subclasses()) {
-                System.out.println(vncls.verbNetId());
-                vncls.members().forEach(System.out::println);
-            }
         }
     }
 

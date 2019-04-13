@@ -38,6 +38,7 @@ public interface VerbNetMember {
 
     /**
      * Returns any member-specific features applicable in {@link SemanticPredicate semantic predicates} for the VerbNet class,
+     * e.g. "+increase".
      */
     String features();
 

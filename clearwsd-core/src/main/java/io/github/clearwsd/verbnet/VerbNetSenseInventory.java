@@ -48,7 +48,7 @@ public class VerbNetSenseInventory implements SenseInventory<VerbNetClass>, Seri
 
     private static final long serialVersionUID = 410274561044821035L;
 
-    public static final String DEFAULT_VERBNET = "vn3.3.1.xml";
+    public static final String DEFAULT_VERBNET = "vn_3.3.xml";
 
     @Getter
     private transient VerbIndex verbnet;
