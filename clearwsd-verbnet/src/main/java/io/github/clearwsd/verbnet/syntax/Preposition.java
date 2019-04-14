@@ -14,20 +14,20 @@
  * limitations under the License.
  */
 
-package io.github.clearwsd.verbnet;
+package io.github.clearwsd.verbnet.syntax;
+
+import java.util.Set;
 
 /**
- * VerbNet frame syntax type.
+ * Preposition within a given syntactic frame.
  *
  * @author jamesgung
  */
-public enum SyntaxType {
+public interface Preposition extends SyntacticPhrase {
 
-    ADV,
-    ADJ,
-    LEX,
-    NP,
-    PREP,
-    VERB
+    /**
+     * Valid prepositions types.
+     */
+    Set<String> types();
 
 }

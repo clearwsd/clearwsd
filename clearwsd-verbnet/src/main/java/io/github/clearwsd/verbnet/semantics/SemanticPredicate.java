@@ -14,17 +14,30 @@
  * limitations under the License.
  */
 
-package io.github.clearwsd.verbnet;
+package io.github.clearwsd.verbnet.semantics;
+
+import java.util.List;
 
 /**
- * Polarity of predicate, true, false, or uncertain.
+ * VerbNet semantic predicate, providing underlying components of meaning for an event, its participants and sub-events.
  *
- * @author jamesgung
+ * @author jgung
  */
-public enum PredicatePolarity {
+public interface SemanticPredicate {
 
-    TRUE,
-    FALSE,
-    UNCERTAIN
+    /**
+     * Truth value for this semantic predicate: TRUE, FALSE, or UNCERTAIN.
+     */
+    PredicatePolarity polarity();
+
+    /**
+     * Type of this semantic predicate, e.g. "has_possession".
+     */
+    String type();
+
+    /**
+     * Collection of arguments of this semantic predicate.
+     */
+    List<SemanticArgument> semanticArguments();
 
 }

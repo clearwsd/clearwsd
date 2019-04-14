@@ -16,10 +16,9 @@
 
 package io.github.clearwsd.verbnet.xml;
 
-import io.github.clearwsd.verbnet.PredicatePolarity;
-import io.github.clearwsd.verbnet.SemanticArgument;
-import io.github.clearwsd.verbnet.SemanticPredicate;
-import java.security.cert.TrustAnchor;
+import io.github.clearwsd.verbnet.semantics.PredicatePolarity;
+import io.github.clearwsd.verbnet.semantics.SemanticArgument;
+import io.github.clearwsd.verbnet.semantics.SemanticPredicate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;

@@ -16,7 +16,7 @@
 
 package io.github.clearwsd.verbnet.xml.util;
 
-import io.github.clearwsd.verbnet.LogicalRelation;
+import io.github.clearwsd.verbnet.xml.LogicalRelation;
 import javax.xml.bind.annotation.adapters.XmlAdapter;
 
 /**

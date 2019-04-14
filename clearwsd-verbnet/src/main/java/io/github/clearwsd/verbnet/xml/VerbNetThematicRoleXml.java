@@ -16,7 +16,7 @@
 
 package io.github.clearwsd.verbnet.xml;
 
-import io.github.clearwsd.verbnet.Restrictions;
+import io.github.clearwsd.verbnet.restrictions.Restrictions;
 import io.github.clearwsd.verbnet.ThematicRole;
 import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;

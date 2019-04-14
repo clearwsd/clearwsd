@@ -14,30 +14,17 @@
  * limitations under the License.
  */
 
-package io.github.clearwsd.verbnet;
-
-import java.util.List;
+package io.github.clearwsd.verbnet.semantics;
 
 /**
- * Nominal syntactic phrase.
+ * Polarity of predicate, true, false, or uncertain.
  *
  * @author jamesgung
  */
-public interface NounPhrase extends SyntacticPhrase {
+public enum PredicatePolarity {
 
-    /**
-     * Thematic role associated with this NP.
-     */
-    String thematicRole();
-
-    /**
-     * Syntactic restrictions associated with this NP.
-     */
-    List<Restrictions<String>> syntacticRestrictions();
-
-    /**
-     * Additional selectional restrictions (beyond those at the thematic role level) for this NP.
-     */
-    List<Restrictions<String>> selectionalRestrictions();
+    TRUE,
+    FALSE,
+    UNCERTAIN
 
 }

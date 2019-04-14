@@ -16,6 +16,7 @@
 
 package io.github.clearwsd.verbnet;
 
+import io.github.clearwsd.verbnet.restrictions.Restrictions;
 import java.util.List;
 
 /**

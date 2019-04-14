@@ -16,7 +16,7 @@
 
 package io.github.clearwsd.verbnet.xml;
 
-import io.github.clearwsd.verbnet.SemanticArgument;
+import io.github.clearwsd.verbnet.semantics.SemanticArgument;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;

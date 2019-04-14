@@ -14,16 +14,25 @@
  * limitations under the License.
  */
 
-package io.github.clearwsd.verbnet;
+package io.github.clearwsd.verbnet.restrictions;
+
+import java.util.Set;
 
 /**
- * Selectional restriction logical relation.
+ * Restrictions on VerbNet types.
  *
  * @author jamesgung
  */
-public enum LogicalRelation {
+public interface Restrictions<T> {
 
-    AND,
-    OR
+    /**
+     * Restrictions that must be included.
+     */
+    Set<T> include();
+
+    /**
+     * Restrictions that must not be present.
+     */
+    Set<T> exclude();
 
 }

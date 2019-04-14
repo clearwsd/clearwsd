@@ -16,6 +16,7 @@
 
 package io.github.clearwsd.verbnet;
 
+import io.github.clearwsd.verbnet.semantics.SemanticPredicate;
 import io.github.clearwsd.verbnet.xml.WordNetKey;
 import java.util.List;
 

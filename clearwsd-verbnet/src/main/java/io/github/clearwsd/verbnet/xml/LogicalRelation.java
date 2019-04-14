@@ -14,23 +14,16 @@
  * limitations under the License.
  */
 
-package io.github.clearwsd.verbnet;
+package io.github.clearwsd.verbnet.xml;
 
 /**
- * VerbNet syntactic phrase or constituent within a frame.
+ * Selectional restriction logical relation.
  *
  * @author jamesgung
  */
-public interface SyntacticPhrase {
+public enum LogicalRelation {
 
-    /**
-     * Index of this phrase within a VerbNet frame (from 0).
-     */
-    int index();
-
-    /**
-     * The syntactic type for this constituent within a VerbNet frame, e.g. "NP".
-     */
-    SyntaxType type();
+    AND,
+    OR
 
 }

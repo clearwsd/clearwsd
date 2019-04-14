@@ -14,30 +14,23 @@
  * limitations under the License.
  */
 
-package io.github.clearwsd.verbnet;
-
-import java.util.List;
+package io.github.clearwsd.verbnet.semantics;
 
 /**
- * VerbNet semantic predicate, providing underlying components of meaning for an event, its participants and sub-events.
+ * Argument of a VerbNet semantic predicate.
  *
  * @author jgung
  */
-public interface SemanticPredicate {
+public interface SemanticArgument {
 
     /**
-     * Truth value for this semantic predicate: TRUE, FALSE, or UNCERTAIN.
-     */
-    PredicatePolarity polarity();
-
-    /**
-     * Type of this semantic predicate, e.g. "has_possession".
+     * Type of argument, e.g. "ThemRole".
      */
     String type();
 
     /**
-     * Collection of arguments of this semantic predicate.
+     * Value of argument, e.g. "Patient".
      */
-    List<SemanticArgument> semanticArguments();
+    String value();
 
 }

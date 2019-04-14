@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.github.clearwsd.verbnet;
+package io.github.clearwsd.verbnet.syntax;
 
 /**
  * Lexical phrase or constituent.

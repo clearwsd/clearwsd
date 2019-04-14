@@ -14,23 +14,20 @@
  * limitations under the License.
  */
 
-package io.github.clearwsd.verbnet;
+package io.github.clearwsd.verbnet.syntax;
 
 /**
- * Argument of a VerbNet semantic predicate.
+ * VerbNet frame syntax type.
  *
- * @author jgung
+ * @author jamesgung
  */
-public interface SemanticArgument {
+public enum SyntaxType {
 
-    /**
-     * Type of argument, e.g. "ThemRole".
-     */
-    String type();
-
-    /**
-     * Value of argument, e.g. "Patient".
-     */
-    String value();
+    ADV,
+    ADJ,
+    LEX,
+    NP,
+    PREP,
+    VERB
 
 }

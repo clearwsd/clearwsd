@@ -16,9 +16,8 @@
 
 package io.github.clearwsd.verbnet.xml;
 
-import io.github.clearwsd.verbnet.DefaultRestrictions;
-import io.github.clearwsd.verbnet.LogicalRelation;
-import io.github.clearwsd.verbnet.Restrictions;
+import io.github.clearwsd.verbnet.restrictions.DefaultRestrictions;
+import io.github.clearwsd.verbnet.restrictions.Restrictions;
 import io.github.clearwsd.verbnet.xml.util.LogicAdapterXmlAdapter;
 import java.util.ArrayList;
 import java.util.List;

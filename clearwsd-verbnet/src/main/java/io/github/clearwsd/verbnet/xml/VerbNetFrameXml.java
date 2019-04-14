@@ -16,13 +16,13 @@
 
 package io.github.clearwsd.verbnet.xml;
 
-import io.github.clearwsd.verbnet.LexicalPhrase;
-import io.github.clearwsd.verbnet.NounPhrase;
-import io.github.clearwsd.verbnet.Preposition;
-import io.github.clearwsd.verbnet.Restrictions;
-import io.github.clearwsd.verbnet.SemanticPredicate;
-import io.github.clearwsd.verbnet.SyntacticPhrase;
-import io.github.clearwsd.verbnet.SyntaxType;
+import io.github.clearwsd.verbnet.syntax.LexicalPhrase;
+import io.github.clearwsd.verbnet.syntax.NounPhrase;
+import io.github.clearwsd.verbnet.syntax.Preposition;
+import io.github.clearwsd.verbnet.restrictions.Restrictions;
+import io.github.clearwsd.verbnet.semantics.SemanticPredicate;
+import io.github.clearwsd.verbnet.syntax.SyntacticPhrase;
+import io.github.clearwsd.verbnet.syntax.SyntaxType;
 import io.github.clearwsd.verbnet.VerbNetClass;
 import io.github.clearwsd.verbnet.VerbNetFrame;
 import java.util.ArrayList;
@@ -45,12 +45,12 @@ import lombok.ToString;
 import lombok.experimental.Accessors;
 import lombok.experimental.Delegate;
 
-import static io.github.clearwsd.verbnet.SyntaxType.ADJ;
-import static io.github.clearwsd.verbnet.SyntaxType.ADV;
-import static io.github.clearwsd.verbnet.SyntaxType.LEX;
-import static io.github.clearwsd.verbnet.SyntaxType.NP;
-import static io.github.clearwsd.verbnet.SyntaxType.PREP;
-import static io.github.clearwsd.verbnet.SyntaxType.VERB;
+import static io.github.clearwsd.verbnet.syntax.SyntaxType.ADJ;
+import static io.github.clearwsd.verbnet.syntax.SyntaxType.ADV;
+import static io.github.clearwsd.verbnet.syntax.SyntaxType.LEX;
+import static io.github.clearwsd.verbnet.syntax.SyntaxType.NP;
+import static io.github.clearwsd.verbnet.syntax.SyntaxType.PREP;
+import static io.github.clearwsd.verbnet.syntax.SyntaxType.VERB;
 
 /**
  * XML binding implementation of {@link VerbNetFrame}.

@@ -14,25 +14,23 @@
  * limitations under the License.
  */
 
-package io.github.clearwsd.verbnet;
-
-import java.util.Set;
+package io.github.clearwsd.verbnet.syntax;
 
 /**
- * Restrictions on VerbNet types.
+ * VerbNet syntactic phrase or constituent within a frame.
  *
  * @author jamesgung
  */
-public interface Restrictions<T> {
+public interface SyntacticPhrase {
 
     /**
-     * Restrictions that must be included.
+     * Index of this phrase within a VerbNet frame (from 0).
      */
-    Set<T> include();
+    int index();
 
     /**
-     * Restrictions that must not be present.
+     * The syntactic type for this constituent within a VerbNet frame, e.g. "NP".
      */
-    Set<T> exclude();
+    SyntaxType type();
 
 }

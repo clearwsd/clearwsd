@@ -1,5 +1,11 @@
 package io.github.clearwsd.verbnet;
 
+import io.github.clearwsd.verbnet.restrictions.Restrictions;
+import io.github.clearwsd.verbnet.semantics.PredicatePolarity;
+import io.github.clearwsd.verbnet.semantics.SemanticArgument;
+import io.github.clearwsd.verbnet.semantics.SemanticPredicate;
+import io.github.clearwsd.verbnet.syntax.NounPhrase;
+import io.github.clearwsd.verbnet.syntax.SyntaxType;
 import io.github.clearwsd.verbnet.xml.VerbNetClassXml;
 import io.github.clearwsd.verbnet.xml.VerbNetXmlFactory;
 import java.util.Arrays;

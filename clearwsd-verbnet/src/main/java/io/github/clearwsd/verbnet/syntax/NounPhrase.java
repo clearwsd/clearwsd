@@ -14,20 +14,31 @@
  * limitations under the License.
  */
 
-package io.github.clearwsd.verbnet;
+package io.github.clearwsd.verbnet.syntax;
 
-import java.util.Set;
+import io.github.clearwsd.verbnet.restrictions.Restrictions;
+import java.util.List;
 
 /**
- * Preposition within a given syntactic frame.
+ * Nominal syntactic phrase.
  *
  * @author jamesgung
  */
-public interface Preposition extends SyntacticPhrase {
+public interface NounPhrase extends SyntacticPhrase {
 
     /**
-     * Valid prepositions types.
+     * Thematic role associated with this NP.
      */
-    Set<String> types();
+    String thematicRole();
+
+    /**
+     * Syntactic restrictions associated with this NP.
+     */
+    List<Restrictions<String>> syntacticRestrictions();
+
+    /**
+     * Additional selectional restrictions (beyond those at the thematic role level) for this NP.
+     */
+    List<Restrictions<String>> selectionalRestrictions();
 
 }

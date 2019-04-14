@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.github.clearwsd.verbnet;
+package io.github.clearwsd.verbnet.restrictions;
 
 import java.util.Arrays;
 import java.util.Collection;
