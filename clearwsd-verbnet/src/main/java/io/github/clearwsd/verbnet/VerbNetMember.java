@@ -38,14 +38,14 @@ public interface VerbNetMember {
 
     /**
      * Returns any member-specific features applicable in {@link SemanticPredicate semantic predicates} for the VerbNet class, e.g.
-     * "+increase".
+     * "increase".
      */
-    String features();
+    List<String> features();
 
     /**
      * Returns the OntoNotes groupings sense for this {@link VerbNetMember}, e.g. "sever.01 sever.02".
      */
-    String grouping();
+    List<String> groupings();
 
     /**
      * Returns the VerbNet key for this member, e.g. "sever#2".

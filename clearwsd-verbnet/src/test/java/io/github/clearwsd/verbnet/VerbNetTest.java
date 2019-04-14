@@ -1,7 +1,6 @@
 package io.github.clearwsd.verbnet;
 
 import io.github.clearwsd.verbnet.xml.VerbNetClassXml;
-import io.github.clearwsd.verbnet.xml.VerbNetFrameXml.NounPhraseXml;
 import io.github.clearwsd.verbnet.xml.VerbNetXmlFactory;
 import java.util.Arrays;
 import java.util.List;
@@ -39,10 +38,10 @@ public class VerbNetTest {
         assertEquals(2, verbNetClass.members().size());
         VerbNetMember build = verbNetClass.members().get(0);
         VerbNetMember die = verbNetClass.members().get(1);
-        assertEquals("+increase", build.features());
-        assertEquals("+decrease", die.features());
-        assertEquals("build.02", build.grouping());
-        assertEquals("die.02", die.grouping());
+        assertTrue(build.features().contains("increase"));
+        assertTrue(die.features().contains("decrease"));
+        assertTrue(build.groupings().contains("build.02"));
+        assertTrue(die.groupings().contains("die.02"));
         assertEquals("build", build.name());
         assertEquals("die", die.name());
         assertEquals("build#3", build.verbnetKey());
@@ -81,7 +80,7 @@ public class VerbNetTest {
         assertEquals("", frame.description().xtag());
 
         assertEquals(4, frame.syntax().size());
-        NounPhraseXml patient = (NounPhraseXml) frame.syntax().get(2);
+        NounPhrase patient = (NounPhrase) frame.syntax().get(2);
         assertEquals(SyntaxType.NP, patient.type());
         assertEquals("Patient", patient.thematicRole());
 

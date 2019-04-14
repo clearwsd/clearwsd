@@ -19,12 +19,15 @@ package io.github.clearwsd.verbnet.xml;
 import io.github.clearwsd.verbnet.VerbNetClass;
 import io.github.clearwsd.verbnet.VerbNetMember;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
+import javax.xml.bind.annotation.adapters.XmlAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -57,12 +60,12 @@ public class VerbNetMemberXml implements VerbNetMember {
     private List<WordNetKey> wn = new ArrayList<>();
 
     @XmlAttribute(name = "features")
-    @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
-    private String features = "";
+    @XmlJavaTypeAdapter(ValueSetAdapter.class)
+    private List<String> features;
 
     @XmlAttribute(name = "grouping")
-    @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
-    private String grouping = "";
+    @XmlJavaTypeAdapter(GroupingsSetAdapter.class)
+    private List<String> groupings;
 
     @XmlAttribute(name = "verbnet_key")
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
@@ -72,6 +75,39 @@ public class VerbNetMemberXml implements VerbNetMember {
 
     public VerbNetClass verbClass() {
         return verbClass;
+    }
+
+    public static class ValueSetAdapter extends XmlAdapter<String, List<String>> {
+
+        @Override
+        public List<String> unmarshal(String value) {
+            return Arrays.stream(value.split("\\s+"))
+                .map(feature -> feature.replaceFirst("\\+", "").trim().toLowerCase())
+                .distinct()
+                .collect(Collectors.toList());
+
+        }
+
+        @Override
+        public String marshal(List<String> value) {
+            return value.stream().map(val -> "+" + val).collect(Collectors.joining(" "));
+        }
+    }
+
+    public static class GroupingsSetAdapter extends XmlAdapter<String, List<String>> {
+
+        @Override
+        public List<String> unmarshal(String value) {
+            return Arrays.stream(value.split("\\s+"))
+                .distinct()
+                .collect(Collectors.toList());
+
+        }
+
+        @Override
+        public String marshal(List<String> value) {
+            return String.join(" ", value);
+        }
     }
 
 }
