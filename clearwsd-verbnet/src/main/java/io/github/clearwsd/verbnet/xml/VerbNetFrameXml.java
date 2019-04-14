@@ -23,6 +23,7 @@ import io.github.clearwsd.verbnet.Restrictions;
 import io.github.clearwsd.verbnet.SemanticPredicate;
 import io.github.clearwsd.verbnet.SyntacticPhrase;
 import io.github.clearwsd.verbnet.SyntaxType;
+import io.github.clearwsd.verbnet.VerbNetClass;
 import io.github.clearwsd.verbnet.VerbNetFrame;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -41,6 +42,7 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.ToString;
 import lombok.experimental.Accessors;
 import lombok.experimental.Delegate;
 
@@ -57,6 +59,7 @@ import static io.github.clearwsd.verbnet.SyntaxType.VERB;
  * @author jgung
  */
 @Data
+@ToString(of = "description")
 @Accessors(fluent = true)
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlRootElement(name = VerbNetFrameXml.ROOT_NAME)
@@ -79,6 +82,8 @@ public class VerbNetFrameXml implements VerbNetFrame {
     @XmlElementWrapper(name = "SEMANTICS")
     @XmlElement(name = SemanticPredicateXml.ROOT_NAME, required = true)
     private List<SemanticPredicateXml> preds = new ArrayList<>();
+
+    private transient VerbNetClass verbClass;
 
     @Override
     public List<String> examples() {
@@ -111,6 +116,7 @@ public class VerbNetFrameXml implements VerbNetFrame {
     }
 
     @Data
+    @ToString(of = {"thematicRole"}, callSuper = true)
     @EqualsAndHashCode(callSuper = true)
     @Accessors(fluent = true)
     @XmlRootElement(name = "NP")

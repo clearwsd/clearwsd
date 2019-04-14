@@ -35,6 +35,7 @@ import javax.xml.bind.annotation.adapters.XmlAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.ToString;
 import lombok.experimental.Accessors;
 
 /**
@@ -43,6 +44,7 @@ import lombok.experimental.Accessors;
  * @author jgung
  */
 @Data
+@ToString(of = "verbNetId")
 @EqualsAndHashCode(of = "verbNetId")
 @Accessors(fluent = true)
 @XmlAccessorType(XmlAccessType.FIELD)

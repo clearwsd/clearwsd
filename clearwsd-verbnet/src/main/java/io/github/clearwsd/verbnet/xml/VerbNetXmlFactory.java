@@ -67,6 +67,9 @@ public class VerbNetXmlFactory {
         }
         for (VerbNetClassXml verbNetClass : parent.children()) {
             verbNetClass.parentClass(parent);
+            for (VerbNetFrameXml frameXml: verbNetClass.frameElements()) {
+                frameXml.verbClass(verbNetClass);
+            }
             setPointers(verbNetClass);
         }
     }

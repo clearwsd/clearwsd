@@ -45,4 +45,9 @@ public interface VerbNetFrame extends FrameDescription {
      */
     List<SemanticPredicate> predicates();
 
+    /**
+     * Return the VerbNet class for this {@link VerbNetFrame}.
+     */
+    VerbNetClass verbClass();
+
 }
