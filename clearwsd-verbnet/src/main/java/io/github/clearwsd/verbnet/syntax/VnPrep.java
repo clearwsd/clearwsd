@@ -16,6 +16,8 @@
 
 package io.github.clearwsd.verbnet.syntax;
 
+import io.github.clearwsd.verbnet.restrictions.VnRestrictions;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -29,5 +31,10 @@ public interface VnPrep extends VnSyntax {
      * Valid prepositions types.
      */
     Set<String> types();
+
+    /**
+     * Further restrictions on preposition.
+     */
+    List<VnRestrictions<String>> restrictions();
 
 }

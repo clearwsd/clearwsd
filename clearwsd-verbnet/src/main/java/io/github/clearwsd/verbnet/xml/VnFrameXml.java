@@ -204,6 +204,11 @@ public class VnFrameXml implements VnFrame {
         public PrepXml() {
             super(PREP);
         }
+
+        @Override
+        public List<VnRestrictions<String>> restrictions() {
+            return selectionalRestrictions.restrictions();
+        }
     }
 
     @Data
