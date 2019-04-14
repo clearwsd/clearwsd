@@ -132,7 +132,7 @@ public interface VnClass {
      */
     default VnClass root() {
         VnClass root = this;
-        while (!root.parentClass().isPresent()) {
+        while (root.parentClass().isPresent()) {
             root = root.parentClass().get();
         }
         return root;
