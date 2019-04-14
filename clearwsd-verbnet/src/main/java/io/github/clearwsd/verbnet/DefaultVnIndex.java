@@ -17,11 +17,15 @@
 package io.github.clearwsd.verbnet;
 
 import com.google.common.base.Strings;
-import com.google.common.collect.HashMultimap;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.LinkedHashMultimap;
 import com.google.common.collect.SetMultimap;
+import com.google.common.collect.Sets;
+import io.github.clearwsd.verbnet.xml.VerbNetXmlFactory;
+import java.io.InputStream;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -36,6 +40,8 @@ import lombok.experimental.Accessors;
  */
 public class DefaultVnIndex implements VnIndex {
 
+    public static final String DEFAULT_INDEX = "vn_3.3.xml";
+
     /**
      * Return the base lemma of a phrasal verb (e.g. "go_ballistic" to "go").
      *
@@ -47,24 +53,35 @@ public class DefaultVnIndex implements VnIndex {
         return fields[0].toLowerCase();
     }
 
+    /**
+     * Initialize a new {@link VnIndex} from a given XML input stream.
+     */
+    public static DefaultVnIndex fromInputStream(@NonNull InputStream xmlInputStream) {
+        return new DefaultVnIndex(VerbNetXmlFactory.readVerbNet(xmlInputStream));
+    }
+
     @Getter
     @Accessors(fluent = true)
     private List<VnClass> roots;
 
-    private SetMultimap<String, VnClass> lemmaVnMap;
-    private SetMultimap<String, WnKey> lemmaWnMap;
-    private SetMultimap<WnKey, VnMember> wordNetMemberMap;
-    private SetMultimap<String, VnMember> lemmaMemberMap;
-    private Map<String, VnClass> senseVnMap;
+    private SetMultimap<String, VnClass> lemmaVnMap = LinkedHashMultimap.create();
+    private SetMultimap<String, WnKey> lemmaWnMap = LinkedHashMultimap.create();
+    private SetMultimap<WnKey, VnMember> wordNetMemberMap = LinkedHashMultimap.create();
+    private SetMultimap<String, VnMember> lemmaMemberMap = LinkedHashMultimap.create();
+    private Map<String, VnClass> senseVnMap = new HashMap<>();
 
     public DefaultVnIndex(@NonNull List<VnClass> verbClasses) {
-        this.roots = ImmutableList.copyOf(verbClasses);
-        lemmaVnMap = HashMultimap.create();
-        lemmaWnMap = HashMultimap.create();
-        lemmaMemberMap = HashMultimap.create();
-        senseVnMap = new HashMap<>();
-        wordNetMemberMap = LinkedHashMultimap.create();
+        initialize(verbClasses);
+    }
 
+    public DefaultVnIndex() {
+        List<VnClass> verbClasses = VerbNetXmlFactory
+            .readVerbNet(this.getClass().getClassLoader().getResourceAsStream(DEFAULT_INDEX));
+        initialize(verbClasses);
+    }
+
+    private void initialize(@NonNull List<VnClass> verbClasses) {
+        this.roots = ImmutableList.copyOf(verbClasses);
         for (VnClass cls : verbClasses) {
             senseVnMap.put(cls.verbNetId().classId(), cls);
             for (VnClass subcls : cls.descendants(true)) {
@@ -82,7 +99,7 @@ public class DefaultVnIndex implements VnIndex {
     }
 
     @Override
-    public VnClass getById(@NonNull String id) {
+    public VnClass getById(String id) {
 
         if (Strings.isNullOrEmpty(id)) {
             return null;
@@ -108,6 +125,29 @@ public class DefaultVnIndex implements VnIndex {
 
         return null;
 
+    }
+
+    @Override
+    public Set<VnClass> getByBaseIdAndLemma(String id, String lemma) {
+        if (Strings.isNullOrEmpty(id)) {
+            return Collections.emptySet();
+        }
+        Set<VnClass> byLemma = getByLemma(getBaseForm(lemma));
+        if (byLemma.isEmpty()) {
+            return Collections.emptySet();
+        }
+        try {
+            List<VnClass> verbNetClasses = getById(id).related();
+            if (null == verbNetClasses) {
+                return Collections.emptySet();
+            }
+            Set<VnClass> matches = Sets.newHashSet(verbNetClasses);
+            return new HashSet<>(Sets.intersection(matches, byLemma));
+        } catch (IllegalArgumentException ignored) {
+            // just return empty if class is invalid
+        }
+
+        return Collections.emptySet();
     }
 
     @Override

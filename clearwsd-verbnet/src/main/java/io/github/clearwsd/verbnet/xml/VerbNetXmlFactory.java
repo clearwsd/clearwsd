@@ -16,10 +16,10 @@
 
 package io.github.clearwsd.verbnet.xml;
 
-import io.github.clearwsd.verbnet.DefaultVnIndex;
-import io.github.clearwsd.verbnet.VnIndex;
+import io.github.clearwsd.verbnet.VnClass;
 import io.github.clearwsd.verbnet.xml.VnFrameXml.Syntax;
 import java.io.InputStream;
+import java.util.List;
 import javax.xml.bind.JAXBContext;
 import javax.xml.parsers.SAXParserFactory;
 import javax.xml.transform.sax.SAXSource;
@@ -50,7 +50,7 @@ public class VerbNetXmlFactory {
      * @param inputStream VerbNetXml XML file input stream
      * @return VerbNetXml classes
      */
-    public static VnIndex readVerbNet(InputStream inputStream) {
+    public static List<VnClass> readVerbNet(InputStream inputStream) {
         try {
             SAXParserFactory parserFactory = SAXParserFactory.newInstance();
             parserFactory.setFeature(LOAD_EXTERNAL_DTD, false);
@@ -59,7 +59,7 @@ public class VerbNetXmlFactory {
                 AdjectiveXml.class, AdverbXml.class, NounPhraseXml.class, PrepXml.class, LexXml.class, VerbXml.class)
                 .createUnmarshaller().unmarshal(source);
             verbNet.classes().forEach(VerbNetXmlFactory::setPointers);
-            return new DefaultVnIndex(verbNet.verbClasses());
+            return verbNet.verbClasses();
         } catch (Exception e) {
             throw new RuntimeException("An error occurred while reading VerbNetXml XML files", e);
         }

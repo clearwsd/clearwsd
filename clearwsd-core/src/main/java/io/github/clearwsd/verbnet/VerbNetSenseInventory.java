@@ -20,7 +20,6 @@ import com.google.common.collect.Sets;
 import com.google.common.io.ByteStreams;
 import io.github.clearwsd.utils.CountingSenseInventory;
 import io.github.clearwsd.utils.SenseInventory;
-import io.github.clearwsd.verbnet.xml.VerbNetXmlFactory;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
@@ -46,8 +45,6 @@ import lombok.extern.slf4j.Slf4j;
 public class VerbNetSenseInventory implements SenseInventory<VnClass>, Serializable {
 
     private static final long serialVersionUID = 410274561044821035L;
-
-    public static final String DEFAULT_VERBNET = "vn_3.3.xml";
 
     @Getter
     private transient VnIndex verbnet;
@@ -84,7 +81,7 @@ public class VerbNetSenseInventory implements SenseInventory<VnClass>, Serializa
      * Initialize sense inventory with default VerbNetXml from classpath resources.
      */
     public VerbNetSenseInventory() {
-        this(VerbNetSenseInventory.class.getClassLoader().getResource(DEFAULT_VERBNET));
+        this(VerbNetSenseInventory.class.getClassLoader().getResource(DefaultVnIndex.DEFAULT_INDEX));
     }
 
     @Override
@@ -127,9 +124,9 @@ public class VerbNetSenseInventory implements SenseInventory<VnClass>, Serializa
             } catch (IOException e) {
                 throw new RuntimeException("Error reading VerbNetXml XML: " + e.getMessage(), e);
             }
-            verbnet = VerbNetXmlFactory.readVerbNet(new ByteArrayInputStream(data));
+            verbnet = DefaultVnIndex.fromInputStream(new ByteArrayInputStream(data));
         } else {
-            verbnet = VerbNetXmlFactory.readVerbNet(new ByteArrayInputStream(data));
+            verbnet = DefaultVnIndex.fromInputStream(new ByteArrayInputStream(data));
         }
     }
 

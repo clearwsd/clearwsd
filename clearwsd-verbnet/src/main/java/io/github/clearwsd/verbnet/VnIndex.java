@@ -37,6 +37,11 @@ public interface VnIndex {
     VnClass getById(String id);
 
     /**
+     * Return all matching VerbNet classes for a given base ID, e.g. "55.1" and a lemma.
+     */
+    Set<VnClass> getByBaseIdAndLemma(String id, String lemma);
+
+    /**
      * Return a set of {@link VnClass classes} corresponding to a given lemma.
      */
     Set<VnClass> getByLemma(String lemma);

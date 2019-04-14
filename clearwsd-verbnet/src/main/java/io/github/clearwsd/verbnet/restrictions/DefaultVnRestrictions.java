@@ -19,8 +19,12 @@ package io.github.clearwsd.verbnet.restrictions;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 import lombok.Getter;
+import lombok.NonNull;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
@@ -52,10 +56,24 @@ public class DefaultVnRestrictions<T> implements VnRestrictions<T> {
         return res;
     }
 
-    public static <S> DefaultVnRestrictions<S> includingExcluding(Collection<S> including, Collection<S> excluding) {
+    public static <S> DefaultVnRestrictions<S> includingExcluding(@NonNull Collection<S> including,
+        @NonNull Collection<S> excluding) {
         DefaultVnRestrictions<S> res = new DefaultVnRestrictions<>();
         res.include.addAll(including);
         res.exclude.addAll(excluding);
         return res;
+    }
+
+    public static <S> DefaultVnRestrictions<S> map(@NonNull VnRestrictions<String> restrictions,
+        @NonNull Function<String, S> mapper) {
+        DefaultVnRestrictions<S> result = new DefaultVnRestrictions<>();
+        result.include(restrictions.include().stream().map(mapper).collect(Collectors.toSet()));
+        result.exclude(restrictions.exclude().stream().map(mapper).collect(Collectors.toSet()));
+        return result;
+    }
+
+    public static <S> List<DefaultVnRestrictions<S>> map(@NonNull List<VnRestrictions<String>> restrictions,
+        @NonNull Function<String, S> mapper) {
+        return restrictions.stream().map(res -> map(res, mapper)).collect(Collectors.toList());
     }
 }

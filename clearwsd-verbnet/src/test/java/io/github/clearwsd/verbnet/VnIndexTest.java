@@ -6,7 +6,6 @@ import io.github.clearwsd.verbnet.semantics.VnSemanticArgument;
 import io.github.clearwsd.verbnet.semantics.VnSemanticPredicate;
 import io.github.clearwsd.verbnet.syntax.VnNounPhrase;
 import io.github.clearwsd.verbnet.syntax.VnSyntaxType;
-import io.github.clearwsd.verbnet.xml.VerbNetXmlFactory;
 import io.github.clearwsd.verbnet.xml.VnClassXml;
 import java.util.Arrays;
 import java.util.List;
@@ -27,14 +26,13 @@ public class VnIndexTest {
 
     @BeforeClass
     public static void init() {
-        verbNet = VerbNetXmlFactory.readVerbNet(VnClassXml.class.getClassLoader()
+        verbNet = DefaultVnIndex.fromInputStream(VnClassXml.class.getClassLoader()
             .getResourceAsStream("vn_test.xml"));
     }
 
     @Test
     public void loadVerbNet() {
-        VnIndex verbIndex = VerbNetXmlFactory.readVerbNet(VnClassXml.class.getClassLoader()
-            .getResourceAsStream("vn_3.3.xml"));
+        VnIndex verbIndex = new DefaultVnIndex();
         assertEquals(327, verbIndex.roots().size());
     }
 
