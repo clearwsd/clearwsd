@@ -35,8 +35,8 @@ import lombok.experimental.Accessors;
 @Data
 @Accessors(fluent = true)
 @XmlAccessorType(XmlAccessType.PROPERTY)
-@XmlRootElement(name = VerbNetThematicRoleXml.ROOT_NAME)
-public class VerbNetThematicRoleXml implements VnThematicRole {
+@XmlRootElement(name = VnThematicRoleXml.ROOT_NAME)
+public class VnThematicRoleXml implements VnThematicRole {
 
     static final String ROOT_NAME = "THEMROLE";
 

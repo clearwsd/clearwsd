@@ -26,7 +26,7 @@ import lombok.experimental.Accessors;
 @Getter
 @EqualsAndHashCode(of = "classId")
 @Accessors(fluent = true)
-public class VerbNetId implements Comparable<VerbNetId> {
+public class VnClassId implements Comparable<VnClassId> {
 
     public static final Pattern VN_ID_PATTERN = Pattern.compile(
         "(?:(?<name>[a-zA-Z-_]+)-)?(?<rootId>(?<fullId>(?<number>\\d+)(?:\\.\\d+)*)(?<subcls>(?:-\\d+)*))");
@@ -36,7 +36,7 @@ public class VerbNetId implements Comparable<VerbNetId> {
     private final String rootId;
     private final Integer number;
 
-    private VerbNetId(String id) {
+    private VnClassId(String id) {
         Matcher matcher = VN_ID_PATTERN.matcher(id);
         if (!matcher.find()) {
             throw new IllegalArgumentException("Invalid VerbNet class ID: " + id);
@@ -52,12 +52,12 @@ public class VerbNetId implements Comparable<VerbNetId> {
         return name == null ? rootId : name + "-" + rootId;
     }
 
-    public static VerbNetId parse(@NonNull String id) {
-        return new VerbNetId(id);
+    public static VnClassId parse(@NonNull String id) {
+        return new VnClassId(id);
     }
 
     @Override
-    public int compareTo(@NonNull VerbNetId other) {
+    public int compareTo(@NonNull VnClassId other) {
         int comparison = Integer.compare(number, other.number);
         if (comparison != 0) {
             return comparison;

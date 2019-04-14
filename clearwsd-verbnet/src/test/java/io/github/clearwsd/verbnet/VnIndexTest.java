@@ -21,9 +21,9 @@ import static org.junit.Assert.assertTrue;
  *
  * @author jgung
  */
-public class VerbNetTest {
+public class VnIndexTest {
 
-    private static VerbIndex verbNet;
+    private static VnIndex verbNet;
 
     @BeforeClass
     public static void init() {
@@ -33,7 +33,7 @@ public class VerbNetTest {
 
     @Test
     public void loadVerbNet() {
-        VerbIndex verbIndex = VerbNetXmlFactory.readVerbNet(VnClassXml.class.getClassLoader()
+        VnIndex verbIndex = VerbNetXmlFactory.readVerbNet(VnClassXml.class.getClassLoader()
             .getResourceAsStream("vn_3.3.xml"));
         assertEquals(327, verbIndex.roots().size());
     }

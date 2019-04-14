@@ -51,7 +51,7 @@ public class VerbNetSenseInventory implements SenseInventory<VnClass>, Serializa
     public static final String DEFAULT_VERBNET = "vn_3.3.xml";
 
     @Getter
-    private transient VerbIndex verbnet;
+    private transient VnIndex verbnet;
 
     private CountingSenseInventory countingSenseInventory = new CountingSenseInventory();
     private URL url;
@@ -100,10 +100,10 @@ public class VerbNetSenseInventory implements SenseInventory<VnClass>, Serializa
         Optional<WordNetKey> wnKey = verbnet.getWordNetKeysByLemma(lemma).stream()
             .min(Comparator.comparingInt(WordNetKey::lexicalId));
         if (wnKey.isPresent()) {
-            Optional<VerbNetId> member = verbnet.getMembersByWordNetKey(wnKey.get()).stream()
+            Optional<VnClassId> member = verbnet.getMembersByWordNetKey(wnKey.get()).stream()
                 .map(VnMember::verbClass)
                 .map(VnClass::verbNetId)
-                .min(VerbNetId::compareTo);
+                .min(VnClassId::compareTo);
             if (member.isPresent()) {
                 return member.get().rootId();
             }

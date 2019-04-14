@@ -19,7 +19,7 @@ package io.github.clearwsd.verbnet.xml;
 import io.github.clearwsd.verbnet.VnThematicRole;
 import io.github.clearwsd.verbnet.VnClass;
 import io.github.clearwsd.verbnet.VnFrame;
-import io.github.clearwsd.verbnet.VerbNetId;
+import io.github.clearwsd.verbnet.VnClassId;
 import io.github.clearwsd.verbnet.VnMember;
 import java.util.ArrayList;
 import java.util.List;
@@ -55,15 +55,15 @@ public class VnClassXml implements VnClass {
 
     @XmlAttribute(name = "ID", required = true)
     @XmlJavaTypeAdapter(VerbNetIdXmlAdapter.class)
-    private VerbNetId verbNetId;
+    private VnClassId verbNetId;
 
     @XmlElementWrapper(name = "MEMBERS")
     @XmlElement(name = VnMemberXml.ROOT_NAME, required = true)
     private List<VnMemberXml> memberElements = new ArrayList<>();
 
     @XmlElementWrapper(name = "THEMROLES")
-    @XmlElement(name = VerbNetThematicRoleXml.ROOT_NAME, required = true)
-    private List<VerbNetThematicRoleXml> thematicRoles = new ArrayList<>();
+    @XmlElement(name = VnThematicRoleXml.ROOT_NAME, required = true)
+    private List<VnThematicRoleXml> thematicRoles = new ArrayList<>();
 
     @XmlElementWrapper(name = "FRAMES")
     @XmlElement(name = VnFrameXml.ROOT_NAME, required = true)
@@ -107,18 +107,18 @@ public class VnClassXml implements VnClass {
         return Optional.ofNullable(parentClass);
     }
 
-    public static class VerbNetIdXmlAdapter extends XmlAdapter<String, VerbNetId> {
+    public static class VerbNetIdXmlAdapter extends XmlAdapter<String, VnClassId> {
 
         @Override
-        public VerbNetId unmarshal(String value) {
+        public VnClassId unmarshal(String value) {
             if (null == value) {
                 return null;
             }
-            return VerbNetId.parse(value);
+            return VnClassId.parse(value);
         }
 
         @Override
-        public String marshal(VerbNetId value) {
+        public String marshal(VnClassId value) {
             if (null == value) {
                 return null;
             }

@@ -31,11 +31,11 @@ import lombok.NonNull;
 import lombok.experimental.Accessors;
 
 /**
- * Default {@link VerbIndex} implementation.
+ * Default {@link VnIndex} implementation.
  *
  * @author jamesgung
  */
-public class DefaultVerbIndex implements VerbIndex {
+public class DefaultVnIndex implements VnIndex {
 
     /**
      * Return the base lemma of a phrasal verb (e.g. "go_ballistic" to "go").
@@ -58,7 +58,7 @@ public class DefaultVerbIndex implements VerbIndex {
     private SetMultimap<String, VnMember> lemmaMemberMap;
     private Map<String, VnClass> senseVnMap;
 
-    public DefaultVerbIndex(@NonNull List<VnClass> verbClasses) {
+    public DefaultVnIndex(@NonNull List<VnClass> verbClasses) {
         this.roots = ImmutableList.copyOf(verbClasses);
         lemmaVnMap = HashMultimap.create();
         lemmaWnMap = HashMultimap.create();
@@ -90,7 +90,7 @@ public class DefaultVerbIndex implements VerbIndex {
         }
 
         try {
-            VerbNetId verbNetId = VerbNetId.parse(id);
+            VnClassId verbNetId = VnClassId.parse(id);
 
             VnClass rootClass = senseVnMap.get(verbNetId.rootId());
 

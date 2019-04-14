@@ -25,10 +25,10 @@ import java.util.Set;
  *
  * @author jamesgung
  */
-public interface VerbIndex {
+public interface VnIndex {
 
     /**
-     * Return a list of all root {@link VnClass classes} in this {@link VerbIndex}.
+     * Return a list of all root {@link VnClass classes} in this {@link VnIndex}.
      */
     List<VnClass> roots();
 

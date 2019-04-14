@@ -29,9 +29,9 @@ import java.util.Stack;
 public interface VnClass {
 
     /**
-     * Return the identifying {@link VerbNetId} for this class.
+     * Return the identifying {@link VnClassId} for this class.
      */
-    VerbNetId verbNetId();
+    VnClassId verbNetId();
 
     /**
      * Return a list of the {@link VnMember member verbs} for this class.
