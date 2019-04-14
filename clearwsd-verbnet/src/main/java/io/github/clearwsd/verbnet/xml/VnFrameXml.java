@@ -27,6 +27,7 @@ import io.github.clearwsd.verbnet.syntax.VnSyntax;
 import io.github.clearwsd.verbnet.syntax.VnSyntaxType;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -197,7 +198,7 @@ public class VnFrameXml implements VnFrame {
 
         @XmlAttribute(name = "value")
         @XmlJavaTypeAdapter(ValueSetAdapter.class)
-        private Set<String> types;
+        private Set<String> types = new HashSet<>();
         @XmlElement(name = SelectionalRestrictionsXml.ROOT_NAME)
         private SelectionalRestrictionsXml selectionalRestrictions;
 

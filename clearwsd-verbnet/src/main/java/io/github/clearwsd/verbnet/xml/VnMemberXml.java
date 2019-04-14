@@ -63,11 +63,11 @@ public class VnMemberXml implements VnMember {
 
     @XmlAttribute(name = "features")
     @XmlJavaTypeAdapter(ValueSetAdapter.class)
-    private List<String> features;
+    private List<String> features = new ArrayList<>();
 
     @XmlAttribute(name = "grouping")
     @XmlJavaTypeAdapter(GroupingsSetAdapter.class)
-    private List<String> groupings;
+    private List<String> groupings = new ArrayList<>();
 
     @XmlAttribute(name = "verbnet_key")
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
