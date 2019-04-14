@@ -699,9 +699,15 @@
         </MEMBERS>
         <THEMROLES>
             <THEMROLE type="Agent">
-                <SELRESTRS logic="or">
-                    <SELRESTR Value="+" type="animate"/>
-                    <SELRESTR Value="+" type="organization"/>
+                <SELRESTRS logic="and">
+                    <SELRESTRS logic="or">
+                        <SELRESTR Value="+" type="animate"/>
+                        <SELRESTR Value="+" type="organization"/>
+                    </SELRESTRS>
+                    <SELRESTRS logic="and">
+                        <SELRESTR Value="+" type="location"/>
+                        <SELRESTR Value="-" type="region"/>
+                    </SELRESTRS>
                 </SELRESTRS>
             </THEMROLE>
             <THEMROLE type="Theme">

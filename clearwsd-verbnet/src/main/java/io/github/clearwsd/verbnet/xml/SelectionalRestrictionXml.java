@@ -42,6 +42,6 @@ public class SelectionalRestrictionXml {
     private String type;
     @XmlAttribute(name = "Value", required = true)
     @XmlJavaTypeAdapter(BooleanAdapterXmlAdapter.class)
-    private Boolean value;
+    private Boolean include;
 
 }

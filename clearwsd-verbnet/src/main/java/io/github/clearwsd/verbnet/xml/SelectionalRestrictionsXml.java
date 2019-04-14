@@ -63,7 +63,7 @@ public class SelectionalRestrictionsXml {
         List<Restrictions<String>> result = new ArrayList<>();
         if (restrictions.logic == LogicalRelation.OR) {
             for (SelectionalRestrictionXml xml : restrictions.resAtomic) {
-                result.add(xml.value()
+                result.add(xml.include()
                     ? DefaultRestrictions.including(xml.type())
                     : DefaultRestrictions.excluding(xml.type()));
             }
@@ -75,7 +75,7 @@ public class SelectionalRestrictionsXml {
             // AND relation -- combine restrictions
             DefaultRestrictions<String> rest = new DefaultRestrictions<>();
             for (SelectionalRestrictionXml xml : restrictions.resAtomic) {
-                (xml.value() ? rest.include() : rest.exclude()).add(xml.type());
+                (xml.include() ? rest.include() : rest.exclude()).add(xml.type());
             }
             // combine with hierarchical restrictions
             List<DefaultRestrictions<String>> paths = new ArrayList<>();

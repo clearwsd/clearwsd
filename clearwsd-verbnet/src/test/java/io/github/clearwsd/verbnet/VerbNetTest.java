@@ -3,6 +3,7 @@ package io.github.clearwsd.verbnet;
 import io.github.clearwsd.verbnet.xml.VerbNetClassXml;
 import io.github.clearwsd.verbnet.xml.VerbNetFrameXml.NounPhraseXml;
 import io.github.clearwsd.verbnet.xml.VerbNetXmlFactory;
+import java.util.Arrays;
 import java.util.List;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -61,8 +62,10 @@ public class VerbNetTest {
         assertEquals("Theme", theme.type());
         assertEquals("Instrument", instrument.type());
         List<Restrictions<String>> selRels = agent.restrictions();
-        assertTrue(selRels.get(0).include().contains("animate"));
-        assertTrue(selRels.get(1).include().contains("organization"));
+        assertTrue(selRels.get(0).include().containsAll(Arrays.asList("animate", "location")));
+        assertTrue(selRels.get(1).include().containsAll(Arrays.asList("organization", "location")));
+        assertTrue(selRels.get(0).exclude().contains("region"));
+        assertTrue(selRels.get(1).exclude().contains("region"));
     }
 
     @Test

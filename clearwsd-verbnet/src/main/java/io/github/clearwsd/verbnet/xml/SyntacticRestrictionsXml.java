@@ -55,7 +55,7 @@ public class SyntacticRestrictionsXml {
         List<Restrictions<String>> result = new ArrayList<>();
         if (logic == LogicalRelation.OR) {
             for (SyntacticRestrictionXml xml : syntacticRestrictions) {
-                Restrictions<String> single = xml.value()
+                Restrictions<String> single = xml.include()
                     ? DefaultRestrictions.including(xml.type())
                     : DefaultRestrictions.excluding(xml.type());
                 result.add(single);
@@ -63,7 +63,7 @@ public class SyntacticRestrictionsXml {
         } else {
             Restrictions<String> rest = new DefaultRestrictions<>();
             for (SyntacticRestrictionXml xml : syntacticRestrictions) {
-                (xml.value() ? rest.include() : rest.exclude()).add(xml.type());
+                (xml.include() ? rest.include() : rest.exclude()).add(xml.type());
             }
             result.add(rest);
         }
