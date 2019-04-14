@@ -23,7 +23,7 @@ import java.util.List;
  *
  * @author jgung
  */
-public interface VerbNetFrame {
+public interface VerbNetFrame extends FrameDescription {
 
     /**
      * Provides a human-readable description and identifying information for this {@link VerbNetFrame}.

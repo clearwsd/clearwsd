@@ -42,6 +42,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
+import lombok.experimental.Delegate;
 
 import static io.github.clearwsd.verbnet.SyntaxType.ADJ;
 import static io.github.clearwsd.verbnet.SyntaxType.ADV;
@@ -63,6 +64,7 @@ public class VerbNetFrameXml implements VerbNetFrame {
 
     static final String ROOT_NAME = "FRAME";
 
+    @Delegate
     @XmlElement(name = "DESCRIPTION", required = true)
     private FrameDescriptionXml description;
 
