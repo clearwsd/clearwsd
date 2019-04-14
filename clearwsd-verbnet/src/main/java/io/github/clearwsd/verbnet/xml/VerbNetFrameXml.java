@@ -16,13 +16,13 @@
 
 package io.github.clearwsd.verbnet.xml;
 
-import io.github.clearwsd.verbnet.syntax.LexicalPhrase;
-import io.github.clearwsd.verbnet.syntax.NounPhrase;
-import io.github.clearwsd.verbnet.syntax.Preposition;
+import io.github.clearwsd.verbnet.syntax.VnLex;
+import io.github.clearwsd.verbnet.syntax.VnNounPhrase;
+import io.github.clearwsd.verbnet.syntax.VnPrep;
 import io.github.clearwsd.verbnet.restrictions.Restrictions;
 import io.github.clearwsd.verbnet.semantics.SemanticPredicate;
-import io.github.clearwsd.verbnet.syntax.SyntacticPhrase;
-import io.github.clearwsd.verbnet.syntax.SyntaxType;
+import io.github.clearwsd.verbnet.syntax.VnSyntax;
+import io.github.clearwsd.verbnet.syntax.VnSyntaxType;
 import io.github.clearwsd.verbnet.VerbNetClass;
 import io.github.clearwsd.verbnet.VerbNetFrame;
 import java.util.ArrayList;
@@ -45,12 +45,12 @@ import lombok.ToString;
 import lombok.experimental.Accessors;
 import lombok.experimental.Delegate;
 
-import static io.github.clearwsd.verbnet.syntax.SyntaxType.ADJ;
-import static io.github.clearwsd.verbnet.syntax.SyntaxType.ADV;
-import static io.github.clearwsd.verbnet.syntax.SyntaxType.LEX;
-import static io.github.clearwsd.verbnet.syntax.SyntaxType.NP;
-import static io.github.clearwsd.verbnet.syntax.SyntaxType.PREP;
-import static io.github.clearwsd.verbnet.syntax.SyntaxType.VERB;
+import static io.github.clearwsd.verbnet.syntax.VnSyntaxType.ADJ;
+import static io.github.clearwsd.verbnet.syntax.VnSyntaxType.ADV;
+import static io.github.clearwsd.verbnet.syntax.VnSyntaxType.LEX;
+import static io.github.clearwsd.verbnet.syntax.VnSyntaxType.NP;
+import static io.github.clearwsd.verbnet.syntax.VnSyntaxType.PREP;
+import static io.github.clearwsd.verbnet.syntax.VnSyntaxType.VERB;
 
 /**
  * XML binding implementation of {@link VerbNetFrame}.
@@ -92,9 +92,9 @@ public class VerbNetFrameXml implements VerbNetFrame {
     }
 
     @Override
-    public List<SyntacticPhrase> syntax() {
+    public List<VnSyntax> syntax() {
         return syntaxElements.stream()
-            .map(pred -> (SyntacticPhrase) pred)
+            .map(pred -> (VnSyntax) pred)
             .collect(Collectors.toList());
     }
 
@@ -107,12 +107,12 @@ public class VerbNetFrameXml implements VerbNetFrame {
 
     @Data
     @Accessors(fluent = true)
-    public static abstract class Syntax implements SyntacticPhrase {
+    public static abstract class Syntax implements VnSyntax {
 
         protected int index;
-        protected SyntaxType type;
+        protected VnSyntaxType type;
 
-        Syntax(SyntaxType syntaxType) {
+        Syntax(VnSyntaxType syntaxType) {
             this.type = syntaxType;
         }
 
@@ -123,7 +123,7 @@ public class VerbNetFrameXml implements VerbNetFrame {
     @EqualsAndHashCode(callSuper = true)
     @Accessors(fluent = true)
     @XmlRootElement(name = "NP")
-    public static class NounPhraseXml extends Syntax implements NounPhrase {
+    public static class NounPhraseXml extends Syntax implements VnNounPhrase {
 
         @XmlAttribute(name = "value", required = true)
         private String thematicRole;
@@ -193,7 +193,7 @@ public class VerbNetFrameXml implements VerbNetFrame {
     @EqualsAndHashCode(callSuper = true)
     @Accessors(fluent = true)
     @XmlRootElement(name = "PREP")
-    public static class PrepXml extends Syntax implements Preposition {
+    public static class PrepXml extends Syntax implements VnPrep {
 
         @XmlAttribute(name = "value")
         @XmlJavaTypeAdapter(ValueSetAdapter.class)
@@ -210,7 +210,7 @@ public class VerbNetFrameXml implements VerbNetFrame {
     @EqualsAndHashCode(callSuper = true)
     @Accessors(fluent = true)
     @XmlRootElement(name = "LEX")
-    public static class LexXml extends Syntax implements LexicalPhrase {
+    public static class LexXml extends Syntax implements VnLex {
 
         @XmlAttribute(name = "value", required = true)
         private String value;

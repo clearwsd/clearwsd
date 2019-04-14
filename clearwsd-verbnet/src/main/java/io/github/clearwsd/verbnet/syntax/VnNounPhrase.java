@@ -24,7 +24,7 @@ import java.util.List;
  *
  * @author jamesgung
  */
-public interface NounPhrase extends SyntacticPhrase {
+public interface VnNounPhrase extends VnSyntax {
 
     /**
      * Thematic role associated with this NP.

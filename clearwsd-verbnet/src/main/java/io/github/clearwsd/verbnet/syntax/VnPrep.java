@@ -16,16 +16,18 @@
 
 package io.github.clearwsd.verbnet.syntax;
 
+import java.util.Set;
+
 /**
- * Lexical phrase or constituent.
+ * Preposition within a given syntactic frame.
  *
  * @author jamesgung
  */
-public interface LexicalPhrase extends SyntacticPhrase {
+public interface VnPrep extends VnSyntax {
 
     /**
-     * Value associated with this LEX constituent.
+     * Valid prepositions types.
      */
-    String value();
+    Set<String> types();
 
 }

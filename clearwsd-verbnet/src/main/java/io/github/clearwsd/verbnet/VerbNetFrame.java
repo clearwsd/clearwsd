@@ -17,7 +17,7 @@
 package io.github.clearwsd.verbnet;
 
 import io.github.clearwsd.verbnet.semantics.SemanticPredicate;
-import io.github.clearwsd.verbnet.syntax.SyntacticPhrase;
+import io.github.clearwsd.verbnet.syntax.VnSyntax;
 import java.util.List;
 
 /**
@@ -38,9 +38,9 @@ public interface VerbNetFrame extends FrameDescription {
     List<String> examples();
 
     /**
-     * Return the {@link SyntacticPhrase syntactic phrases} for this {@link VerbNetFrame}.
+     * Return the {@link VnSyntax syntactic phrases} for this {@link VerbNetFrame}.
      */
-    List<SyntacticPhrase> syntax();
+    List<VnSyntax> syntax();
 
     /**
      * Return the {@link SemanticPredicate semantic predicates} associated with this {@link VerbNetFrame}.

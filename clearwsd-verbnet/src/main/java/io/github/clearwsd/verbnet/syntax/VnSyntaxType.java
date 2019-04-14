@@ -16,18 +16,18 @@
 
 package io.github.clearwsd.verbnet.syntax;
 
-import java.util.Set;
-
 /**
- * Preposition within a given syntactic frame.
+ * VerbNet frame syntax type.
  *
  * @author jamesgung
  */
-public interface Preposition extends SyntacticPhrase {
+public enum VnSyntaxType {
 
-    /**
-     * Valid prepositions types.
-     */
-    Set<String> types();
+    ADV,
+    ADJ,
+    LEX,
+    NP,
+    PREP,
+    VERB
 
 }

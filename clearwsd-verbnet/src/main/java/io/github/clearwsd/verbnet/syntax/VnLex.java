@@ -17,20 +17,15 @@
 package io.github.clearwsd.verbnet.syntax;
 
 /**
- * VerbNet syntactic phrase or constituent within a frame.
+ * Lexical phrase or constituent.
  *
  * @author jamesgung
  */
-public interface SyntacticPhrase {
+public interface VnLex extends VnSyntax {
 
     /**
-     * Index of this phrase within a VerbNet frame (from 0).
+     * Value associated with this LEX constituent.
      */
-    int index();
-
-    /**
-     * The syntactic type for this constituent within a VerbNet frame, e.g. "NP".
-     */
-    SyntaxType type();
+    String value();
 
 }

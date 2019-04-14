@@ -17,17 +17,20 @@
 package io.github.clearwsd.verbnet.syntax;
 
 /**
- * VerbNet frame syntax type.
+ * VerbNet syntactic phrase or constituent within a frame.
  *
  * @author jamesgung
  */
-public enum SyntaxType {
+public interface VnSyntax {
 
-    ADV,
-    ADJ,
-    LEX,
-    NP,
-    PREP,
-    VERB
+    /**
+     * Index of this phrase within a VerbNet frame (from 0).
+     */
+    int index();
+
+    /**
+     * The syntactic type for this constituent within a VerbNet frame, e.g. "NP".
+     */
+    VnSyntaxType type();
 
 }

@@ -4,8 +4,8 @@ import io.github.clearwsd.verbnet.restrictions.Restrictions;
 import io.github.clearwsd.verbnet.semantics.PredicatePolarity;
 import io.github.clearwsd.verbnet.semantics.SemanticArgument;
 import io.github.clearwsd.verbnet.semantics.SemanticPredicate;
-import io.github.clearwsd.verbnet.syntax.NounPhrase;
-import io.github.clearwsd.verbnet.syntax.SyntaxType;
+import io.github.clearwsd.verbnet.syntax.VnNounPhrase;
+import io.github.clearwsd.verbnet.syntax.VnSyntaxType;
 import io.github.clearwsd.verbnet.xml.VerbNetClassXml;
 import io.github.clearwsd.verbnet.xml.VerbNetXmlFactory;
 import java.util.Arrays;
@@ -86,8 +86,8 @@ public class VerbNetTest {
         assertEquals("", frame.description().xtag());
 
         assertEquals(4, frame.syntax().size());
-        NounPhrase patient = (NounPhrase) frame.syntax().get(2);
-        assertEquals(SyntaxType.NP, patient.type());
+        VnNounPhrase patient = (VnNounPhrase) frame.syntax().get(2);
+        assertEquals(VnSyntaxType.NP, patient.type());
         assertEquals(2, patient.index());
         assertEquals("Patient", patient.thematicRole());
 
