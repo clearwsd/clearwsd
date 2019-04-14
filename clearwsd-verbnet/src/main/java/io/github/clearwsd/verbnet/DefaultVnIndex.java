@@ -21,7 +21,6 @@ import com.google.common.collect.HashMultimap;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.LinkedHashMultimap;
 import com.google.common.collect.SetMultimap;
-import io.github.clearwsd.verbnet.xml.WordNetKey;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -53,8 +52,8 @@ public class DefaultVnIndex implements VnIndex {
     private List<VnClass> roots;
 
     private SetMultimap<String, VnClass> lemmaVnMap;
-    private SetMultimap<String, WordNetKey> lemmaWnMap;
-    private SetMultimap<WordNetKey, VnMember> wordNetMemberMap;
+    private SetMultimap<String, WnKey> lemmaWnMap;
+    private SetMultimap<WnKey, VnMember> wordNetMemberMap;
     private SetMultimap<String, VnMember> lemmaMemberMap;
     private Map<String, VnClass> senseVnMap;
 
@@ -74,7 +73,7 @@ public class DefaultVnIndex implements VnIndex {
                     lemmaVnMap.put(name, cls);
                     lemmaWnMap.putAll(name, member.wn());
                     lemmaMemberMap.put(name, member);
-                    for (WordNetKey key : member.wn()) {
+                    for (WnKey key : member.wn()) {
                         wordNetMemberMap.put(key, member);
                     }
                 }
@@ -122,12 +121,12 @@ public class DefaultVnIndex implements VnIndex {
     }
 
     @Override
-    public Set<VnMember> getMembersByWordNetKey(@NonNull WordNetKey wordNetKey) {
-        return wordNetMemberMap.get(wordNetKey);
+    public Set<VnMember> getMembersByWordNetKey(@NonNull WnKey wnKey) {
+        return wordNetMemberMap.get(wnKey);
     }
 
     @Override
-    public Set<WordNetKey> getWordNetKeysByLemma(@NonNull String lemma) {
+    public Set<WnKey> getWordNetKeysByLemma(@NonNull String lemma) {
         return lemmaWnMap.get(getBaseForm(lemma));
     }
 

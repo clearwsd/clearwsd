@@ -17,7 +17,6 @@
 package io.github.clearwsd.verbnet;
 
 import io.github.clearwsd.verbnet.semantics.VnSemanticPredicate;
-import io.github.clearwsd.verbnet.xml.WordNetKey;
 import java.util.List;
 
 /**
@@ -33,9 +32,9 @@ public interface VnMember {
     String name();
 
     /**
-     * Return a list of {@link WordNetKey WordNet synsets} this member is mapped to.
+     * Return a list of {@link WnKey WordNet synsets} this member is mapped to.
      */
-    List<WordNetKey> wn();
+    List<WnKey> wn();
 
     /**
      * Returns any member-specific features applicable in {@link VnSemanticPredicate semantic predicates} for the VerbNet class, e.g.

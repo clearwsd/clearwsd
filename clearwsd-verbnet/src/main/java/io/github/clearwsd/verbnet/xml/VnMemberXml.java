@@ -18,9 +18,11 @@ package io.github.clearwsd.verbnet.xml;
 
 import io.github.clearwsd.verbnet.VnClass;
 import io.github.clearwsd.verbnet.VnMember;
+import io.github.clearwsd.verbnet.WnKey;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -56,8 +58,8 @@ public class VnMemberXml implements VnMember {
     private String name;
 
     @XmlAttribute(name = "wn", required = true)
-    @XmlJavaTypeAdapter(WordNetKey.WordNetKeyAdapter.class)
-    private List<WordNetKey> wn = new ArrayList<>();
+    @XmlJavaTypeAdapter(WordNetKeyAdapter.class)
+    private List<WnKey> wn = new ArrayList<>();
 
     @XmlAttribute(name = "features")
     @XmlJavaTypeAdapter(ValueSetAdapter.class)
@@ -107,6 +109,32 @@ public class VnMemberXml implements VnMember {
         @Override
         public String marshal(List<String> value) {
             return String.join(" ", value);
+        }
+    }
+
+    public static class WordNetKeyAdapter extends XmlAdapter<String, List<WnKey>> {
+
+        @Override
+        public List<WnKey> unmarshal(String value) {
+            if (null == value || value.trim().isEmpty()) {
+                return new ArrayList<>();
+            }
+            return Arrays.stream(value.split("\\s+"))
+                .map(WnKey::parseWordNetKey)
+                .filter(Optional::isPresent)
+                .map(Optional::get)
+                .collect(Collectors.toList());
+        }
+
+        @Override
+        public String marshal(List<WnKey> value) {
+            if (null == value) {
+                return null;
+            }
+            return value.stream()
+                .map(key -> String.format("%s%%%s:%d:%d", key.lemma(), key.type().ordinal(), key.lexicalFileNumber(),
+                    key.lexicalId()))
+                .collect(Collectors.joining(" "));
         }
     }
 

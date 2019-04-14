@@ -21,7 +21,6 @@ import com.google.common.io.ByteStreams;
 import io.github.clearwsd.utils.CountingSenseInventory;
 import io.github.clearwsd.utils.SenseInventory;
 import io.github.clearwsd.verbnet.xml.VerbNetXmlFactory;
-import io.github.clearwsd.verbnet.xml.WordNetKey;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
@@ -97,8 +96,8 @@ public class VerbNetSenseInventory implements SenseInventory<VnClass>, Serializa
 
     @Override
     public String defaultSense(String lemma) {
-        Optional<WordNetKey> wnKey = verbnet.getWordNetKeysByLemma(lemma).stream()
-            .min(Comparator.comparingInt(WordNetKey::lexicalId));
+        Optional<WnKey> wnKey = verbnet.getWordNetKeysByLemma(lemma).stream()
+            .min(Comparator.comparingInt(WnKey::lexicalId));
         if (wnKey.isPresent()) {
             Optional<VnClassId> member = verbnet.getMembersByWordNetKey(wnKey.get()).stream()
                 .map(VnMember::verbClass)

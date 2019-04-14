@@ -16,7 +16,6 @@
 
 package io.github.clearwsd.verbnet;
 
-import io.github.clearwsd.verbnet.xml.WordNetKey;
 import java.util.List;
 import java.util.Set;
 
@@ -48,13 +47,13 @@ public interface VnIndex {
     Set<VnMember> getMembersByLemma(String lemma);
 
     /**
-     * Return the set of {@link VnClass class} {@link VnMember members} for a given {@link WordNetKey}.
+     * Return the set of {@link VnClass class} {@link VnMember members} for a given {@link WnKey}.
      */
-    Set<VnMember> getMembersByWordNetKey(WordNetKey wordNetKey);
+    Set<VnMember> getMembersByWordNetKey(WnKey wnKey);
 
     /**
-     * Return the set of {@link WordNetKey WordNet keys/senses} for a given lemma.
+     * Return the set of {@link WnKey WordNet keys/senses} for a given lemma.
      */
-    Set<WordNetKey> getWordNetKeysByLemma(String lemma);
+    Set<WnKey> getWordNetKeysByLemma(String lemma);
 
 }
