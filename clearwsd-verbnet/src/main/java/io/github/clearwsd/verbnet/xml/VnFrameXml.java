@@ -27,6 +27,7 @@ import io.github.clearwsd.verbnet.syntax.VnSyntax;
 import io.github.clearwsd.verbnet.syntax.VnSyntaxType;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -139,11 +140,17 @@ public class VnFrameXml implements VnFrame {
 
         @Override
         public List<VnRestrictions<String>> selectionalRestrictions() {
+            if (selectionalRestrictions == null) {
+                return Collections.emptyList();
+            }
             return selectionalRestrictions.restrictions();
         }
 
         @Override
         public List<VnRestrictions<String>> syntacticRestrictions() {
+            if (syntacticRestrictions == null) {
+                return Collections.emptyList();
+            }
             return syntacticRestrictions.restrictions();
         }
     }
@@ -208,6 +215,9 @@ public class VnFrameXml implements VnFrame {
 
         @Override
         public List<VnRestrictions<String>> restrictions() {
+            if (selectionalRestrictions == null) {
+                return Collections.emptyList();
+            }
             return selectionalRestrictions.restrictions();
         }
     }
