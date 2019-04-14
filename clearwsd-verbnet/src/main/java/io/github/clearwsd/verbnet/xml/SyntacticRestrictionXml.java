@@ -41,6 +41,6 @@ public class SyntacticRestrictionXml {
     @XmlAttribute(name = "type", required = true)
     private String type;
     @XmlJavaTypeAdapter(BooleanAdapterXmlAdapter.class)
-    private Boolean include;
+    private Boolean include = true;
 
 }

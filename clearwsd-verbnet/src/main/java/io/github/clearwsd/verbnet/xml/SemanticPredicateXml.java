@@ -19,6 +19,7 @@ package io.github.clearwsd.verbnet.xml;
 import io.github.clearwsd.verbnet.PredicatePolarity;
 import io.github.clearwsd.verbnet.SemanticArgument;
 import io.github.clearwsd.verbnet.SemanticPredicate;
+import java.security.cert.TrustAnchor;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -50,7 +51,7 @@ public class SemanticPredicateXml implements SemanticPredicate {
 
     @XmlAttribute(name = "bool")
     @XmlJavaTypeAdapter(PolarityXmlAdapter.class)
-    private PredicatePolarity polarity;
+    private PredicatePolarity polarity = PredicatePolarity.TRUE;
 
     @XmlAttribute(name = "value", required = true)
     private String value;

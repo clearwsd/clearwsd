@@ -87,6 +87,7 @@ public class VerbNetTest {
 
         assertEquals(5, frame.predicates().size());
         SemanticPredicate semanticPredicate = frame.predicates().get(1);
+        assertEquals(PredicatePolarity.TRUE, semanticPredicate.polarity());
         assertEquals("change_value", semanticPredicate.type());
 
         assertEquals(5, semanticPredicate.semanticArguments().size());
