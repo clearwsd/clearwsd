@@ -14,25 +14,23 @@
  * limitations under the License.
  */
 
-package io.github.clearwsd.verbnet.restrictions;
-
-import java.util.Set;
+package io.github.clearwsd.verbnet.semantics;
 
 /**
- * Restrictions on VerbNet types.
+ * Argument of a VerbNet semantic predicate.
  *
- * @author jamesgung
+ * @author jgung
  */
-public interface Restrictions<T> {
+public interface VnSemanticArgument {
 
     /**
-     * Restrictions that must be included.
+     * Type of argument, e.g. "ThemRole".
      */
-    Set<T> include();
+    String type();
 
     /**
-     * Restrictions that must not be present.
+     * Value of argument, e.g. "Patient".
      */
-    Set<T> exclude();
+    String value();
 
 }

@@ -44,7 +44,7 @@ import lombok.extern.slf4j.Slf4j;
  * @author jamesgung
  */
 @Slf4j
-public class VerbNetSenseInventory implements SenseInventory<VerbNetClass>, Serializable {
+public class VerbNetSenseInventory implements SenseInventory<VnClass>, Serializable {
 
     private static final long serialVersionUID = 410274561044821035L;
 
@@ -101,8 +101,8 @@ public class VerbNetSenseInventory implements SenseInventory<VerbNetClass>, Seri
             .min(Comparator.comparingInt(WordNetKey::lexicalId));
         if (wnKey.isPresent()) {
             Optional<VerbNetId> member = verbnet.getMembersByWordNetKey(wnKey.get()).stream()
-                .map(VerbNetMember::verbClass)
-                .map(VerbNetClass::verbNetId)
+                .map(VnMember::verbClass)
+                .map(VnClass::verbNetId)
                 .min(VerbNetId::compareTo);
             if (member.isPresent()) {
                 return member.get().rootId();
@@ -117,7 +117,7 @@ public class VerbNetSenseInventory implements SenseInventory<VerbNetClass>, Seri
     }
 
     @Override
-    public VerbNetClass getSense(String id) {
+    public VnClass getSense(String id) {
         return verbnet.getById(id);
     }
 
@@ -134,7 +134,7 @@ public class VerbNetSenseInventory implements SenseInventory<VerbNetClass>, Seri
         }
     }
 
-    private VerbNetClass getRoot(VerbNetClass cls) {
+    private VnClass getRoot(VnClass cls) {
         while (cls.parentClass().isPresent()) {
             cls = cls.parentClass().get();
         }

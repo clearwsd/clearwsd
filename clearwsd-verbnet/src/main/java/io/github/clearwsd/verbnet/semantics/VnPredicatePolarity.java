@@ -21,7 +21,7 @@ package io.github.clearwsd.verbnet.semantics;
  *
  * @author jamesgung
  */
-public enum PredicatePolarity {
+public enum VnPredicatePolarity {
 
     TRUE,
     FALSE,

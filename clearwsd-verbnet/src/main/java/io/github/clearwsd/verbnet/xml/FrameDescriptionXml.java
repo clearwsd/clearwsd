@@ -16,7 +16,7 @@
 
 package io.github.clearwsd.verbnet.xml;
 
-import io.github.clearwsd.verbnet.FrameDescription;
+import io.github.clearwsd.verbnet.VnFrameDescription;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -27,7 +27,7 @@ import lombok.Data;
 import lombok.experimental.Accessors;
 
 /**
- * XML binding implementation of {@link FrameDescription}.
+ * XML binding implementation of {@link VnFrameDescription}.
  *
  * @author jgung
  */
@@ -35,7 +35,7 @@ import lombok.experimental.Accessors;
 @Accessors(fluent = true)
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlRootElement(name = FrameDescriptionXml.ROOT_NAME)
-public class FrameDescriptionXml implements FrameDescription {
+public class FrameDescriptionXml implements VnFrameDescription {
 
     static final String ROOT_NAME = "DESCRIPTION";
 

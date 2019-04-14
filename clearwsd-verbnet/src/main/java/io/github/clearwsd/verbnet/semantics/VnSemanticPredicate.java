@@ -14,33 +14,30 @@
  * limitations under the License.
  */
 
-package io.github.clearwsd.verbnet;
+package io.github.clearwsd.verbnet.semantics;
+
+import java.util.List;
 
 /**
- * VerbNet frame description.
+ * VerbNet semantic predicate, providing underlying components of meaning for an event, its participants and sub-events.
  *
  * @author jgung
  */
-public interface FrameDescription {
+public interface VnSemanticPredicate {
 
     /**
-     * Returns the primary type for this frame, e.g. "NP.attribute V".
+     * Truth value for this semantic predicate: TRUE, FALSE, or UNCERTAIN.
      */
-    String primary();
+    VnPredicatePolarity polarity();
 
     /**
-     * Returns the secondary type for this frame, e.g. "Intransitive; Attribute Subject".
+     * Type of this semantic predicate, e.g. "has_possession".
      */
-    String secondary();
+    String type();
 
     /**
-     * Returns the description number for this frame, e.g. "2.13.5".
+     * Collection of arguments of this semantic predicate.
      */
-    String descriptionNumber();
-
-    /**
-     * Returns the xtag for this frame, e.g. "0.2".
-     */
-    String xtag();
+    List<VnSemanticArgument> semanticArguments();
 
 }

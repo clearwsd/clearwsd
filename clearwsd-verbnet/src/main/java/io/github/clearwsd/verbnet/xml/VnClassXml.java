@@ -16,11 +16,11 @@
 
 package io.github.clearwsd.verbnet.xml;
 
-import io.github.clearwsd.verbnet.ThematicRole;
-import io.github.clearwsd.verbnet.VerbNetClass;
-import io.github.clearwsd.verbnet.VerbNetFrame;
+import io.github.clearwsd.verbnet.VnThematicRole;
+import io.github.clearwsd.verbnet.VnClass;
+import io.github.clearwsd.verbnet.VnFrame;
 import io.github.clearwsd.verbnet.VerbNetId;
-import io.github.clearwsd.verbnet.VerbNetMember;
+import io.github.clearwsd.verbnet.VnMember;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -39,7 +39,7 @@ import lombok.ToString;
 import lombok.experimental.Accessors;
 
 /**
- * XML binding implementation of {@link VerbNetClass}.
+ * XML binding implementation of {@link VnClass}.
  *
  * @author jgung
  */
@@ -48,8 +48,8 @@ import lombok.experimental.Accessors;
 @EqualsAndHashCode(of = "verbNetId")
 @Accessors(fluent = true)
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlRootElement(name = VerbNetClassXml.ROOT_NAME)
-public class VerbNetClassXml implements VerbNetClass {
+@XmlRootElement(name = VnClassXml.ROOT_NAME)
+public class VnClassXml implements VnClass {
 
     static final String ROOT_NAME = "VNCLASS";
 
@@ -58,52 +58,52 @@ public class VerbNetClassXml implements VerbNetClass {
     private VerbNetId verbNetId;
 
     @XmlElementWrapper(name = "MEMBERS")
-    @XmlElement(name = VerbNetMemberXml.ROOT_NAME, required = true)
-    private List<VerbNetMemberXml> memberElements = new ArrayList<>();
+    @XmlElement(name = VnMemberXml.ROOT_NAME, required = true)
+    private List<VnMemberXml> memberElements = new ArrayList<>();
 
     @XmlElementWrapper(name = "THEMROLES")
     @XmlElement(name = VerbNetThematicRoleXml.ROOT_NAME, required = true)
     private List<VerbNetThematicRoleXml> thematicRoles = new ArrayList<>();
 
     @XmlElementWrapper(name = "FRAMES")
-    @XmlElement(name = VerbNetFrameXml.ROOT_NAME, required = true)
-    private List<VerbNetFrameXml> frameElements = new ArrayList<>();
+    @XmlElement(name = VnFrameXml.ROOT_NAME, required = true)
+    private List<VnFrameXml> frameElements = new ArrayList<>();
 
     @XmlElementWrapper(name = "SUBCLASSES")
     @XmlElement(name = "VNSUBCLASS", required = true)
-    private List<VerbNetClassXml> children = new ArrayList<>();
+    private List<VnClassXml> children = new ArrayList<>();
 
-    private transient VerbNetClass parentClass;
+    private transient VnClass parentClass;
 
     @Override
-    public List<VerbNetMember> members() {
+    public List<VnMember> members() {
         return memberElements.stream()
-            .map(member -> (VerbNetMember) member)
+            .map(member -> (VnMember) member)
             .collect(Collectors.toList());
     }
 
     @Override
-    public List<ThematicRole> roles() {
+    public List<VnThematicRole> roles() {
         return thematicRoles.stream()
-            .map(role -> (ThematicRole) role)
+            .map(role -> (VnThematicRole) role)
             .collect(Collectors.toList());
     }
 
     @Override
-    public List<VerbNetFrame> frames() {
+    public List<VnFrame> frames() {
         return frameElements.stream()
-            .map(frame -> (VerbNetFrame) frame)
+            .map(frame -> (VnFrame) frame)
             .collect(Collectors.toList());
     }
 
     @Override
-    public List<VerbNetClass> subclasses() {
+    public List<VnClass> subclasses() {
         return children.stream()
-            .map(cls -> (VerbNetClass) cls)
+            .map(cls -> (VnClass) cls)
             .collect(Collectors.toList());
     }
 
-    public Optional<VerbNetClass> parentClass() {
+    public Optional<VnClass> parentClass() {
         return Optional.ofNullable(parentClass);
     }
 

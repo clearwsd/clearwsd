@@ -1,12 +1,12 @@
 package io.github.clearwsd.verbnet;
 
-import io.github.clearwsd.verbnet.restrictions.Restrictions;
-import io.github.clearwsd.verbnet.semantics.PredicatePolarity;
-import io.github.clearwsd.verbnet.semantics.SemanticArgument;
-import io.github.clearwsd.verbnet.semantics.SemanticPredicate;
+import io.github.clearwsd.verbnet.restrictions.VnRestrictions;
+import io.github.clearwsd.verbnet.semantics.VnPredicatePolarity;
+import io.github.clearwsd.verbnet.semantics.VnSemanticArgument;
+import io.github.clearwsd.verbnet.semantics.VnSemanticPredicate;
 import io.github.clearwsd.verbnet.syntax.VnNounPhrase;
 import io.github.clearwsd.verbnet.syntax.VnSyntaxType;
-import io.github.clearwsd.verbnet.xml.VerbNetClassXml;
+import io.github.clearwsd.verbnet.xml.VnClassXml;
 import io.github.clearwsd.verbnet.xml.VerbNetXmlFactory;
 import java.util.Arrays;
 import java.util.List;
@@ -27,23 +27,23 @@ public class VerbNetTest {
 
     @BeforeClass
     public static void init() {
-        verbNet = VerbNetXmlFactory.readVerbNet(VerbNetClassXml.class.getClassLoader()
+        verbNet = VerbNetXmlFactory.readVerbNet(VnClassXml.class.getClassLoader()
             .getResourceAsStream("vn_test.xml"));
     }
 
     @Test
     public void loadVerbNet() {
-        VerbIndex verbIndex = VerbNetXmlFactory.readVerbNet(VerbNetClassXml.class.getClassLoader()
+        VerbIndex verbIndex = VerbNetXmlFactory.readVerbNet(VnClassXml.class.getClassLoader()
             .getResourceAsStream("vn_3.3.xml"));
         assertEquals(327, verbIndex.roots().size());
     }
 
     @Test
     public void testMembers() {
-        VerbNetClass verbNetClass = verbNet.roots().get(0);
+        VnClass verbNetClass = verbNet.roots().get(0);
         assertEquals(2, verbNetClass.members().size());
-        VerbNetMember build = verbNetClass.members().get(0);
-        VerbNetMember die = verbNetClass.members().get(1);
+        VnMember build = verbNetClass.members().get(0);
+        VnMember die = verbNetClass.members().get(1);
         assertTrue(build.features().contains("increase"));
         assertTrue(die.features().contains("decrease"));
         assertTrue(build.groupings().contains("build.02"));
@@ -58,15 +58,15 @@ public class VerbNetTest {
 
     @Test
     public void testThematicRoles() {
-        VerbNetClass beginClass = verbNet.roots().get(1);
+        VnClass beginClass = verbNet.roots().get(1);
         assertEquals(3, beginClass.roles().size());
-        ThematicRole agent = beginClass.roles().get(0);
-        ThematicRole theme = beginClass.roles().get(1);
-        ThematicRole instrument = beginClass.roles().get(2);
+        VnThematicRole agent = beginClass.roles().get(0);
+        VnThematicRole theme = beginClass.roles().get(1);
+        VnThematicRole instrument = beginClass.roles().get(2);
         assertEquals("Agent", agent.type());
         assertEquals("Theme", theme.type());
         assertEquals("Instrument", instrument.type());
-        List<Restrictions<String>> selRels = agent.restrictions();
+        List<VnRestrictions<String>> selRels = agent.restrictions();
         assertTrue(selRels.get(0).include().containsAll(Arrays.asList("animate", "location")));
         assertTrue(selRels.get(1).include().containsAll(Arrays.asList("organization", "location")));
         assertTrue(selRels.get(0).exclude().contains("region"));
@@ -75,10 +75,10 @@ public class VerbNetTest {
 
     @Test
     public void testFrames() {
-        VerbNetClass verbNetClass = verbNet.roots().get(0);
+        VnClass verbNetClass = verbNet.roots().get(0);
         assertEquals(3, verbNetClass.frames().size());
 
-        VerbNetFrame frame = verbNetClass.frames().get(0);
+        VnFrame frame = verbNetClass.frames().get(0);
         assertEquals("The price of oil soared.", frame.examples().get(0));
         assertEquals("2.13.5", frame.description().descriptionNumber());
         assertEquals("NP.attribute V", frame.description().primary());
@@ -92,12 +92,12 @@ public class VerbNetTest {
         assertEquals("Patient", patient.thematicRole());
 
         assertEquals(5, frame.predicates().size());
-        SemanticPredicate semanticPredicate = frame.predicates().get(1);
-        assertEquals(PredicatePolarity.TRUE, semanticPredicate.polarity());
+        VnSemanticPredicate semanticPredicate = frame.predicates().get(1);
+        assertEquals(VnPredicatePolarity.TRUE, semanticPredicate.polarity());
         assertEquals("change_value", semanticPredicate.type());
 
         assertEquals(5, semanticPredicate.semanticArguments().size());
-        SemanticArgument verbSpecific = semanticPredicate.semanticArguments().get(2);
+        VnSemanticArgument verbSpecific = semanticPredicate.semanticArguments().get(2);
         assertEquals("VerbSpecific", verbSpecific.type());
         assertEquals("V_Direction", verbSpecific.value());
     }

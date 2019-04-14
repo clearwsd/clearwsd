@@ -26,7 +26,7 @@ import java.util.Stack;
  *
  * @author jgung
  */
-public interface VerbNetClass {
+public interface VnClass {
 
     /**
      * Return the identifying {@link VerbNetId} for this class.
@@ -34,42 +34,42 @@ public interface VerbNetClass {
     VerbNetId verbNetId();
 
     /**
-     * Return a list of the {@link VerbNetMember member verbs} for this class.
+     * Return a list of the {@link VnMember member verbs} for this class.
      */
-    List<VerbNetMember> members();
+    List<VnMember> members();
 
     /**
-     * Return a list of the {@link ThematicRole thematic roles} for this class.
+     * Return a list of the {@link VnThematicRole thematic roles} for this class.
      */
-    List<ThematicRole> roles();
+    List<VnThematicRole> roles();
 
     /**
-     * Return a list of the {@link VerbNetFrame frames} for this class.
+     * Return a list of the {@link VnFrame frames} for this class.
      */
-    List<VerbNetFrame> frames();
+    List<VnFrame> frames();
 
     /**
-     * Return a list of the direct {@link VerbNetClass subclasses} of this class.
+     * Return a list of the direct {@link VnClass subclasses} of this class.
      */
-    List<VerbNetClass> subclasses();
+    List<VnClass> subclasses();
 
     /**
-     * Optionally return the {@link VerbNetClass parent class} for this class.
+     * Optionally return the {@link VnClass parent class} for this class.
      */
-    Optional<VerbNetClass> parentClass();
+    Optional<VnClass> parentClass();
 
     /**
-     * Return all ancestors of this {@link VerbNetClass}.
+     * Return all ancestors of this {@link VnClass}.
      *
      * @param includeSelf if True, include this class in the result
      * @return list of all ancestor classes
      */
-    default List<VerbNetClass> ancestors(boolean includeSelf) {
-        List<VerbNetClass> ancestors = new ArrayList<>();
+    default List<VnClass> ancestors(boolean includeSelf) {
+        List<VnClass> ancestors = new ArrayList<>();
         if (includeSelf) {
             ancestors.add(this);
         }
-        VerbNetClass current = this;
+        VnClass current = this;
         while (current.parentClass().isPresent()) {
             current = current.parentClass().get();
             ancestors.add(current);
@@ -78,27 +78,27 @@ public interface VerbNetClass {
     }
 
     /**
-     * Return all ancestors of this {@link VerbNetClass}.
+     * Return all ancestors of this {@link VnClass}.
      */
-    default List<VerbNetClass> ancestors() {
+    default List<VnClass> ancestors() {
         return ancestors(false);
     }
 
     /**
-     * Return all descendants of this {@link VerbNetClass}.
+     * Return all descendants of this {@link VnClass}.
      *
      * @param includeSelf if True, include this class in the result
      * @return list of all descendant classes
      */
-    default List<VerbNetClass> descendants(boolean includeSelf) {
-        List<VerbNetClass> descendants = new ArrayList<>();
+    default List<VnClass> descendants(boolean includeSelf) {
+        List<VnClass> descendants = new ArrayList<>();
         if (includeSelf) {
             descendants.add(this);
         }
-        Stack<VerbNetClass> stack = new Stack<>();
+        Stack<VnClass> stack = new Stack<>();
         stack.addAll(this.subclasses());
         while (!stack.isEmpty()) {
-            VerbNetClass current = stack.pop();
+            VnClass current = stack.pop();
             descendants.add(current);
             stack.addAll(current.subclasses());
         }
@@ -106,32 +106,32 @@ public interface VerbNetClass {
     }
 
     /**
-     * Return all descendants of this {@link VerbNetClass}.
+     * Return all descendants of this {@link VnClass}.
      */
-    default List<VerbNetClass> descendants() {
+    default List<VnClass> descendants() {
         return descendants(false);
     }
 
     /**
-     * Return all classes related to this {@link VerbNetClass}. In other words, find the root ancestor of this class, then find all
+     * Return all classes related to this {@link VnClass}. In other words, find the root ancestor of this class, then find all
      * descendants.
      */
-    default List<VerbNetClass> related() {
+    default List<VnClass> related() {
         return root().descendants(true);
     }
 
     /**
-     * Returns True if this {@link VerbNetClass} has no ancestors.
+     * Returns True if this {@link VnClass} has no ancestors.
      */
     default boolean isRoot() {
         return !parentClass().isPresent();
     }
 
     /**
-     * Returns the root ancestor of this {@link VerbNetClass}, or itself it is already the root.
+     * Returns the root ancestor of this {@link VnClass}, or itself it is already the root.
      */
-    default VerbNetClass root() {
-        VerbNetClass root = this;
+    default VnClass root() {
+        VnClass root = this;
         while (!root.parentClass().isPresent()) {
             root = root.parentClass().get();
         }

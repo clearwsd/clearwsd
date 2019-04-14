@@ -16,7 +16,7 @@
 
 package io.github.clearwsd.verbnet;
 
-import io.github.clearwsd.verbnet.semantics.SemanticPredicate;
+import io.github.clearwsd.verbnet.semantics.VnSemanticPredicate;
 import io.github.clearwsd.verbnet.syntax.VnSyntax;
 import java.util.List;
 
@@ -25,31 +25,31 @@ import java.util.List;
  *
  * @author jgung
  */
-public interface VerbNetFrame extends FrameDescription {
+public interface VnFrame extends VnFrameDescription {
 
     /**
-     * Provides a human-readable description and identifying information for this {@link VerbNetFrame}.
+     * Provides a human-readable description and identifying information for this {@link VnFrame}.
      */
-    FrameDescription description();
+    VnFrameDescription description();
 
     /**
-     * Return a list of example sentences for this {@link VerbNetFrame}.
+     * Return a list of example sentences for this {@link VnFrame}.
      */
     List<String> examples();
 
     /**
-     * Return the {@link VnSyntax syntactic phrases} for this {@link VerbNetFrame}.
+     * Return the {@link VnSyntax syntactic phrases} for this {@link VnFrame}.
      */
     List<VnSyntax> syntax();
 
     /**
-     * Return the {@link SemanticPredicate semantic predicates} associated with this {@link VerbNetFrame}.
+     * Return the {@link VnSemanticPredicate semantic predicates} associated with this {@link VnFrame}.
      */
-    List<SemanticPredicate> predicates();
+    List<VnSemanticPredicate> predicates();
 
     /**
-     * Return the VerbNet class for this {@link VerbNetFrame}.
+     * Return the VerbNet class for this {@link VnFrame}.
      */
-    VerbNetClass verbClass();
+    VnClass verbClass();
 
 }

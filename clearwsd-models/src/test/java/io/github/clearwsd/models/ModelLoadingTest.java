@@ -23,7 +23,7 @@ import org.junit.Test;
 import io.github.clearwsd.DefaultSensePredictor;
 import io.github.clearwsd.SensePredictor;
 import io.github.clearwsd.corpus.ontonotes.OntoNotesSense;
-import io.github.clearwsd.verbnet.VerbNetClass;
+import io.github.clearwsd.verbnet.VnClass;
 
 import static junit.framework.TestCase.assertNotNull;
 
@@ -52,7 +52,7 @@ public class ModelLoadingTest {
 
     @Test
     public void testVerbNet() {
-        SensePredictor<VerbNetClass> predictor = DefaultSensePredictor.loadFromResource(VERBNET_PATH, null);
+        SensePredictor<VnClass> predictor = DefaultSensePredictor.loadFromResource(VERBNET_PATH, null);
         assertNotNull(predictor);
     }
 

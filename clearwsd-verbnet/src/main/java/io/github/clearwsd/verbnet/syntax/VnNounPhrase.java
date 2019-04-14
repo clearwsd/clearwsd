@@ -16,7 +16,7 @@
 
 package io.github.clearwsd.verbnet.syntax;
 
-import io.github.clearwsd.verbnet.restrictions.Restrictions;
+import io.github.clearwsd.verbnet.restrictions.VnRestrictions;
 import java.util.List;
 
 /**
@@ -34,11 +34,11 @@ public interface VnNounPhrase extends VnSyntax {
     /**
      * Syntactic restrictions associated with this NP.
      */
-    List<Restrictions<String>> syntacticRestrictions();
+    List<VnRestrictions<String>> syntacticRestrictions();
 
     /**
      * Additional selectional restrictions (beyond those at the thematic role level) for this NP.
      */
-    List<Restrictions<String>> selectionalRestrictions();
+    List<VnRestrictions<String>> selectionalRestrictions();
 
 }

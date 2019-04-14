@@ -16,7 +16,7 @@
 
 package io.github.clearwsd.verbnet.xml;
 
-import io.github.clearwsd.verbnet.VerbNetClass;
+import io.github.clearwsd.verbnet.VnClass;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -38,11 +38,11 @@ import lombok.experimental.Accessors;
 @XmlRootElement(name = "VERBNET")
 public class VerbNetXml {
 
-    @XmlElement(name = VerbNetClassXml.ROOT_NAME, required = true)
-    private List<VerbNetClassXml> classes = new ArrayList<>();
+    @XmlElement(name = VnClassXml.ROOT_NAME, required = true)
+    private List<VnClassXml> classes = new ArrayList<>();
 
-    public List<VerbNetClass> verbClasses() {
-        return classes.stream().map(cls -> (VerbNetClass) cls).collect(Collectors.toList());
+    public List<VnClass> verbClasses() {
+        return classes.stream().map(cls -> (VnClass) cls).collect(Collectors.toList());
     }
 
 }

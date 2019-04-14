@@ -14,23 +14,26 @@
  * limitations under the License.
  */
 
-package io.github.clearwsd.verbnet.semantics;
+package io.github.clearwsd.verbnet;
+
+import io.github.clearwsd.verbnet.restrictions.VnRestrictions;
+import java.util.List;
 
 /**
- * Argument of a VerbNet semantic predicate.
+ * VerbNet thematic role, which defines the semantic relationship between a predicate and an argument.
  *
  * @author jgung
  */
-public interface SemanticArgument {
+public interface VnThematicRole {
 
     /**
-     * Type of argument, e.g. "ThemRole".
+     * Type of thematic role, e.g. "Agent" or "Patient".
      */
     String type();
 
     /**
-     * Value of argument, e.g. "Patient".
+     * Selectional restrictions further refining the nature of this thematic role.
      */
-    String value();
+    List<VnRestrictions<String>> restrictions();
 
 }

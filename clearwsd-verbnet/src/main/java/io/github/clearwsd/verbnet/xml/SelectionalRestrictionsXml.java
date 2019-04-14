@@ -16,8 +16,8 @@
 
 package io.github.clearwsd.verbnet.xml;
 
-import io.github.clearwsd.verbnet.restrictions.DefaultRestrictions;
-import io.github.clearwsd.verbnet.restrictions.Restrictions;
+import io.github.clearwsd.verbnet.restrictions.DefaultVnRestrictions;
+import io.github.clearwsd.verbnet.restrictions.VnRestrictions;
 import io.github.clearwsd.verbnet.xml.util.LogicAdapterXmlAdapter;
 import java.util.ArrayList;
 import java.util.List;
@@ -54,17 +54,17 @@ public class SelectionalRestrictionsXml {
     @XmlElement(name = ROOT_NAME)
     private List<SelectionalRestrictionsXml> resHierarchies = new ArrayList<>();
 
-    public List<Restrictions<String>> restrictions() {
+    public List<VnRestrictions<String>> restrictions() {
         return restrictions(this);
     }
 
-    private static List<Restrictions<String>> restrictions(SelectionalRestrictionsXml restrictions) {
-        List<Restrictions<String>> result = new ArrayList<>();
+    private static List<VnRestrictions<String>> restrictions(SelectionalRestrictionsXml restrictions) {
+        List<VnRestrictions<String>> result = new ArrayList<>();
         if (restrictions.logic == LogicalRelation.OR) {
             for (SelectionalRestrictionXml xml : restrictions.resAtomic) {
                 result.add(xml.include()
-                    ? DefaultRestrictions.including(xml.type())
-                    : DefaultRestrictions.excluding(xml.type()));
+                    ? DefaultVnRestrictions.including(xml.type())
+                    : DefaultVnRestrictions.excluding(xml.type()));
             }
             // recursively add additional restrictions for each restrictions hierarchy
             for (SelectionalRestrictionsXml res : restrictions.resHierarchies) {
@@ -72,21 +72,21 @@ public class SelectionalRestrictionsXml {
             }
         } else {
             // AND relation -- combine restrictions
-            DefaultRestrictions<String> rest = new DefaultRestrictions<>();
+            DefaultVnRestrictions<String> rest = new DefaultVnRestrictions<>();
             for (SelectionalRestrictionXml xml : restrictions.resAtomic) {
                 (xml.include() ? rest.include() : rest.exclude()).add(xml.type());
             }
             // combine with hierarchical restrictions
-            List<DefaultRestrictions<String>> paths = new ArrayList<>();
+            List<DefaultVnRestrictions<String>> paths = new ArrayList<>();
             paths.add(rest);
             for (SelectionalRestrictionsXml res : restrictions.resHierarchies) {
                 // recursively find all restrictions for a given hierarchy
-                List<Restrictions<String>> andRes = restrictions(res);
+                List<VnRestrictions<String>> andRes = restrictions(res);
 
-                List<DefaultRestrictions<String>> newPaths = new ArrayList<>();
-                for (Restrictions<String> path : paths) {
-                    for (Restrictions<String> andRe : andRes) {
-                        DefaultRestrictions<String> combined = DefaultRestrictions
+                List<DefaultVnRestrictions<String>> newPaths = new ArrayList<>();
+                for (VnRestrictions<String> path : paths) {
+                    for (VnRestrictions<String> andRe : andRes) {
+                        DefaultVnRestrictions<String> combined = DefaultVnRestrictions
                             .includingExcluding(path.include(), path.exclude());
                         combined.include().addAll(andRe.include());
                         combined.exclude().addAll(andRe.exclude());
@@ -95,7 +95,7 @@ public class SelectionalRestrictionsXml {
                 }
                 paths = newPaths;
             }
-            result = paths.stream().map(r -> (Restrictions<String>) r).collect(Collectors.toList());
+            result = paths.stream().map(r -> (VnRestrictions<String>) r).collect(Collectors.toList());
         }
 
         return result;

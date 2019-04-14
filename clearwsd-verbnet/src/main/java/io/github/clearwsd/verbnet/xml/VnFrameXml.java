@@ -16,15 +16,15 @@
 
 package io.github.clearwsd.verbnet.xml;
 
+import io.github.clearwsd.verbnet.restrictions.VnRestrictions;
 import io.github.clearwsd.verbnet.syntax.VnLex;
 import io.github.clearwsd.verbnet.syntax.VnNounPhrase;
 import io.github.clearwsd.verbnet.syntax.VnPrep;
-import io.github.clearwsd.verbnet.restrictions.Restrictions;
-import io.github.clearwsd.verbnet.semantics.SemanticPredicate;
+import io.github.clearwsd.verbnet.semantics.VnSemanticPredicate;
 import io.github.clearwsd.verbnet.syntax.VnSyntax;
 import io.github.clearwsd.verbnet.syntax.VnSyntaxType;
-import io.github.clearwsd.verbnet.VerbNetClass;
-import io.github.clearwsd.verbnet.VerbNetFrame;
+import io.github.clearwsd.verbnet.VnClass;
+import io.github.clearwsd.verbnet.VnFrame;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -53,7 +53,7 @@ import static io.github.clearwsd.verbnet.syntax.VnSyntaxType.PREP;
 import static io.github.clearwsd.verbnet.syntax.VnSyntaxType.VERB;
 
 /**
- * XML binding implementation of {@link VerbNetFrame}.
+ * XML binding implementation of {@link VnFrame}.
  *
  * @author jgung
  */
@@ -61,8 +61,8 @@ import static io.github.clearwsd.verbnet.syntax.VnSyntaxType.VERB;
 @ToString(of = "description")
 @Accessors(fluent = true)
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlRootElement(name = VerbNetFrameXml.ROOT_NAME)
-public class VerbNetFrameXml implements VerbNetFrame {
+@XmlRootElement(name = VnFrameXml.ROOT_NAME)
+public class VnFrameXml implements VnFrame {
 
     static final String ROOT_NAME = "FRAME";
 
@@ -82,7 +82,7 @@ public class VerbNetFrameXml implements VerbNetFrame {
     @XmlElement(name = SemanticPredicateXml.ROOT_NAME, required = true)
     private List<SemanticPredicateXml> preds = new ArrayList<>();
 
-    private transient VerbNetClass verbClass;
+    private transient VnClass verbClass;
 
     @Override
     public List<String> examples() {
@@ -99,9 +99,9 @@ public class VerbNetFrameXml implements VerbNetFrame {
     }
 
     @Override
-    public List<SemanticPredicate> predicates() {
+    public List<VnSemanticPredicate> predicates() {
         return preds.stream()
-            .map(pred -> (SemanticPredicate) pred)
+            .map(pred -> (VnSemanticPredicate) pred)
             .collect(Collectors.toList());
     }
 
@@ -137,12 +137,12 @@ public class VerbNetFrameXml implements VerbNetFrame {
         }
 
         @Override
-        public List<Restrictions<String>> selectionalRestrictions() {
+        public List<VnRestrictions<String>> selectionalRestrictions() {
             return selectionalRestrictions.restrictions();
         }
 
         @Override
-        public List<Restrictions<String>> syntacticRestrictions() {
+        public List<VnRestrictions<String>> syntacticRestrictions() {
             return syntacticRestrictions.restrictions();
         }
     }

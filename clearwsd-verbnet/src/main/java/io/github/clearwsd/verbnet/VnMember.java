@@ -16,7 +16,7 @@
 
 package io.github.clearwsd.verbnet;
 
-import io.github.clearwsd.verbnet.semantics.SemanticPredicate;
+import io.github.clearwsd.verbnet.semantics.VnSemanticPredicate;
 import io.github.clearwsd.verbnet.xml.WordNetKey;
 import java.util.List;
 
@@ -25,7 +25,7 @@ import java.util.List;
  *
  * @author jgung
  */
-public interface VerbNetMember {
+public interface VnMember {
 
     /**
      * Return the name of this member, e.g. "run".
@@ -38,13 +38,13 @@ public interface VerbNetMember {
     List<WordNetKey> wn();
 
     /**
-     * Returns any member-specific features applicable in {@link SemanticPredicate semantic predicates} for the VerbNet class, e.g.
+     * Returns any member-specific features applicable in {@link VnSemanticPredicate semantic predicates} for the VerbNet class, e.g.
      * "increase".
      */
     List<String> features();
 
     /**
-     * Returns the OntoNotes groupings sense for this {@link VerbNetMember}, e.g. "sever.01 sever.02".
+     * Returns the OntoNotes groupings sense for this {@link VnMember}, e.g. "sever.01 sever.02".
      */
     List<String> groupings();
 
@@ -54,8 +54,8 @@ public interface VerbNetMember {
     String verbnetKey();
 
     /**
-     * Returns the {@link VerbNetClass} this member belongs to.
+     * Returns the {@link VnClass} this member belongs to.
      */
-    VerbNetClass verbClass();
+    VnClass verbClass();
 
 }

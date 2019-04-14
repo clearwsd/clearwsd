@@ -16,7 +16,7 @@
 
 package io.github.clearwsd.verbnet.xml;
 
-import io.github.clearwsd.verbnet.semantics.SemanticArgument;
+import io.github.clearwsd.verbnet.semantics.VnSemanticArgument;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -25,7 +25,7 @@ import lombok.Data;
 import lombok.experimental.Accessors;
 
 /**
- * XML binding implementation of {@link SemanticArgument}.
+ * XML binding implementation of {@link VnSemanticArgument}.
  *
  * @author jgung
  */
@@ -33,7 +33,7 @@ import lombok.experimental.Accessors;
 @Accessors(fluent = true)
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlRootElement(name = SemanticArgumentXml.ROOT_NAME)
-public class SemanticArgumentXml implements SemanticArgument {
+public class SemanticArgumentXml implements VnSemanticArgument {
 
     static final String ROOT_NAME = "ARG";
 

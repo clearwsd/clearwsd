@@ -16,8 +16,8 @@
 
 package io.github.clearwsd.verbnet.xml;
 
-import io.github.clearwsd.verbnet.VerbNetClass;
-import io.github.clearwsd.verbnet.VerbNetMember;
+import io.github.clearwsd.verbnet.VnClass;
+import io.github.clearwsd.verbnet.VnMember;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -36,7 +36,7 @@ import lombok.ToString;
 import lombok.experimental.Accessors;
 
 /**
- * XML binding implementation of {@link VerbNetMember}.
+ * XML binding implementation of {@link VnMember}.
  *
  * @author jgung
  */
@@ -46,8 +46,8 @@ import lombok.experimental.Accessors;
 @EqualsAndHashCode
 @Accessors(fluent = true)
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlRootElement(name = VerbNetMemberXml.ROOT_NAME)
-public class VerbNetMemberXml implements VerbNetMember {
+@XmlRootElement(name = VnMemberXml.ROOT_NAME)
+public class VnMemberXml implements VnMember {
 
     static final String ROOT_NAME = "MEMBER";
 
@@ -71,9 +71,9 @@ public class VerbNetMemberXml implements VerbNetMember {
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
     private String verbnetKey = "";
 
-    private transient VerbNetClass verbClass;
+    private transient VnClass verbClass;
 
-    public VerbNetClass verbClass() {
+    public VnClass verbClass() {
         return verbClass;
     }
 

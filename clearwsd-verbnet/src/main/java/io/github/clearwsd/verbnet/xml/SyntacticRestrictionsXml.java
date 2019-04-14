@@ -16,8 +16,8 @@
 
 package io.github.clearwsd.verbnet.xml;
 
-import io.github.clearwsd.verbnet.restrictions.DefaultRestrictions;
-import io.github.clearwsd.verbnet.restrictions.Restrictions;
+import io.github.clearwsd.verbnet.restrictions.DefaultVnRestrictions;
+import io.github.clearwsd.verbnet.restrictions.VnRestrictions;
 import io.github.clearwsd.verbnet.xml.util.LogicAdapterXmlAdapter;
 import java.util.ArrayList;
 import java.util.List;
@@ -50,17 +50,17 @@ public class SyntacticRestrictionsXml {
     @XmlElement(name = SyntacticRestrictionXml.ROOT_NAME)
     private List<SyntacticRestrictionXml> syntacticRestrictions = new ArrayList<>();
 
-    public List<Restrictions<String>> restrictions() {
-        List<Restrictions<String>> result = new ArrayList<>();
+    public List<VnRestrictions<String>> restrictions() {
+        List<VnRestrictions<String>> result = new ArrayList<>();
         if (logic == LogicalRelation.OR) {
             for (SyntacticRestrictionXml xml : syntacticRestrictions) {
-                Restrictions<String> single = xml.include()
-                    ? DefaultRestrictions.including(xml.type())
-                    : DefaultRestrictions.excluding(xml.type());
+                VnRestrictions<String> single = xml.include()
+                    ? DefaultVnRestrictions.including(xml.type())
+                    : DefaultVnRestrictions.excluding(xml.type());
                 result.add(single);
             }
         } else {
-            Restrictions<String> rest = new DefaultRestrictions<>();
+            VnRestrictions<String> rest = new DefaultVnRestrictions<>();
             for (SyntacticRestrictionXml xml : syntacticRestrictions) {
                 (xml.include() ? rest.include() : rest.exclude()).add(xml.type());
             }

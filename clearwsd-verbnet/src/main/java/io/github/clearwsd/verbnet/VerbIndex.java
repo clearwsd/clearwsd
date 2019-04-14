@@ -28,29 +28,29 @@ import java.util.Set;
 public interface VerbIndex {
 
     /**
-     * Return a list of all root {@link VerbNetClass classes} in this {@link VerbIndex}.
+     * Return a list of all root {@link VnClass classes} in this {@link VerbIndex}.
      */
-    List<VerbNetClass> roots();
+    List<VnClass> roots();
 
     /**
      * Returns the VerbNet class for a given VerbNet class ID. Supported ID formats include "begin-55.1-1" or "55.1-1".
      */
-    VerbNetClass getById(String id);
+    VnClass getById(String id);
 
     /**
-     * Return a set of {@link VerbNetClass classes} corresponding to a given lemma.
+     * Return a set of {@link VnClass classes} corresponding to a given lemma.
      */
-    Set<VerbNetClass> getByLemma(String lemma);
+    Set<VnClass> getByLemma(String lemma);
 
     /**
-     * Return the set of {@link VerbNetClass class} {@link VerbNetMember members} for a given lemma.
+     * Return the set of {@link VnClass class} {@link VnMember members} for a given lemma.
      */
-    Set<VerbNetMember> getMembersByLemma(String lemma);
+    Set<VnMember> getMembersByLemma(String lemma);
 
     /**
-     * Return the set of {@link VerbNetClass class} {@link VerbNetMember members} for a given {@link WordNetKey}.
+     * Return the set of {@link VnClass class} {@link VnMember members} for a given {@link WordNetKey}.
      */
-    Set<VerbNetMember> getMembersByWordNetKey(WordNetKey wordNetKey);
+    Set<VnMember> getMembersByWordNetKey(WordNetKey wordNetKey);
 
     /**
      * Return the set of {@link WordNetKey WordNet keys/senses} for a given lemma.

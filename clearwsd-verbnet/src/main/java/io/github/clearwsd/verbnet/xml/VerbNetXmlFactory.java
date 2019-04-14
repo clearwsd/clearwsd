@@ -18,7 +18,7 @@ package io.github.clearwsd.verbnet.xml;
 
 import io.github.clearwsd.verbnet.DefaultVerbIndex;
 import io.github.clearwsd.verbnet.VerbIndex;
-import io.github.clearwsd.verbnet.xml.VerbNetFrameXml.Syntax;
+import io.github.clearwsd.verbnet.xml.VnFrameXml.Syntax;
 import java.io.InputStream;
 import javax.xml.bind.JAXBContext;
 import javax.xml.parsers.SAXParserFactory;
@@ -27,12 +27,12 @@ import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import org.xml.sax.InputSource;
 
-import static io.github.clearwsd.verbnet.xml.VerbNetFrameXml.AdjectiveXml;
-import static io.github.clearwsd.verbnet.xml.VerbNetFrameXml.AdverbXml;
-import static io.github.clearwsd.verbnet.xml.VerbNetFrameXml.LexXml;
-import static io.github.clearwsd.verbnet.xml.VerbNetFrameXml.NounPhraseXml;
-import static io.github.clearwsd.verbnet.xml.VerbNetFrameXml.PrepXml;
-import static io.github.clearwsd.verbnet.xml.VerbNetFrameXml.VerbXml;
+import static io.github.clearwsd.verbnet.xml.VnFrameXml.AdjectiveXml;
+import static io.github.clearwsd.verbnet.xml.VnFrameXml.AdverbXml;
+import static io.github.clearwsd.verbnet.xml.VnFrameXml.LexXml;
+import static io.github.clearwsd.verbnet.xml.VnFrameXml.NounPhraseXml;
+import static io.github.clearwsd.verbnet.xml.VnFrameXml.PrepXml;
+import static io.github.clearwsd.verbnet.xml.VnFrameXml.VerbXml;
 
 /**
  * VerbNetXml factory.
@@ -65,18 +65,18 @@ public class VerbNetXmlFactory {
         }
     }
 
-    private static void setPointers(VerbNetClassXml parent) {
-        for (VerbNetMemberXml member : parent.memberElements()) {
+    private static void setPointers(VnClassXml parent) {
+        for (VnMemberXml member : parent.memberElements()) {
             member.verbClass(parent);
         }
-        for (VerbNetFrameXml frameXml : parent.frameElements()) {
+        for (VnFrameXml frameXml : parent.frameElements()) {
             frameXml.verbClass(parent);
             int index = 0;
             for (Syntax syntax : frameXml.syntaxElements()) {
                 syntax.index(index++);
             }
         }
-        for (VerbNetClassXml verbNetClass : parent.children()) {
+        for (VnClassXml verbNetClass : parent.children()) {
             verbNetClass.parentClass(parent);
             setPointers(verbNetClass);
         }

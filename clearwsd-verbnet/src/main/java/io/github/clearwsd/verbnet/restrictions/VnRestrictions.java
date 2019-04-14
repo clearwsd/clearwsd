@@ -14,26 +14,25 @@
  * limitations under the License.
  */
 
-package io.github.clearwsd.verbnet;
+package io.github.clearwsd.verbnet.restrictions;
 
-import io.github.clearwsd.verbnet.restrictions.Restrictions;
-import java.util.List;
+import java.util.Set;
 
 /**
- * VerbNet thematic role, which defines the semantic relationship between a predicate and an argument.
+ * Restrictions on VerbNet types.
  *
- * @author jgung
+ * @author jamesgung
  */
-public interface ThematicRole {
+public interface VnRestrictions<T> {
 
     /**
-     * Type of thematic role, e.g. "Agent" or "Patient".
+     * Restrictions that must be included.
      */
-    String type();
+    Set<T> include();
 
     /**
-     * Selectional restrictions further refining the nature of this thematic role.
+     * Restrictions that must not be present.
      */
-    List<Restrictions<String>> restrictions();
+    Set<T> exclude();
 
 }

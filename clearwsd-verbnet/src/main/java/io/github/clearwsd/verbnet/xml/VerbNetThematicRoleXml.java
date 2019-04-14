@@ -16,8 +16,8 @@
 
 package io.github.clearwsd.verbnet.xml;
 
-import io.github.clearwsd.verbnet.restrictions.Restrictions;
-import io.github.clearwsd.verbnet.ThematicRole;
+import io.github.clearwsd.verbnet.restrictions.VnRestrictions;
+import io.github.clearwsd.verbnet.VnThematicRole;
 import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -28,7 +28,7 @@ import lombok.Data;
 import lombok.experimental.Accessors;
 
 /**
- * XML binding implementation of {@link ThematicRole}.
+ * XML binding implementation of {@link VnThematicRole}.
  *
  * @author jgung
  */
@@ -36,7 +36,7 @@ import lombok.experimental.Accessors;
 @Accessors(fluent = true)
 @XmlAccessorType(XmlAccessType.PROPERTY)
 @XmlRootElement(name = VerbNetThematicRoleXml.ROOT_NAME)
-public class VerbNetThematicRoleXml implements ThematicRole {
+public class VerbNetThematicRoleXml implements VnThematicRole {
 
     static final String ROOT_NAME = "THEMROLE";
 
@@ -47,7 +47,7 @@ public class VerbNetThematicRoleXml implements ThematicRole {
     private SelectionalRestrictionsXml selectionalRestrictions;
 
     @Override
-    public List<Restrictions<String>> restrictions() {
+    public List<VnRestrictions<String>> restrictions() {
         return selectionalRestrictions.restrictions();
     }
 }

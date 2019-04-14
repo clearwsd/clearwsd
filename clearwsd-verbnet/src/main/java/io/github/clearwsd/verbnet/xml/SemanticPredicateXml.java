@@ -16,9 +16,9 @@
 
 package io.github.clearwsd.verbnet.xml;
 
-import io.github.clearwsd.verbnet.semantics.PredicatePolarity;
-import io.github.clearwsd.verbnet.semantics.SemanticArgument;
-import io.github.clearwsd.verbnet.semantics.SemanticPredicate;
+import io.github.clearwsd.verbnet.semantics.VnPredicatePolarity;
+import io.github.clearwsd.verbnet.semantics.VnSemanticArgument;
+import io.github.clearwsd.verbnet.semantics.VnSemanticPredicate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -35,7 +35,7 @@ import lombok.experimental.Accessors;
 import lombok.extern.slf4j.Slf4j;
 
 /**
- * XML binding implementation of {@link SemanticPredicate}.
+ * XML binding implementation of {@link VnSemanticPredicate}.
  *
  * @author jgung
  */
@@ -44,13 +44,13 @@ import lombok.extern.slf4j.Slf4j;
 @Accessors(fluent = true)
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlRootElement(name = SemanticPredicateXml.ROOT_NAME)
-public class SemanticPredicateXml implements SemanticPredicate {
+public class SemanticPredicateXml implements VnSemanticPredicate {
 
     static final String ROOT_NAME = "PRED";
 
     @XmlAttribute(name = "bool")
     @XmlJavaTypeAdapter(PolarityXmlAdapter.class)
-    private PredicatePolarity polarity = PredicatePolarity.TRUE;
+    private VnPredicatePolarity polarity = VnPredicatePolarity.TRUE;
 
     @XmlAttribute(name = "value", required = true)
     private String value;
@@ -65,28 +65,28 @@ public class SemanticPredicateXml implements SemanticPredicate {
     }
 
     @Override
-    public List<SemanticArgument> semanticArguments() {
-        return args.stream().map(arg -> (SemanticArgument) arg).collect(Collectors.toList());
+    public List<VnSemanticArgument> semanticArguments() {
+        return args.stream().map(arg -> (VnSemanticArgument) arg).collect(Collectors.toList());
     }
 
-    public static class PolarityXmlAdapter extends XmlAdapter<String, PredicatePolarity> {
+    public static class PolarityXmlAdapter extends XmlAdapter<String, VnPredicatePolarity> {
 
         @Override
-        public PredicatePolarity unmarshal(String value) {
+        public VnPredicatePolarity unmarshal(String value) {
             if (null == value || value.isEmpty()) {
-                return PredicatePolarity.TRUE;
+                return VnPredicatePolarity.TRUE;
             } else if ("!".equals(value)) {
-                return PredicatePolarity.FALSE;
+                return VnPredicatePolarity.FALSE;
             } else {
                 if (!"?".equals(value)) {
                     log.warn("Unexpected predicate polarity type: {}", value);
                 }
-                return PredicatePolarity.UNCERTAIN;
+                return VnPredicatePolarity.UNCERTAIN;
             }
         }
 
         @Override
-        public String marshal(PredicatePolarity value) {
+        public String marshal(VnPredicatePolarity value) {
             switch (value) {
                 case TRUE:
                     return null;

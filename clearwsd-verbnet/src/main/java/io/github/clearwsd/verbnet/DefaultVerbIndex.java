@@ -50,15 +50,15 @@ public class DefaultVerbIndex implements VerbIndex {
 
     @Getter
     @Accessors(fluent = true)
-    private List<VerbNetClass> roots;
+    private List<VnClass> roots;
 
-    private SetMultimap<String, VerbNetClass> lemmaVnMap;
+    private SetMultimap<String, VnClass> lemmaVnMap;
     private SetMultimap<String, WordNetKey> lemmaWnMap;
-    private SetMultimap<WordNetKey, VerbNetMember> wordNetMemberMap;
-    private SetMultimap<String, VerbNetMember> lemmaMemberMap;
-    private Map<String, VerbNetClass> senseVnMap;
+    private SetMultimap<WordNetKey, VnMember> wordNetMemberMap;
+    private SetMultimap<String, VnMember> lemmaMemberMap;
+    private Map<String, VnClass> senseVnMap;
 
-    public DefaultVerbIndex(@NonNull List<VerbNetClass> verbClasses) {
+    public DefaultVerbIndex(@NonNull List<VnClass> verbClasses) {
         this.roots = ImmutableList.copyOf(verbClasses);
         lemmaVnMap = HashMultimap.create();
         lemmaWnMap = HashMultimap.create();
@@ -66,10 +66,10 @@ public class DefaultVerbIndex implements VerbIndex {
         senseVnMap = new HashMap<>();
         wordNetMemberMap = LinkedHashMultimap.create();
 
-        for (VerbNetClass cls : verbClasses) {
+        for (VnClass cls : verbClasses) {
             senseVnMap.put(cls.verbNetId().classId(), cls);
-            for (VerbNetClass subcls : cls.descendants(true)) {
-                for (VerbNetMember member : subcls.members()) {
+            for (VnClass subcls : cls.descendants(true)) {
+                for (VnMember member : subcls.members()) {
                     String name = getBaseForm(member.name());
                     lemmaVnMap.put(name, cls);
                     lemmaWnMap.putAll(name, member.wn());
@@ -83,7 +83,7 @@ public class DefaultVerbIndex implements VerbIndex {
     }
 
     @Override
-    public VerbNetClass getById(@NonNull String id) {
+    public VnClass getById(@NonNull String id) {
 
         if (Strings.isNullOrEmpty(id)) {
             return null;
@@ -92,13 +92,13 @@ public class DefaultVerbIndex implements VerbIndex {
         try {
             VerbNetId verbNetId = VerbNetId.parse(id);
 
-            VerbNetClass rootClass = senseVnMap.get(verbNetId.rootId());
+            VnClass rootClass = senseVnMap.get(verbNetId.rootId());
 
             if (null == rootClass) {
                 return null;
             }
 
-            for (VerbNetClass cls : rootClass.descendants(true)) {
+            for (VnClass cls : rootClass.descendants(true)) {
                 if (cls.verbNetId().classId().equals(verbNetId.classId())) {
                     return cls;
                 }
@@ -112,17 +112,17 @@ public class DefaultVerbIndex implements VerbIndex {
     }
 
     @Override
-    public Set<VerbNetClass> getByLemma(@NonNull String lemma) {
+    public Set<VnClass> getByLemma(@NonNull String lemma) {
         return lemmaVnMap.get(getBaseForm(lemma));
     }
 
     @Override
-    public Set<VerbNetMember> getMembersByLemma(@NonNull String lemma) {
+    public Set<VnMember> getMembersByLemma(@NonNull String lemma) {
         return lemmaMemberMap.get(getBaseForm(lemma));
     }
 
     @Override
-    public Set<VerbNetMember> getMembersByWordNetKey(@NonNull WordNetKey wordNetKey) {
+    public Set<VnMember> getMembersByWordNetKey(@NonNull WordNetKey wordNetKey) {
         return wordNetMemberMap.get(wordNetKey);
     }
 

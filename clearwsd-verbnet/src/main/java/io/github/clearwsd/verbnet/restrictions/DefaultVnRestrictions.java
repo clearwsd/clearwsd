@@ -25,35 +25,35 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 
 /**
- * {@link Restrictions} default implementation.
+ * {@link VnRestrictions} default implementation.
  *
  * @author jamesgung
  */
 @Getter
 @Setter
 @Accessors(fluent = true)
-public class DefaultRestrictions<T> implements Restrictions<T> {
+public class DefaultVnRestrictions<T> implements VnRestrictions<T> {
 
     private Set<T> include = new HashSet<>();
 
     private Set<T> exclude = new HashSet<>();
 
     @SafeVarargs
-    public static <S> DefaultRestrictions<S> excluding(S... excluding) {
-        DefaultRestrictions<S> res = new DefaultRestrictions<>();
+    public static <S> DefaultVnRestrictions<S> excluding(S... excluding) {
+        DefaultVnRestrictions<S> res = new DefaultVnRestrictions<>();
         res.exclude.addAll(Arrays.asList(excluding));
         return res;
     }
 
     @SafeVarargs
-    public static <S> DefaultRestrictions<S> including(S... including) {
-        DefaultRestrictions<S> res = new DefaultRestrictions<>();
+    public static <S> DefaultVnRestrictions<S> including(S... including) {
+        DefaultVnRestrictions<S> res = new DefaultVnRestrictions<>();
         res.include.addAll(Arrays.asList(including));
         return res;
     }
 
-    public static <S> DefaultRestrictions<S> includingExcluding(Collection<S> including, Collection<S> excluding) {
-        DefaultRestrictions<S> res = new DefaultRestrictions<>();
+    public static <S> DefaultVnRestrictions<S> includingExcluding(Collection<S> including, Collection<S> excluding) {
+        DefaultVnRestrictions<S> res = new DefaultVnRestrictions<>();
         res.include.addAll(including);
         res.exclude.addAll(excluding);
         return res;
