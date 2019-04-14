@@ -24,6 +24,11 @@ package io.github.clearwsd.verbnet;
 public interface SyntacticPhrase {
 
     /**
+     * Index of this phrase within a VerbNet frame (from 0).
+     */
+    int index();
+
+    /**
      * The syntactic type for this constituent within a VerbNet frame, e.g. "NP".
      */
     SyntaxType type();

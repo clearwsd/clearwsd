@@ -39,7 +39,6 @@ import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.adapters.XmlAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
@@ -108,10 +107,14 @@ public class VerbNetFrameXml implements VerbNetFrame {
 
     @Data
     @Accessors(fluent = true)
-    @AllArgsConstructor
     public static abstract class Syntax implements SyntacticPhrase {
 
+        protected int index;
         protected SyntaxType type;
+
+        Syntax(SyntaxType syntaxType) {
+            this.type = syntaxType;
+        }
 
     }
 

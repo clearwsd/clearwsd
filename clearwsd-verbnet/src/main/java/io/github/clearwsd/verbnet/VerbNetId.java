@@ -49,7 +49,7 @@ public class VerbNetId implements Comparable<VerbNetId> {
 
     @Override
     public String toString() {
-        return name == null ? classId : name + "-" + classId;
+        return name == null ? rootId : name + "-" + rootId;
     }
 
     public static VerbNetId parse(@NonNull String id) {
@@ -62,6 +62,6 @@ public class VerbNetId implements Comparable<VerbNetId> {
         if (comparison != 0) {
             return comparison;
         }
-        return classId.compareTo(other.classId);
+        return rootId.compareTo(other.rootId);
     }
 }

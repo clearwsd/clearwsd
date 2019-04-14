@@ -18,10 +18,13 @@ package io.github.clearwsd.verbnet.xml;
 
 import io.github.clearwsd.verbnet.DefaultVerbIndex;
 import io.github.clearwsd.verbnet.VerbIndex;
+import io.github.clearwsd.verbnet.xml.VerbNetFrameXml.Syntax;
 import java.io.InputStream;
 import javax.xml.bind.JAXBContext;
 import javax.xml.parsers.SAXParserFactory;
 import javax.xml.transform.sax.SAXSource;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 import org.xml.sax.InputSource;
 
 import static io.github.clearwsd.verbnet.xml.VerbNetFrameXml.AdjectiveXml;
@@ -36,6 +39,7 @@ import static io.github.clearwsd.verbnet.xml.VerbNetFrameXml.VerbXml;
  *
  * @author jgung
  */
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class VerbNetXmlFactory {
 
     private static final String LOAD_EXTERNAL_DTD = "http://apache.org/xml/features/nonvalidating/load-external-dtd";
@@ -65,11 +69,15 @@ public class VerbNetXmlFactory {
         for (VerbNetMemberXml member : parent.memberElements()) {
             member.verbClass(parent);
         }
+        for (VerbNetFrameXml frameXml : parent.frameElements()) {
+            frameXml.verbClass(parent);
+            int index = 0;
+            for (Syntax syntax : frameXml.syntaxElements()) {
+                syntax.index(index++);
+            }
+        }
         for (VerbNetClassXml verbNetClass : parent.children()) {
             verbNetClass.parentClass(parent);
-            for (VerbNetFrameXml frameXml: verbNetClass.frameElements()) {
-                frameXml.verbClass(verbNetClass);
-            }
             setPointers(verbNetClass);
         }
     }

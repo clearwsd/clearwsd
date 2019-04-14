@@ -82,6 +82,7 @@ public class VerbNetTest {
         assertEquals(4, frame.syntax().size());
         NounPhrase patient = (NounPhrase) frame.syntax().get(2);
         assertEquals(SyntaxType.NP, patient.type());
+        assertEquals(2, patient.index());
         assertEquals("Patient", patient.thematicRole());
 
         assertEquals(5, frame.predicates().size());
