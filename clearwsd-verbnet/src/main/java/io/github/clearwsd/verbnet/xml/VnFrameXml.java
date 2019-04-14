@@ -16,15 +16,15 @@
 
 package io.github.clearwsd.verbnet.xml;
 
+import io.github.clearwsd.verbnet.VnClass;
+import io.github.clearwsd.verbnet.VnFrame;
 import io.github.clearwsd.verbnet.restrictions.VnRestrictions;
+import io.github.clearwsd.verbnet.semantics.VnSemanticPredicate;
 import io.github.clearwsd.verbnet.syntax.VnLex;
 import io.github.clearwsd.verbnet.syntax.VnNounPhrase;
 import io.github.clearwsd.verbnet.syntax.VnPrep;
-import io.github.clearwsd.verbnet.semantics.VnSemanticPredicate;
 import io.github.clearwsd.verbnet.syntax.VnSyntax;
 import io.github.clearwsd.verbnet.syntax.VnSyntaxType;
-import io.github.clearwsd.verbnet.VnClass;
-import io.github.clearwsd.verbnet.VnFrame;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;

@@ -37,8 +37,8 @@ public interface VnMember {
     List<WnKey> wn();
 
     /**
-     * Returns any member-specific features applicable in {@link VnSemanticPredicate semantic predicates} for the VerbNet class, e.g.
-     * "increase".
+     * Returns any member-specific features applicable in {@link VnSemanticPredicate semantic predicates} for the VerbNet class,
+     * e.g. "increase".
      */
     List<String> features();
 

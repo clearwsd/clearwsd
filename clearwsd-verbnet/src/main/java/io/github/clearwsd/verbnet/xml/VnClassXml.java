@@ -16,11 +16,11 @@
 
 package io.github.clearwsd.verbnet.xml;
 
-import io.github.clearwsd.verbnet.VnThematicRole;
 import io.github.clearwsd.verbnet.VnClass;
-import io.github.clearwsd.verbnet.VnFrame;
 import io.github.clearwsd.verbnet.VnClassId;
+import io.github.clearwsd.verbnet.VnFrame;
 import io.github.clearwsd.verbnet.VnMember;
+import io.github.clearwsd.verbnet.VnThematicRole;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
