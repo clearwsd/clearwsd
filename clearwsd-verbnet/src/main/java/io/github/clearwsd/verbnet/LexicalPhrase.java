@@ -16,28 +16,16 @@
 
 package io.github.clearwsd.verbnet;
 
-import java.util.List;
-
 /**
- * Collection of VerbNet selectional restrictions aligned by some logical relation.
+ * Lexical phrase or constituent.
  *
- * @author jgung
+ * @author jamesgung
  */
-public interface SelResDescription {
+public interface LexicalPhrase extends SyntacticPhrase {
 
     /**
-     * Logical relation, such as "and" or "or.
+     * Value associated with this LEX constituent.
      */
-    LogicalRelation logic();
-
-    /**
-     * Raw selectional restrictions.
-     */
-    List<SelRes> restrictions();
-
-    /**
-     * {@link SelResDescription Sub-descriptions} hierarchically linked by logical relation.
-     */
-    List<SelResDescription> descriptions();
+    String value();
 
 }

@@ -16,13 +16,12 @@
 
 package io.github.clearwsd.verbnet.xml;
 
+import io.github.clearwsd.verbnet.DefaultRestrictions;
 import io.github.clearwsd.verbnet.LogicalRelation;
-import io.github.clearwsd.verbnet.SyntRes;
-import io.github.clearwsd.verbnet.SyntResDescription;
+import io.github.clearwsd.verbnet.Restrictions;
 import io.github.clearwsd.verbnet.xml.util.LogicAdapterXmlAdapter;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -33,7 +32,7 @@ import lombok.Data;
 import lombok.experimental.Accessors;
 
 /**
- * XML binding implementation of {@link SyntResDescription}.
+ * XML bindings for Verbnet syntactic restrictions.
  *
  * @author jgung
  */
@@ -41,7 +40,7 @@ import lombok.experimental.Accessors;
 @Accessors(fluent = true)
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlRootElement(name = SyntacticRestrictionsXml.ROOT_NAME)
-public class SyntacticRestrictionsXml implements SyntResDescription {
+public class SyntacticRestrictionsXml {
 
     static final String ROOT_NAME = "SYNRESTRS";
 
@@ -52,10 +51,22 @@ public class SyntacticRestrictionsXml implements SyntResDescription {
     @XmlElement(name = SyntacticRestrictionXml.ROOT_NAME)
     private List<SyntacticRestrictionXml> syntacticRestrictions = new ArrayList<>();
 
-    @Override
-    public List<SyntRes> restrictions() {
-        return syntacticRestrictions.stream()
-            .map(res -> (SyntRes) res)
-            .collect(Collectors.toList());
+    public List<Restrictions<String>> restrictions() {
+        List<Restrictions<String>> result = new ArrayList<>();
+        if (logic == LogicalRelation.OR) {
+            for (SyntacticRestrictionXml xml : syntacticRestrictions) {
+                Restrictions<String> single = xml.value()
+                    ? DefaultRestrictions.including(xml.type())
+                    : DefaultRestrictions.excluding(xml.type());
+                result.add(single);
+            }
+        } else {
+            Restrictions<String> rest = new DefaultRestrictions<>();
+            for (SyntacticRestrictionXml xml : syntacticRestrictions) {
+                (xml.value() ? rest.include() : rest.exclude()).add(xml.type());
+            }
+            result.add(rest);
+        }
+        return result;
     }
 }

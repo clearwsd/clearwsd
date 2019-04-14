@@ -16,7 +16,6 @@
 
 package io.github.clearwsd.verbnet.xml;
 
-import io.github.clearwsd.verbnet.SyntRes;
 import io.github.clearwsd.verbnet.xml.util.BooleanAdapterXmlAdapter;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -27,7 +26,7 @@ import lombok.Data;
 import lombok.experimental.Accessors;
 
 /**
- * XML binding implementation of {@link SyntRes}.
+ * XML binding for syntactic restrictions in VerbNet.
  *
  * @author jgung
  */
@@ -35,7 +34,7 @@ import lombok.experimental.Accessors;
 @Accessors(fluent = true)
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlRootElement(name = SyntacticRestrictionXml.ROOT_NAME)
-public class SyntacticRestrictionXml implements SyntRes {
+public class SyntacticRestrictionXml {
 
     static final String ROOT_NAME = "SYNRESTR";
 
@@ -43,10 +42,5 @@ public class SyntacticRestrictionXml implements SyntRes {
     private String type;
     @XmlJavaTypeAdapter(BooleanAdapterXmlAdapter.class)
     private Boolean value;
-
-    @Override
-    public boolean value() {
-        return value;
-    }
 
 }

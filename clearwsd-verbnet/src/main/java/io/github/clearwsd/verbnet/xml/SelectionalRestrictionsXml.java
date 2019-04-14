@@ -16,9 +16,9 @@
 
 package io.github.clearwsd.verbnet.xml;
 
+import io.github.clearwsd.verbnet.DefaultRestrictions;
 import io.github.clearwsd.verbnet.LogicalRelation;
-import io.github.clearwsd.verbnet.SelRes;
-import io.github.clearwsd.verbnet.SelResDescription;
+import io.github.clearwsd.verbnet.Restrictions;
 import io.github.clearwsd.verbnet.xml.util.LogicAdapterXmlAdapter;
 import java.util.ArrayList;
 import java.util.List;
@@ -33,7 +33,7 @@ import lombok.Data;
 import lombok.experimental.Accessors;
 
 /**
- * XML binding implementation of {@link SelResDescription}.
+ * XML bindings for VerbNet selectional restrictions.
  *
  * @author jgung
  */
@@ -41,7 +41,7 @@ import lombok.experimental.Accessors;
 @Accessors(fluent = true)
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlRootElement(name = SelectionalRestrictionsXml.ROOT_NAME)
-public class SelectionalRestrictionsXml implements SelResDescription {
+public class SelectionalRestrictionsXml {
 
     static final String ROOT_NAME = "SELRESTRS";
 
@@ -50,18 +50,55 @@ public class SelectionalRestrictionsXml implements SelResDescription {
     private LogicalRelation logic;
 
     @XmlElement(name = SelectionalRestrictionXml.ROOT_NAME)
-    private List<SelectionalRestrictionXml> selectionalRestriction = new ArrayList<>();
+    private List<SelectionalRestrictionXml> resAtomic = new ArrayList<>();
 
     @XmlElement(name = ROOT_NAME)
-    private List<SelectionalRestrictionsXml> selectionalRestrictions = new ArrayList<>();
+    private List<SelectionalRestrictionsXml> resHierarchies = new ArrayList<>();
 
-    @Override
-    public List<SelRes> restrictions() {
-        return selectionalRestriction.stream().map(res -> (SelRes) res).collect(Collectors.toList());
+    public List<Restrictions<String>> restrictions() {
+        return restrictions(this);
     }
 
-    @Override
-    public List<SelResDescription> descriptions() {
-        return selectionalRestrictions.stream().map(res -> (SelResDescription) res).collect(Collectors.toList());
+    private static List<Restrictions<String>> restrictions(SelectionalRestrictionsXml restrictions) {
+        List<Restrictions<String>> result = new ArrayList<>();
+        if (restrictions.logic == LogicalRelation.OR) {
+            for (SelectionalRestrictionXml xml : restrictions.resAtomic) {
+                result.add(xml.value()
+                    ? DefaultRestrictions.including(xml.type())
+                    : DefaultRestrictions.excluding(xml.type()));
+            }
+            // recursively add additional restrictions for each restrictions hierarchy
+            for (SelectionalRestrictionsXml res : restrictions.resHierarchies) {
+                result.addAll(restrictions(res));
+            }
+        } else {
+            // AND relation -- combine restrictions
+            DefaultRestrictions<String> rest = new DefaultRestrictions<>();
+            for (SelectionalRestrictionXml xml : restrictions.resAtomic) {
+                (xml.value() ? rest.include() : rest.exclude()).add(xml.type());
+            }
+            // combine with hierarchical restrictions
+            List<DefaultRestrictions<String>> paths = new ArrayList<>();
+            paths.add(rest);
+            for (SelectionalRestrictionsXml res : restrictions.resHierarchies) {
+                // recursively find all restrictions for a given hierarchy
+                List<Restrictions<String>> andRes = restrictions(res);
+
+                List<DefaultRestrictions<String>> newPaths = new ArrayList<>();
+                for (Restrictions<String> path : paths) {
+                    for (Restrictions<String> andRe : andRes) {
+                        DefaultRestrictions<String> combined = DefaultRestrictions
+                            .includingExcluding(path.include(), path.exclude());
+                        combined.include().addAll(andRe.include());
+                        combined.exclude().addAll(andRe.exclude());
+                        newPaths.add(combined);
+                    }
+                }
+                paths = newPaths;
+            }
+            result = paths.stream().map(r -> (Restrictions<String>) r).collect(Collectors.toList());
+        }
+
+        return result;
     }
 }

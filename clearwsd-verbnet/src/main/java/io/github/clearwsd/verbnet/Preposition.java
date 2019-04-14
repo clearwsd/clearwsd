@@ -16,21 +16,18 @@
 
 package io.github.clearwsd.verbnet;
 
+import java.util.Set;
+
 /**
- * VerbNet selectional restriction, which provides more information about the nature of a given thematic role.
+ * Preposition within a given syntactic frame.
  *
- * @author jgung
+ * @author jamesgung
  */
-public interface SelRes {
+public interface Preposition extends SyntacticPhrase {
 
     /**
-     * Type of selectional restriction, e.g. "concrete".
+     * Valid prepositions types.
      */
-    String type();
-
-    /**
-     * Truth of selectional restriction.
-     */
-    boolean value();
+    Set<String> types();
 
 }

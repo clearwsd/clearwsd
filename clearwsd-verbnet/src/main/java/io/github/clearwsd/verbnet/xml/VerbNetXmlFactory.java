@@ -24,12 +24,12 @@ import javax.xml.parsers.SAXParserFactory;
 import javax.xml.transform.sax.SAXSource;
 import org.xml.sax.InputSource;
 
-import static io.github.clearwsd.verbnet.xml.VerbNetFrameXml.Adjective;
-import static io.github.clearwsd.verbnet.xml.VerbNetFrameXml.Adverb;
-import static io.github.clearwsd.verbnet.xml.VerbNetFrameXml.Lexical;
-import static io.github.clearwsd.verbnet.xml.VerbNetFrameXml.NounPhrase;
-import static io.github.clearwsd.verbnet.xml.VerbNetFrameXml.Preposition;
-import static io.github.clearwsd.verbnet.xml.VerbNetFrameXml.Verb;
+import static io.github.clearwsd.verbnet.xml.VerbNetFrameXml.AdjectiveXml;
+import static io.github.clearwsd.verbnet.xml.VerbNetFrameXml.AdverbXml;
+import static io.github.clearwsd.verbnet.xml.VerbNetFrameXml.LexXml;
+import static io.github.clearwsd.verbnet.xml.VerbNetFrameXml.NounPhraseXml;
+import static io.github.clearwsd.verbnet.xml.VerbNetFrameXml.PrepXml;
+import static io.github.clearwsd.verbnet.xml.VerbNetFrameXml.VerbXml;
 
 /**
  * VerbNetXml factory.
@@ -52,7 +52,7 @@ public class VerbNetXmlFactory {
             parserFactory.setFeature(LOAD_EXTERNAL_DTD, false);
             SAXSource source = new SAXSource(parserFactory.newSAXParser().getXMLReader(), new InputSource(inputStream));
             VerbNetXml verbNet = (VerbNetXml) JAXBContext.newInstance(VerbNetXml.class,
-                Adjective.class, Adverb.class, NounPhrase.class, Preposition.class, Lexical.class, Verb.class)
+                AdjectiveXml.class, AdverbXml.class, NounPhraseXml.class, PrepXml.class, LexXml.class, VerbXml.class)
                 .createUnmarshaller().unmarshal(source);
             verbNet.classes().forEach(VerbNetXmlFactory::setPointers);
             return new DefaultVerbIndex(verbNet.verbClasses());

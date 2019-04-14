@@ -1,8 +1,9 @@
 package io.github.clearwsd.verbnet;
 
 import io.github.clearwsd.verbnet.xml.VerbNetClassXml;
-import io.github.clearwsd.verbnet.xml.VerbNetFrameXml;
+import io.github.clearwsd.verbnet.xml.VerbNetFrameXml.NounPhraseXml;
 import io.github.clearwsd.verbnet.xml.VerbNetXmlFactory;
+import java.util.List;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -59,12 +60,9 @@ public class VerbNetTest {
         assertEquals("Agent", agent.type());
         assertEquals("Theme", theme.type());
         assertEquals("Instrument", instrument.type());
-        SelResDescription selRels = agent.restrictions();
-        assertEquals(LogicalRelation.OR, selRels.logic());
-        assertTrue(selRels.restrictions().get(0).value());
-        assertEquals("animate", selRels.restrictions().get(0).type());
-        assertTrue(selRels.restrictions().get(1).value());
-        assertEquals("organization", selRels.restrictions().get(1).type());
+        List<Restrictions<String>> selRels = agent.restrictions();
+        assertTrue(selRels.get(0).include().contains("animate"));
+        assertTrue(selRels.get(1).include().contains("organization"));
     }
 
     @Test
@@ -80,9 +78,9 @@ public class VerbNetTest {
         assertEquals("", frame.description().xtag());
 
         assertEquals(4, frame.syntax().size());
-        VerbNetFrameXml.NounPhrase patient = (VerbNetFrameXml.NounPhrase) frame.syntax().get(2);
+        NounPhraseXml patient = (NounPhraseXml) frame.syntax().get(2);
         assertEquals(SyntaxType.NP, patient.type());
-        assertEquals("Patient", patient.value());
+        assertEquals("Patient", patient.thematicRole());
 
         assertEquals(5, frame.predicates().size());
         SemanticPredicate semanticPredicate = frame.predicates().get(1);

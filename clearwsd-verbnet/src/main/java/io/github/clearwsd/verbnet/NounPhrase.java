@@ -16,21 +16,28 @@
 
 package io.github.clearwsd.verbnet;
 
+import java.util.List;
+
 /**
- * VerbNet syntactic restriction, refining the syntactic behavior of a given constituent within a VerbNet frame.
+ * Nominal syntactic phrase.
  *
- * @author jgung
+ * @author jamesgung
  */
-public interface SyntRes {
+public interface NounPhrase extends SyntacticPhrase {
 
     /**
-     * Type of syntactic restriction, e.g. "that_comp".
+     * Thematic role associated with this NP.
      */
-    String type();
+    String thematicRole();
 
     /**
-     * Truth value of syntactic restriction.
+     * Syntactic restrictions associated with this NP.
      */
-    boolean value();
+    List<Restrictions<String>> syntacticRestrictions();
+
+    /**
+     * Additional selectional restrictions (beyond those at the thematic role level) for this NP.
+     */
+    List<Restrictions<String>> selectionalRestrictions();
 
 }

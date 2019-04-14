@@ -16,12 +16,18 @@
 
 package io.github.clearwsd.verbnet.xml;
 
+import io.github.clearwsd.verbnet.LexicalPhrase;
+import io.github.clearwsd.verbnet.NounPhrase;
+import io.github.clearwsd.verbnet.Preposition;
+import io.github.clearwsd.verbnet.Restrictions;
 import io.github.clearwsd.verbnet.SemanticPredicate;
 import io.github.clearwsd.verbnet.SyntacticPhrase;
 import io.github.clearwsd.verbnet.SyntaxType;
 import io.github.clearwsd.verbnet.VerbNetFrame;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -30,6 +36,8 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.adapters.XmlAdapter;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -104,42 +112,69 @@ public class VerbNetFrameXml implements VerbNetFrame {
     @EqualsAndHashCode(callSuper = true)
     @Accessors(fluent = true)
     @XmlRootElement(name = "NP")
-    public static class NounPhrase extends Syntax {
+    public static class NounPhraseXml extends Syntax implements NounPhrase {
 
         @XmlAttribute(name = "value", required = true)
-        private String value;
+        private String thematicRole;
         @XmlElement(name = SyntacticRestrictionsXml.ROOT_NAME)
         private SyntacticRestrictionsXml syntacticRestrictions;
         @XmlElement(name = SelectionalRestrictionXml.ROOT_NAME)
         private SelectionalRestrictionsXml selectionalRestrictions;
 
-        public NounPhrase() {
+        public NounPhraseXml() {
             super(NP);
         }
 
+        @Override
+        public List<Restrictions<String>> selectionalRestrictions() {
+            return selectionalRestrictions.restrictions();
+        }
+
+        @Override
+        public List<Restrictions<String>> syntacticRestrictions() {
+            return syntacticRestrictions.restrictions();
+        }
     }
 
     @XmlRootElement(name = "VERB")
-    public static class Verb extends Syntax {
+    public static class VerbXml extends Syntax {
 
-        public Verb() {
+        public VerbXml() {
             super(VERB);
         }
     }
 
     @XmlRootElement(name = "ADJ")
-    public static class Adjective extends Syntax {
+    public static class AdjectiveXml extends Syntax {
 
-        public Adjective() {
+        public AdjectiveXml() {
             super(ADJ);
         }
     }
 
     @XmlRootElement(name = "ADV")
-    public static class Adverb extends Syntax {
+    public static class AdverbXml extends Syntax {
 
-        public Adverb() {
+        public AdverbXml() {
             super(ADV);
+        }
+    }
+
+    public static class ValueSetAdapter extends XmlAdapter<String, Set<String>> {
+
+        @Override
+        public Set<String> unmarshal(String value) {
+            return Arrays.stream(value.split("\\|"))
+                .map(prep -> prep.trim().split("\\s+"))
+                .flatMap(Arrays::stream)
+                .map(prep -> prep.trim().toLowerCase())
+                .collect(Collectors.toSet());
+
+        }
+
+        @Override
+        public String marshal(Set<String> value) {
+            return String.join(" | ", value);
         }
     }
 
@@ -147,14 +182,15 @@ public class VerbNetFrameXml implements VerbNetFrame {
     @EqualsAndHashCode(callSuper = true)
     @Accessors(fluent = true)
     @XmlRootElement(name = "PREP")
-    public static class Preposition extends Syntax {
+    public static class PrepXml extends Syntax implements Preposition {
 
+        @XmlAttribute(name = "value")
+        @XmlJavaTypeAdapter(ValueSetAdapter.class)
+        private Set<String> types;
         @XmlElement(name = SelectionalRestrictionsXml.ROOT_NAME)
         private SelectionalRestrictionsXml selectionalRestrictions;
-        @XmlAttribute(name = "value")
-        private String value;
 
-        public Preposition() {
+        public PrepXml() {
             super(PREP);
         }
     }
@@ -163,12 +199,12 @@ public class VerbNetFrameXml implements VerbNetFrame {
     @EqualsAndHashCode(callSuper = true)
     @Accessors(fluent = true)
     @XmlRootElement(name = "LEX")
-    public static class Lexical extends Syntax {
+    public static class LexXml extends Syntax implements LexicalPhrase {
 
         @XmlAttribute(name = "value", required = true)
         private String value;
 
-        public Lexical() {
+        public LexXml() {
             super(LEX);
         }
     }

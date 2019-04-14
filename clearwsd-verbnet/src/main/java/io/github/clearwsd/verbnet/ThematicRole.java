@@ -16,6 +16,8 @@
 
 package io.github.clearwsd.verbnet;
 
+import java.util.List;
+
 /**
  * VerbNet thematic role, which defines the semantic relationship between a predicate and an argument.
  *
@@ -31,6 +33,6 @@ public interface ThematicRole {
     /**
      * Selectional restrictions further refining the nature of this thematic role.
      */
-    SelResDescription restrictions();
+    List<Restrictions<String>> restrictions();
 
 }

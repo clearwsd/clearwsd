@@ -16,7 +16,6 @@
 
 package io.github.clearwsd.verbnet.xml;
 
-import io.github.clearwsd.verbnet.SelRes;
 import io.github.clearwsd.verbnet.xml.util.BooleanAdapterXmlAdapter;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -27,7 +26,7 @@ import lombok.Data;
 import lombok.experimental.Accessors;
 
 /**
- * XML binding implementation of {@link SelRes}.
+ * XML bindings for selectional restrictions in VerbNet.
  *
  * @author jgung
  */
@@ -35,7 +34,7 @@ import lombok.experimental.Accessors;
 @Accessors(fluent = true)
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlRootElement(name = SelectionalRestrictionXml.ROOT_NAME)
-public class SelectionalRestrictionXml implements SelRes {
+public class SelectionalRestrictionXml {
 
     static final String ROOT_NAME = "SELRESTR";
 
@@ -44,10 +43,5 @@ public class SelectionalRestrictionXml implements SelRes {
     @XmlAttribute(name = "Value", required = true)
     @XmlJavaTypeAdapter(BooleanAdapterXmlAdapter.class)
     private Boolean value;
-
-    @Override
-    public boolean value() {
-        return value;
-    }
 
 }

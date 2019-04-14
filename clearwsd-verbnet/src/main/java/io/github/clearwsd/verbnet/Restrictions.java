@@ -16,22 +16,23 @@
 
 package io.github.clearwsd.verbnet;
 
-import java.util.List;
+import java.util.Set;
 
 /**
- * Collection of {@link SyntRes} linked by a given logical relation.
+ * Restrictions on VerbNet types.
  *
  * @author jamesgung
  */
-public interface SyntResDescription {
+public interface Restrictions<T> {
 
     /**
-     * Logical relation, e.g. "and" or "or".
+     * Restrictions that must be included.
      */
-    LogicalRelation logic();
+    Set<T> include();
 
     /**
-     * Collection of syntactic restrictions linked by the logical relation, {@link SyntResDescription#logic()}.
+     * Restrictions that must not be present.
      */
-    List<SyntRes> restrictions();
+    Set<T> exclude();
+
 }

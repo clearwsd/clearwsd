@@ -16,7 +16,9 @@
 
 package io.github.clearwsd.verbnet.xml;
 
+import io.github.clearwsd.verbnet.Restrictions;
 import io.github.clearwsd.verbnet.ThematicRole;
+import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -42,6 +44,10 @@ public class VerbNetThematicRoleXml implements ThematicRole {
     private String type;
 
     @XmlElement(name = SelectionalRestrictionsXml.ROOT_NAME, required = true)
-    private SelectionalRestrictionsXml restrictions;
+    private SelectionalRestrictionsXml selectionalRestrictions;
 
+    @Override
+    public List<Restrictions<String>> restrictions() {
+        return selectionalRestrictions.restrictions();
+    }
 }
