@@ -34,8 +34,10 @@ import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.function.BiFunction;
@@ -49,6 +51,7 @@ import io.github.clearwsd.WordSenseAnnotator;
 import io.github.clearwsd.WordSenseClassifier;
 import io.github.clearwsd.corpus.CoNllDepTreeReader;
 import io.github.clearwsd.corpus.CorpusReader;
+import io.github.clearwsd.corpus.LemmaMappingCorpusReader;
 import io.github.clearwsd.corpus.TextCorpusReader;
 import io.github.clearwsd.corpus.semeval.ParsingSemevalReader;
 import io.github.clearwsd.corpus.semeval.SemevalReader;
@@ -65,11 +68,11 @@ import io.github.clearwsd.type.FeatureType;
 import io.github.clearwsd.type.NlpFocus;
 import io.github.clearwsd.type.NlpInstance;
 import io.github.clearwsd.utils.CountingSenseInventory;
+import io.github.clearwsd.utils.ExtJwnlSenseInventory;
 import io.github.clearwsd.utils.InteractiveTestLoop;
 import io.github.clearwsd.utils.LemmaDictionary;
 import io.github.clearwsd.utils.OntoNotesSenseInventory;
 import io.github.clearwsd.utils.SenseInventory;
-import io.github.clearwsd.utils.ExtJwnlSenseInventory;
 import io.github.clearwsd.verbnet.DefaultPredicateAnnotator;
 import io.github.clearwsd.verbnet.DefaultVerbNetClassifier;
 import io.github.clearwsd.verbnet.VerbNetSenseInventory;
@@ -216,6 +219,13 @@ public abstract class WordSenseCLI {
     @Parameter(names = "-inventoryPath", description = "Sense inventory path (optional)")
     private String senseInventoryPath;
 
+    @Parameter(names = "-lemmas", description = "Optional comma-separated list of lemmas to include, filtering out rest")
+    private Set<String> lemmas = new HashSet<>();
+
+    @Parameter(names = "-mappings", description = "Optional path to a 3-column CSV mappings file (lemma,original-sense,"
+            + "mapped-sense)")
+    private String mappingsPath;
+
     private WordSenseClassifier classifier;
     private NlpParser parser;
     private Pattern depPattern;
@@ -312,11 +322,9 @@ public abstract class WordSenseCLI {
         if (trainPath == null) {
             return;
         }
-        List<NlpFocus<DepNode, DepTree>> trainInstances = getParseTrees(trainPath, parsed(trainPath)
-                ? corpusType.corpusReader(getKeyPath(trainPath)) : corpusType.corpusParser(getKeyPath(trainPath), getParser()));
+        List<NlpFocus<DepNode, DepTree>> trainInstances = getParseTrees(trainPath, getCorpusReader(trainPath));
         List<NlpFocus<DepNode, DepTree>> validInstances = validPath == null ? new ArrayList<>()
-                : getParseTrees(validPath, parsed(validPath) ? corpusType.corpusReader(getKeyPath(validPath))
-                : corpusType.corpusParser(getKeyPath(validPath), getParser()));
+                : getParseTrees(validPath, getCorpusReader(validPath));
         classifier = newClassifier();
         log.debug("Training classifier on {} instances from corpus at {}", trainInstances.size(), trainPath);
         classifier.train(trainInstances, validInstances);
@@ -336,17 +344,31 @@ public abstract class WordSenseCLI {
         Preconditions.checkState(trainPer < 1 && trainPer > 0,
                 "Percentage of training data must be between 0 and 1 (got %f). "
                         + "Please set ratio of percentage of training instances per fold (e.g. \"-per 0.8\")", trainPer);
-        List<NlpFocus<DepNode, DepTree>> trainInstances = getParseTrees(trainPath, parsed(trainPath)
-                ? corpusType.corpusReader(getKeyPath(trainPath)) : corpusType.corpusParser(getKeyPath(trainPath), getParser()));
+        List<NlpFocus<DepNode, DepTree>> trainInstances = getParseTrees(trainPath, getCorpusReader(trainPath));
         log.info("Performing {}-fold cross validation on {} instances in training corpus at {}", folds,
                 trainInstances.size(), trainPath);
         CrossValidation<NlpFocus<DepNode, DepTree>> cv = new CrossValidation<>(seed, i -> i.feature(FeatureType.Gold));
-        List<Evaluation> evaluations = cv.crossValidate(newClassifier(), cv.createFolds(trainInstances, folds, trainPer));
+        List<Predictions<NlpFocus<DepNode, DepTree>>> evaluations = cv.crossValidate(newClassifier(),
+                cv.createFolds(trainInstances, folds, trainPer),
+                instance -> instance.sequence().tokens().stream()
+                        .map(token -> token == instance.focus() ? "{" + token.feature(Text) + "}" : token.feature(Text))
+                        .collect(Collectors.joining(" ")));
         int index = 0;
-        for (Evaluation evaluation : evaluations) {
-            log.info("Fold {} results:\n{}", index++, evaluation);
+        for (Predictions<NlpFocus<DepNode, DepTree>> evaluation : evaluations) {
+            log.info("Fold {} results:\n{}", index++, evaluation.evaluation());
+            if (outputMisses && evaluation.incorrect().size() > 0) {
+                String missesFile = new File(trainPath).getAbsolutePath() + "." + index + ".misses.txt";
+                log.info("Writing missed predictions to {}", missesFile);
+                try {
+                    Files.write(Paths.get(missesFile), evaluation.print(evaluation.incorrect(), false)
+                            .getBytes(Charset.defaultCharset()));
+                } catch (IOException e) {
+                    log.warn("An error occurred while writing misses to {}:", missesFile, e);
+                }
+            }
         }
-        log.info("Overall {}-fold cross validation results on corpus at {}:\n{}", folds, trainPath, new Evaluation(evaluations));
+        Evaluation overall = new Evaluation(evaluations.stream().map(Predictions::evaluation).collect(Collectors.toList()));
+        log.info("Overall {}-fold cross validation results on corpus at {}:\n{}", folds, trainPath, overall);
     }
 
     private void evaluate() {
@@ -356,8 +378,7 @@ public abstract class WordSenseCLI {
         if (classifier == null) {
             classifier = loadClassifier();
         }
-        List<NlpFocus<DepNode, DepTree>> testInstances = getParseTrees(testPath, parsed(testPath)
-                ? corpusType.corpusReader(getKeyPath(testPath)) : corpusType.corpusParser(getKeyPath(testPath), getParser()));
+        List<NlpFocus<DepNode, DepTree>> testInstances = getParseTrees(testPath, getCorpusReader(testPath));
         evaluate(testInstances, testPath);
     }
 
@@ -418,6 +439,20 @@ public abstract class WordSenseCLI {
         InteractiveTestLoop.test(parser, Sense.name());
     }
 
+    private CorpusReader<NlpFocus<DepNode, DepTree>> getCorpusReader(String path) {
+        CorpusReader<NlpFocus<DepNode, DepTree>> reader;
+        if (parsed(path)) {
+            reader = corpusType.corpusReader(getKeyPath(trainPath));
+        } else {
+            reader = corpusType.corpusParser(getKeyPath(trainPath), getParser());
+        }
+        if (null != mappingsPath) {
+            Path mappingPath = Paths.get(mappingsPath);
+            reader = new LemmaMappingCorpusReader(reader, LemmaMappingCorpusReader.loadMappings(mappingPath));
+        }
+        return reader;
+    }
+
     private NlpParser getParser() {
         if (parser == null) {
             log.debug("Initializing parser...");
@@ -464,14 +499,11 @@ public abstract class WordSenseCLI {
     }
 
     private <T extends NlpInstance> List<T> getParseTrees(String path, CorpusReader<T> reader) {
-        return parseSafe(path, reader, reparse || !parsed(path));
-    }
-
-    private <T extends NlpInstance> List<T> parseSafe(String inputPath, CorpusReader<T> reader, boolean save) {
-        try (InputStream inputStream = new FileInputStream(inputPath)) {
-            List<T> instances = reader.readInstances(inputStream);
+        boolean save = reparse || !parsed(path);
+        try (InputStream inputStream = new FileInputStream(path)) {
+            List<T> instances = reader.readInstances(inputStream, lemmas);
             if (save) {
-                String outputFilePath = new File(inputPath + parseSuffix).getAbsolutePath();
+                String outputFilePath = new File(path + parseSuffix).getAbsolutePath();
                 try (OutputStream outputStream = new FileOutputStream(outputFilePath)) {
                     log.info("Saving parsed instances to {}", outputFilePath);
                     reader.writeInstances(instances, outputStream);
@@ -481,9 +513,9 @@ public abstract class WordSenseCLI {
             }
             return instances;
         } catch (FileNotFoundException e) {
-            throw new RuntimeException("Unable to locate input file at " + inputPath, e);
+            throw new RuntimeException("Unable to locate input file at " + path, e);
         } catch (Exception e) {
-            throw new RuntimeException("Error while parsing file at " + inputPath, e);
+            throw new RuntimeException("Error while parsing file at " + path, e);
         }
     }
 

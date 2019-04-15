@@ -16,10 +16,13 @@
 
 package io.github.clearwsd;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import io.github.clearwsd.parser.NlpParser;
+import io.github.clearwsd.type.DepNode;
 import io.github.clearwsd.type.DepTree;
+import io.github.clearwsd.type.FeatureType;
 import io.github.clearwsd.utils.SenseInventory;
 import lombok.AllArgsConstructor;
 
@@ -30,7 +33,7 @@ import lombok.AllArgsConstructor;
  * @author jamesgung
  */
 @AllArgsConstructor
-public abstract class BaseSensePredictor<T> implements NlpParser, SensePredictor<T> {
+public abstract class BaseSensePredictor<T> implements ParsingSensePredictor<T> {
 
     protected WordSenseAnnotator annotator;
     protected NlpParser dependencyParser;
@@ -48,6 +51,20 @@ public abstract class BaseSensePredictor<T> implements NlpParser, SensePredictor
     @Override
     public List<String> tokenize(String sentence) {
         return dependencyParser.tokenize(sentence);
+    }
+
+    public List<SensePrediction<T>> predict(DepTree depTree) {
+        List<SensePrediction<T>> predictions = new ArrayList<>();
+        for (DepNode token : depTree) {
+            String sense = token.feature(FeatureType.Sense);
+            if (sense != null) {
+                predictions.add(new DefaultSensePrediction<>(
+                        token.index(),
+                        token.feature(FeatureType.Text),
+                        sense, senseInventory().getSense(sense)));
+            }
+        }
+        return predictions;
     }
 
     /**

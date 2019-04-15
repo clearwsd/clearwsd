@@ -125,6 +125,27 @@ public class CrossValidation<T> {
         return evaluations;
     }
 
+    /**
+     * Perform cross validation with a given classifier on a given list of {@link Fold Folds}.
+     *
+     * @param classifier input classifier
+     * @param folds      cross validation folds
+     * @param displayFunction display function for predictions
+     */
+    public List<Predictions<T>> crossValidate(Classifier<T, String> classifier, List<CrossValidation.Fold<T>> folds,
+                                          Function<T, String> displayFunction) {
+        List<Predictions<T>> evaluations = new ArrayList<>();
+        folds.forEach(fold -> {
+            classifier.train(fold.getTrainInstances(), fold.getTestInstances());
+            Predictions<T> evaluation = new Predictions<>(displayFunction, labelFunction);
+            for (T input : fold.getTestInstances()) {
+                evaluation.add(input, classifier.classify(input));
+            }
+            evaluations.add(evaluation);
+        });
+        return evaluations;
+    }
+
     public List<Evaluation> crossValidateParallel(Supplier<Classifier<T, String>> classifierSupplier,
                                                   List<CrossValidation.Fold<T>> folds) {
         return folds.parallelStream()

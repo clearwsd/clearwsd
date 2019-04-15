@@ -25,7 +25,7 @@ import java.util.Set;
  */
 public interface SenseInventory<T> {
 
-    String DEFAULT_SENSE = "NONE";
+    String DEFAULT_SENSE = "None";
 
     /**
      * Return all labels associated with a particular word form.
@@ -42,6 +42,16 @@ public interface SenseInventory<T> {
      * @return default sense for input word
      */
     String defaultSense(String lemma);
+
+    /**
+     * Check if the sense inventory has a sense for a given lemma.
+     *
+     * @param lemma base word
+     * @param sense sense of word
+     */
+    default boolean hasSense(String lemma, String sense) {
+        return senses(lemma).contains(sense);
+    }
 
     /**
      * Add a sense to the sense inventory.

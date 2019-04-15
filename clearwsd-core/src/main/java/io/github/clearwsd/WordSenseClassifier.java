@@ -19,7 +19,10 @@ package io.github.clearwsd;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.net.MalformedURLException;
 import java.net.URL;
+import java.nio.file.Paths;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -37,6 +40,7 @@ import io.github.clearwsd.utils.SenseInventory;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.experimental.Accessors;
+import lombok.extern.slf4j.Slf4j;
 
 import static io.github.clearwsd.type.FeatureType.Predicate;
 
@@ -45,6 +49,7 @@ import static io.github.clearwsd.type.FeatureType.Predicate;
  *
  * @author jamesgung
  */
+@Slf4j
 @Getter
 @Accessors(fluent = true)
 @AllArgsConstructor
@@ -81,10 +86,18 @@ public class WordSenseClassifier implements Classifier<NlpFocus<DepNode, DepTree
     @Override
     public void train(List<NlpFocus<DepNode, DepTree>> train, List<NlpFocus<DepNode, DepTree>> valid) {
         predicateDictionary.train(true);
+        Set<String> missingSenses = new HashSet<>();
         Stream.concat(train.stream(), valid.stream()).forEach(instance -> {
             String lemma = predicateDictionary.apply(instance.focus());
-            senseInventory.addSense(lemma, instance.focus().feature(FeatureType.Gold));
+            String sense = instance.focus().feature(FeatureType.Gold);
+            if (!senseInventory.hasSense(lemma, sense)) {
+                missingSenses.add(lemma + "-" + sense);
+            }
+            senseInventory.addSense(lemma, sense);
         });
+        if (missingSenses.size() > 0) {
+            log.warn("Missing senses: {}", String.join(", ", missingSenses));
+        }
         predicateDictionary.train(false);
         classifier.train(train, valid);
     }
@@ -143,7 +156,15 @@ public class WordSenseClassifier implements Classifier<NlpFocus<DepNode, DepTree
      * @return initialized word sense classifier
      */
     public static WordSenseClassifier loadFromResource(String resource) {
-        return load(WordSenseClassifier.class.getClassLoader().getResource(resource));
+        URL url = WordSenseClassifier.class.getClassLoader().getResource(resource);
+        if (null == url) {
+            try {
+                url = Paths.get(resource).toUri().toURL();
+            } catch (MalformedURLException e) {
+                throw new RuntimeException(e);
+            }
+        }
+        return load(url);
     }
 
 }

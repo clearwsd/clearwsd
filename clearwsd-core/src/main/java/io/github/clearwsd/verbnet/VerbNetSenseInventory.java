@@ -119,7 +119,7 @@ public class VerbNetSenseInventory implements SenseInventory<IVerbClass>, Serial
      * Initialize sense inventory with default VerbNet from classpath resources.
      */
     public VerbNetSenseInventory() {
-        this(VerbNetSenseInventory.class.getClassLoader().getResource("vn32.xml"));
+        this(VerbNetSenseInventory.class.getClassLoader().getResource("vn3.3.1.xml"));
     }
 
     @Override
@@ -136,9 +136,8 @@ public class VerbNetSenseInventory implements SenseInventory<IVerbClass>, Serial
                 .min(Comparator.comparingInt(IWordnetKey::getLexicalID));
         if (wnKey.isPresent()) {
             Optional<IMember> member = verbnet.getMembers(wnKey.get()).stream()
-                    .sorted((m1, m2) -> Comparator.<String>naturalOrder()
-                            .compare(m1.getVerbClass().getID(), m2.getVerbClass().getID()))
-                    .findFirst();
+                    .min((m1, m2) -> Comparator.<String>naturalOrder()
+                    .compare(m1.getVerbClass().getID(), m2.getVerbClass().getID()));
             if (member.isPresent()) {
                 return getIdNumber(getRoot(member.get().getVerbClass()).getID());
             }
@@ -148,9 +147,6 @@ public class VerbNetSenseInventory implements SenseInventory<IVerbClass>, Serial
 
     @Override
     public void addSense(String lemma, String sense) {
-        if (!senseVnMap.containsKey(sense) && !countingSenseInventory.senses(lemma).contains(sense)) {
-            log.warn("Unrecognized sense: {}", sense);
-        }
         countingSenseInventory.addSense(lemma, sense);
     }
 

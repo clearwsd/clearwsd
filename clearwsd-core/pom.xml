@@ -20,7 +20,7 @@
         <liblinear.version>2.11</liblinear.version>
         <jwnl.version>1.9.4</jwnl.version>
         <jwnldata.version>1.2</jwnldata.version>
-        <jverbnet.version>1.2.0.1</jverbnet.version>
+        <jverbnet.version>1.3.0</jverbnet.version>
         <lucene.version>7.5.0</lucene.version>
         <jcommander.version>1.72</jcommander.version>
     </properties>

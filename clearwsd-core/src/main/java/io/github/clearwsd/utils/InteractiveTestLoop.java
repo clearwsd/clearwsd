@@ -113,7 +113,7 @@ public class InteractiveTestLoop {
                 } else {
                     return text;
                 }
-            }).collect(Collectors.joining("\n"));
+            }).collect(Collectors.joining("\n")) + "\n\n" + new CoNllFormatter().apply(dependencyTree);
         }
     }
 

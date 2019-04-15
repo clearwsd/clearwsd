@@ -55,7 +55,7 @@ public class DepChildrenContextFactory extends DepContextFactory {
      *
      * @param exclude labels to exclude (if empty, exclude none)
      * @param include labels to include (if empty, include all)
-     * @param level   level in dependency tree at which to extract contexts (0 for chidren, 1 for children's children, etc.)
+     * @param level   level in dependency tree at which to extract contexts (0 for children, 1 for children's children, etc.)
      */
     public DepChildrenContextFactory(Set<String> exclude, Set<String> include, int level) {
         this.exclude = exclude;

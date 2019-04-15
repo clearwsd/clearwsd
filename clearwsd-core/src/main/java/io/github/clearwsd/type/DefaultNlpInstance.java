@@ -21,8 +21,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import io.github.clearwsd.type.FeatureType;
-import io.github.clearwsd.type.NlpInstance;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -69,6 +67,10 @@ public class DefaultNlpInstance implements NlpInstance {
 
     @Override
     public String toString() {
+        Object feat = feature(FeatureType.Text);
+        if (null != feat) {
+            return feat.toString();
+        }
         return index + "\t" + features.entrySet().stream()
                 .sorted(Comparator.comparing(Map.Entry::getKey))
                 .map((e) -> e.getKey() + ":" + e.getValue())
