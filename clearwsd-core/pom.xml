@@ -30,22 +30,15 @@
             <groupId>io.github.clearwsd</groupId>
             <artifactId>clearwsd-api</artifactId>
         </dependency>
+        <dependency>
+            <groupId>io.github.clearwsd</groupId>
+            <artifactId>clearwsd-verbnet</artifactId>
+        </dependency>
 
         <dependency>
             <groupId>de.bwaldvogel</groupId>
             <artifactId>liblinear</artifactId>
             <version>${liblinear.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>edu.mit</groupId>
-            <artifactId>jverbnet</artifactId>
-            <version>${jverbnet.version}</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>ch.qos.logback</groupId>
-                    <artifactId>logback-core</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
         <dependency>
             <groupId>com.beust</groupId>

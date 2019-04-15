@@ -16,77 +16,39 @@
 
 package io.github.clearwsd.verbnet;
 
-import com.google.common.collect.HashMultimap;
-import com.google.common.collect.Multimap;
 import com.google.common.collect.Sets;
 import com.google.common.io.ByteStreams;
-
+import io.github.clearwsd.utils.CountingSenseInventory;
+import io.github.clearwsd.utils.SenseInventory;
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.Comparator;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
-
-import edu.mit.jverbnet.data.IMember;
-import edu.mit.jverbnet.data.IVerbClass;
-import edu.mit.jverbnet.data.IWordnetKey;
-import edu.mit.jverbnet.index.IVerbIndex;
-import edu.mit.jverbnet.index.VerbIndex;
-import io.github.clearwsd.utils.CountingSenseInventory;
-import io.github.clearwsd.utils.SenseInventory;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
 /**
- * VerbNet XML-based {@link SenseInventory} implementation.
+ * VerbNetXml XML-based {@link SenseInventory} implementation.
  *
  * @author jamesgung
  */
 @Slf4j
-public class VerbNetSenseInventory implements SenseInventory<IVerbClass>, Serializable {
+public class VerbNetSenseInventory implements SenseInventory<VnClass>, Serializable {
 
     private static final long serialVersionUID = 410274561044821035L;
 
-    /**
-     * Return the base lemma of a multi-word expression (e.g. "go_ballistic" 0-&gt; "go").
-     *
-     * @param mwe multi word expression
-     * @return base lemma
-     */
-    public static String getBaseForm(String mwe) {
-        String[] fields = mwe.split("_");
-        return fields[0].toLowerCase();
-    }
-
-    /**
-     * Get the numbered portion of a VerbNet class string, (e.g. "confront-98" --&gt; "98").
-     *
-     * @param id VerbNet class id
-     * @return VerbNet class number
-     */
-    public static String getIdNumber(String id) {
-        int hyphenIndex = id.indexOf("-");
-        return id.substring(hyphenIndex + 1);
-    }
-
     @Getter
-    private transient IVerbIndex verbnet;
+    private transient VnIndex verbnet;
 
-    private transient Multimap<String, IVerbClass> lemmaVnMap;
-    private transient Multimap<String, IWordnetKey> lemmaWnMap;
-    private transient Map<String, IVerbClass> senseVnMap;
     private CountingSenseInventory countingSenseInventory = new CountingSenseInventory();
     private URL url;
     private byte[] data; // we persist this as a byte[] for model loading when the URL is no longer valid
@@ -94,21 +56,21 @@ public class VerbNetSenseInventory implements SenseInventory<IVerbClass>, Serial
     /**
      * Initialize sense inventory from directory.
      *
-     * @param path VerbNet XML directory
+     * @param path VerbNetXml XML directory
      */
     public VerbNetSenseInventory(File path) {
         try {
             this.url = path.toURI().toURL();
             initialize();
         } catch (MalformedURLException e) {
-            throw new RuntimeException("Error initializing VerbNet sense inventory: " + e.getMessage(), e);
+            throw new RuntimeException("Error initializing VerbNetXml sense inventory: " + e.getMessage(), e);
         }
     }
 
     /**
      * Initialize sense inventory from {@link URL} (possibly on classpath).
      *
-     * @param url VerbNet XML URL
+     * @param url VerbNetXml XML URL
      */
     public VerbNetSenseInventory(URL url) {
         this.url = url;
@@ -116,30 +78,30 @@ public class VerbNetSenseInventory implements SenseInventory<IVerbClass>, Serial
     }
 
     /**
-     * Initialize sense inventory with default VerbNet from classpath resources.
+     * Initialize sense inventory with default VerbNetXml from classpath resources.
      */
     public VerbNetSenseInventory() {
-        this(VerbNetSenseInventory.class.getClassLoader().getResource("vn3.3.1.xml"));
+        this(VerbNetSenseInventory.class.getClassLoader().getResource(DefaultVnIndex.DEFAULT_INDEX));
     }
 
     @Override
     public Set<String> senses(String lemma) {
-        return Sets.union(lemmaVnMap.get(lemma).stream()
-                .map(cls -> getIdNumber(cls.getID()))
-                .collect(Collectors.toSet()), countingSenseInventory.senses(lemma));
+        return Sets.union(verbnet.getByLemma(lemma).stream()
+            .map(cls -> cls.verbNetId().rootId())
+            .collect(Collectors.toSet()), countingSenseInventory.senses(lemma));
     }
 
     @Override
     public String defaultSense(String lemma) {
-        // TODO: find principled option for selecting default sense
-        Optional<IWordnetKey> wnKey = lemmaWnMap.get(lemma).stream()
-                .min(Comparator.comparingInt(IWordnetKey::getLexicalID));
+        Optional<WnKey> wnKey = verbnet.getWordNetKeysByLemma(lemma).stream()
+            .min(Comparator.comparingInt(WnKey::lexicalId));
         if (wnKey.isPresent()) {
-            Optional<IMember> member = verbnet.getMembers(wnKey.get()).stream()
-                    .min((m1, m2) -> Comparator.<String>naturalOrder()
-                    .compare(m1.getVerbClass().getID(), m2.getVerbClass().getID()));
+            Optional<VnClassId> member = verbnet.getMembersByWordNetKey(wnKey.get()).stream()
+                .map(VnMember::verbClass)
+                .map(VnClass::verbNetId)
+                .min(VnClassId::compareTo);
             if (member.isPresent()) {
-                return getIdNumber(getRoot(member.get().getVerbClass()).getID());
+                return member.get().rootId();
             }
         }
         return countingSenseInventory.defaultSense(lemma);
@@ -151,66 +113,26 @@ public class VerbNetSenseInventory implements SenseInventory<IVerbClass>, Serial
     }
 
     @Override
-    public IVerbClass getSense(String id) {
-        return senseVnMap.get(id);
+    public VnClass getSense(String id) {
+        return verbnet.getById(id);
     }
 
     private void initialize() {
         if (this.data == null) {
-            try {
-                this.data = ByteStreams.toByteArray(url.openStream());
+            try (InputStream inputStream = url.openStream()) {
+                this.data = ByteStreams.toByteArray(inputStream);
             } catch (IOException e) {
-                throw new RuntimeException("Error reading VerbNet XML: " + e.getMessage(), e);
+                throw new RuntimeException("Error reading VerbNetXml XML: " + e.getMessage(), e);
             }
-            verbnet = new VerbIndex(url);
+            verbnet = DefaultVnIndex.fromInputStream(new ByteArrayInputStream(data));
         } else {
-            try {
-                Path tmp = Files.createTempFile(getClass().getSimpleName(), getClass().getSimpleName());
-                Files.write(tmp, data);
-                tmp.toFile().deleteOnExit();
-                verbnet = new VerbIndex(tmp.toUri().toURL());
-            } catch (IOException e) {
-                throw new RuntimeException("Unable to read VerbNet: " + e.getMessage(), e);
-            }
-        }
-
-        try {
-            verbnet.open();
-        } catch (IOException e) {
-            throw new RuntimeException("Error loading VerbNet dictionary: " + e.getMessage(), e);
-        }
-        Iterator<IVerbClass> clsIterator = verbnet.iterator();
-        lemmaVnMap = HashMultimap.create();
-        lemmaWnMap = HashMultimap.create();
-        senseVnMap = new HashMap<>();
-        while (clsIterator.hasNext()) {
-            IVerbClass cls = clsIterator.next();
-            if (null != cls.getParent()) { // skip sub-classes, we'll handle them recursively
-                continue;
-            }
-            senseVnMap.put(getIdNumber(cls.getID()), cls);
-            for (IVerbClass subcls : getAllSubclasses(cls)) {
-                for (IMember member : subcls.getMembers()) {
-                    String name = getBaseForm(member.getName());
-                    lemmaVnMap.put(name, cls);
-                    lemmaWnMap.putAll(name, member.getWordnetTypes().keySet());
-                }
-            }
+            verbnet = DefaultVnIndex.fromInputStream(new ByteArrayInputStream(data));
         }
     }
 
-    private Set<IVerbClass> getAllSubclasses(IVerbClass cls) {
-        Set<IVerbClass> subclasses = new HashSet<>();
-        subclasses.add(cls);
-        for (IVerbClass subclass : cls.getSubclasses()) {
-            subclasses.addAll(getAllSubclasses(subclass));
-        }
-        return subclasses;
-    }
-
-    private IVerbClass getRoot(IVerbClass cls) {
-        while (cls.getParent() != null) {
-            cls = cls.getParent();
+    private VnClass getRoot(VnClass cls) {
+        while (cls.parentClass().isPresent()) {
+            cls = cls.parentClass().get();
         }
         return cls;
     }
