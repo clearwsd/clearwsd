@@ -87,7 +87,7 @@ public class VerbNetSenseInventory implements SenseInventory<VnClass>, Serializa
     @Override
     public Set<String> senses(String lemma) {
         return Sets.union(verbnet.getByLemma(lemma).stream()
-            .map(cls -> cls.verbNetId().rootId())
+            .map(cls -> cls.verbNetId().classId())
             .collect(Collectors.toSet()), countingSenseInventory.senses(lemma));
     }
 
@@ -101,7 +101,7 @@ public class VerbNetSenseInventory implements SenseInventory<VnClass>, Serializa
                 .map(VnClass::verbNetId)
                 .min(VnClassId::compareTo);
             if (member.isPresent()) {
-                return member.get().rootId();
+                return member.get().classId();
             }
         }
         return countingSenseInventory.defaultSense(lemma);

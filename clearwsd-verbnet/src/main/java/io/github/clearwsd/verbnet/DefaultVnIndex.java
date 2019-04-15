@@ -87,7 +87,7 @@ public class DefaultVnIndex implements VnIndex {
             for (VnClass subcls : cls.descendants(true)) {
                 for (VnMember member : subcls.members()) {
                     String name = getBaseForm(member.name());
-                    lemmaVnMap.put(name, cls);
+                    lemmaVnMap.put(name, subcls);
                     lemmaWnMap.putAll(name, member.wn());
                     lemmaMemberMap.put(name, member);
                     for (WnKey key : member.wn()) {
