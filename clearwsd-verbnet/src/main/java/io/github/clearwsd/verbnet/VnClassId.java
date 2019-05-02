@@ -24,7 +24,7 @@ import lombok.NonNull;
 import lombok.experimental.Accessors;
 
 @Getter
-@EqualsAndHashCode(of = "rootId")
+@EqualsAndHashCode(of = "classId")
 @Accessors(fluent = true)
 public class VnClassId implements Comparable<VnClassId> {
 

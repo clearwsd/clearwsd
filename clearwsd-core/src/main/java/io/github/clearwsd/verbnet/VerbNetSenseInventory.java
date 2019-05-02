@@ -18,8 +18,7 @@ package io.github.clearwsd.verbnet;
 
 import com.google.common.collect.Sets;
 import com.google.common.io.ByteStreams;
-import io.github.clearwsd.utils.CountingSenseInventory;
-import io.github.clearwsd.utils.SenseInventory;
+
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
@@ -33,6 +32,9 @@ import java.util.Comparator;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
+
+import io.github.clearwsd.utils.CountingSenseInventory;
+import io.github.clearwsd.utils.SenseInventory;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
@@ -87,7 +89,7 @@ public class VerbNetSenseInventory implements SenseInventory<VnClass>, Serializa
     @Override
     public Set<String> senses(String lemma) {
         return Sets.union(verbnet.getByLemma(lemma).stream()
-            .map(cls -> cls.verbNetId().classId())
+            .map(cls -> cls.verbNetId().rootId())
             .collect(Collectors.toSet()), countingSenseInventory.senses(lemma));
     }
 
@@ -101,7 +103,7 @@ public class VerbNetSenseInventory implements SenseInventory<VnClass>, Serializa
                 .map(VnClass::verbNetId)
                 .min(VnClassId::compareTo);
             if (member.isPresent()) {
-                return member.get().classId();
+                return member.get().rootId();
             }
         }
         return countingSenseInventory.defaultSense(lemma);
