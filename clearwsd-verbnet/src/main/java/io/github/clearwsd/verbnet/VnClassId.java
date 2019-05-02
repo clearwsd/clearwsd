@@ -29,7 +29,7 @@ import lombok.experimental.Accessors;
 public class VnClassId implements Comparable<VnClassId> {
 
     public static final Pattern VN_ID_PATTERN = Pattern.compile(
-        "(?:(?<name>[a-zA-Z-_]+)-)?(?<rootId>(?<fullId>(?<number>\\d+)(?:\\.\\d+)*)(?<subcls>(?:-\\d+)*))");
+        "(?:(?<name>[a-zA-Z-_]+)-)?(?<fullId>(?<rootId>(?<number>\\d+)(?:\\.\\d+)*)(?<subcls>(?:-\\d+)*))");
 
     private final String classId;
     private final String name;

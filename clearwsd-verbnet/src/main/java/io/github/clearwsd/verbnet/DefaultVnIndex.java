@@ -21,7 +21,7 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.LinkedHashMultimap;
 import com.google.common.collect.SetMultimap;
 import com.google.common.collect.Sets;
-import io.github.clearwsd.verbnet.xml.VerbNetXmlFactory;
+
 import java.io.InputStream;
 import java.util.Collections;
 import java.util.HashMap;
@@ -29,6 +29,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
+import io.github.clearwsd.verbnet.xml.VerbNetXmlFactory;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.experimental.Accessors;
@@ -83,7 +85,7 @@ public class DefaultVnIndex implements VnIndex {
     private void initialize(@NonNull List<VnClass> verbClasses) {
         this.roots = ImmutableList.copyOf(verbClasses);
         for (VnClass cls : verbClasses) {
-            senseVnMap.put(cls.verbNetId().classId(), cls);
+            senseVnMap.put(cls.verbNetId().rootId(), cls);
             for (VnClass subcls : cls.descendants(true)) {
                 for (VnMember member : subcls.members()) {
                     String name = getBaseForm(member.name());
