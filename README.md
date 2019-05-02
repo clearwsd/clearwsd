@@ -39,7 +39,7 @@ include just two of these, the first being `clearwsd-core`:
 <dependency>
   <groupId>io.github.clearwsd</groupId>
   <artifactId>clearwsd-core</artifactId>
-  <version>1.0-SNAPSHOT</version>
+  <version>0.9.0</version>
 </dependency>
 ```
 and the second being a parser module, used for pre-processing and feature extraction.
@@ -48,7 +48,7 @@ A wrapper for the [NLP4J](https://emorynlp.github.io/nlp4j/) dependency parser i
 <dependency>
   <groupId>io.github.clearwsd</groupId>
   <artifactId>clearwsd-nlp4j</artifactId>
-  <version>1.0-SNAPSHOT</version>
+  <version>0.9.0</version>
 </dependency>
 ```
 For the [Stanford Parser](https://stanfordnlp.github.io/CoreNLP/) wrapper module (GPL licensed), you can instead add the following dependency:
@@ -56,7 +56,7 @@ For the [Stanford Parser](https://stanfordnlp.github.io/CoreNLP/) wrapper module
 <dependency>
   <groupId>io.github.clearwsd</groupId>
   <artifactId>clearwsd-stanford</artifactId>
-  <version>1.0-SNAPSHOT</version>
+  <version>0.9.0</version>
 </dependency>
 ```
 
@@ -65,7 +65,7 @@ If you want to use pre-trained word sense disambiguation models, just add the fo
 <dependency>
   <groupId>io.github.clearwsd</groupId>
   <artifactId>clearwsd-models</artifactId>
-  <version>1.0-SNAPSHOT</version>
+  <version>0.9.0</version>
 </dependency>
 ```
 
