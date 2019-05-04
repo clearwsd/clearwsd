@@ -26,7 +26,6 @@ import java.io.Serializable;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -104,7 +103,7 @@ public class DefaultVerbNetClassifier implements Classifier<NlpFocus<DepNode, De
 
     private Set<String> clusters = Sets.newHashSet("cluster-100", "cluster-320", "cluster-1000", "cluster-3200",
             "cluster-10000");
-    private Set<String> includedRels = Sets.newHashSet("dobj");
+    private Set<String> includedRels = Sets.newHashSet("dobj", "obj");
     private Set<String> excludedRels = Sets.newHashSet("punct");
     private Set<Integer> offsets = Sets.newHashSet(-2, -1, 1, 2);
 
@@ -214,7 +213,7 @@ public class DefaultVerbNetClassifier implements Classifier<NlpFocus<DepNode, De
         DepContextFactory depContexts = excludingDeps(excludedRels);
 
         Map<String, List<List<String>>> paths = ImmutableMap.of(
-            "dobj", Collections.singletonList(newArrayList("dobj")));
+            "dobj", newArrayList(newArrayList("obj"), newArrayList("dobj")));
 
         DepContextFactory objects = depPath(paths);
 

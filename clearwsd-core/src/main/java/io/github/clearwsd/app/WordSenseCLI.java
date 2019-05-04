@@ -232,7 +232,8 @@ public abstract class WordSenseCLI {
 
     private JCommander cmd;
 
-    WordSenseCLI(String[] args) {
+    @SuppressWarnings("WeakerAccess")
+    public WordSenseCLI(String[] args) {
         cmd = new JCommander(this);
         cmd.setProgramName(WordSenseCLI.class.getSimpleName());
         try {
