@@ -107,11 +107,4 @@ public class Nlp4jDependencyParser implements NlpParser {
                 .collect(Collectors.toList());
     }
 
-    public static void main(String[] args) {
-        Nlp4jDependencyParser parser = new Nlp4jDependencyParser();
-        List<String> tokens = parser.tokenize("This is a test");
-        DepTree parse = parser.parse(tokens);
-        System.out.println(parse.toString());
-    }
-
 }

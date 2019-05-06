@@ -36,6 +36,7 @@ import io.github.clearwsd.classifier.Classifier;
 import io.github.clearwsd.classifier.LibLinearClassifier;
 import io.github.clearwsd.classifier.MultiClassifier;
 import io.github.clearwsd.corpus.semlink.VerbNetReader;
+import io.github.clearwsd.eval.CrossValidation;
 import io.github.clearwsd.eval.Evaluation;
 import io.github.clearwsd.feature.annotator.AggregateAnnotator;
 import io.github.clearwsd.feature.annotator.Annotator;
@@ -267,10 +268,6 @@ public class VerbNetClassifierUtils {
         devInstances.forEach(annotator::annotate);
         testInstances.forEach(annotator::annotate);
 
-//        CrossValidation<NlpFocus<DepNode, DepTree>> cv = new CrossValidation<>(
-//                (NlpFocus<DepNode, DepTree> i) -> i.feature(FeatureType.Gold));
-//        List<CrossValidation.Fold<NlpFocus<DepNode, DepTree>>> folds = cv.createFolds(instances, 5, 0.8);
-
         FeatureFunctionFactory<NlpFocus<DepNode, DepTree>> factory = getFactory();
         MultiClassifier<NlpFocus<DepNode, DepTree>, String> multi = new MultiClassifier<>(
                 (Serializable & Function<NlpFocus<DepNode, DepTree>, String>)
@@ -278,6 +275,13 @@ public class VerbNetClassifierUtils {
                 (Serializable & Supplier<Classifier<NlpFocus<DepNode, DepTree>, String>>)
                         () -> new MetaModelTrainer<>(factory, LibLinearClassifier::new));
         WordSenseClassifier classifier = new WordSenseClassifier(multi, new CountingSenseInventory(), new LemmaDictionary());
+
+        CrossValidation<NlpFocus<DepNode, DepTree>> cv = new CrossValidation<>(
+                (NlpFocus<DepNode, DepTree> i) -> i.feature(FeatureType.Gold));
+        List<CrossValidation.Fold<NlpFocus<DepNode, DepTree>>> folds = cv.createFolds(instances, 5, 0.8);
+
+        Evaluation overall = new Evaluation(cv.crossValidate(classifier, folds));
+        log.info("\n{}", overall.toString());
 
         classifier.train(instances, devInstances);
         Evaluation evaluation = new Evaluation();
@@ -291,7 +295,5 @@ public class VerbNetClassifierUtils {
         }
         log.info("\n{}", evaluation.toString());
 
-//        Evaluation overall = new Evaluation(cv.crossValidate(classifier, folds));
-//        log.info("\n{}", overall.toString());
     }
 }

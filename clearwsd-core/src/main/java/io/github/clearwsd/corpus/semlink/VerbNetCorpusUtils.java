@@ -3,6 +3,10 @@ package io.github.clearwsd.corpus.semlink;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 
+import com.beust.jcommander.JCommander;
+import com.beust.jcommander.Parameter;
+import com.beust.jcommander.ParameterException;
+
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.nio.file.Files;
@@ -34,8 +38,24 @@ import static com.google.common.collect.ImmutableSet.of;
 @Slf4j
 public final class VerbNetCorpusUtils {
 
-    private VerbNetCorpusUtils() {
+    @Parameter(names = {"-anns", "-i"}, description = "Path to input annotations", required = true)
+    private String annotationsPath;
+    @Parameter(names = {"-trees", "-t"}, description = "Path to source sentences, files with a line per sentence, the root path "
+            + "for paths specified in annotations", required = true)
+    private String sourcePath;
+    @Parameter(names = {"-output", "-o"}, description = "Output path for processed annotations", required = true)
+    private String outputPath;
 
+    private VerbNetCorpusUtils(String... args) {
+        JCommander cmd = new JCommander(this);
+        cmd.setProgramName(this.getClass().getSimpleName());
+        try {
+            cmd.parse(args);
+        } catch (ParameterException e) {
+            System.err.println(e.getMessage());
+            cmd.usage();
+            System.exit(1);
+        }
     }
 
     @Getter
@@ -303,16 +323,11 @@ public final class VerbNetCorpusUtils {
     }
 
     public static void main(String[] args) {
-        //        String filename = "bolt_new_anns";
-        //        String filename = "google_new_anns";
-        //        String filename = "ewt_new_anns";
-        //        String filename = "semlink1.3";
-        String filename = "all-annotated";
-
+        VerbNetCorpusUtils verbNetCorpusUtils = new VerbNetCorpusUtils(args);
         writeAnnotations(
-                Paths.get("data/anns/" + filename + ".txt"),
-                Paths.get("data"),
-                Paths.get("data/anns/" + filename + ".word.txt")
+                Paths.get(verbNetCorpusUtils.annotationsPath),
+                Paths.get(verbNetCorpusUtils.sourcePath),
+                Paths.get(verbNetCorpusUtils.outputPath)
         );
     }
 

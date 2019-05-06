@@ -2,6 +2,10 @@ package io.github.clearwsd.app;
 
 import com.google.common.collect.Sets;
 
+import com.beust.jcommander.JCommander;
+import com.beust.jcommander.Parameter;
+import com.beust.jcommander.ParameterException;
+
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.PrintWriter;
@@ -13,6 +17,7 @@ import java.util.Set;
 
 import io.github.clearwsd.parser.StanfordTokenizer;
 import io.github.clearwsd.verbnet.VerbNetSenseInventory;
+import lombok.Getter;
 
 /**
  * Utility for quickly generating annotations.
@@ -30,9 +35,30 @@ public class AnnotationUtil {
         }
     };
 
+    @Getter
+    @Parameter(names = {"-verb", "-v"}, description = "Target lemma, e.g. 'take'", required = true)
+    private String lemma;
+    @Getter
+    @Parameter(names = {"-output", "-o"}, description = "Output path, e.g. 'take-annotations.txt'", required = true)
+    private String outputPath;
+
+    private AnnotationUtil(String... args) {
+        JCommander cmd = new JCommander(this);
+        cmd.setProgramName(this.getClass().getSimpleName());
+        try {
+            cmd.parse(args);
+        } catch (ParameterException e) {
+            System.err.println(e.getMessage());
+            cmd.usage();
+            System.exit(1);
+        }
+    }
+
     public static void main(String[] args) throws Throwable {
-        String lemma = "come";
-        String outputPath = "data/verbnet/" + lemma + "-aug.txt";
+        AnnotationUtil util = new AnnotationUtil(args);
+        String lemma = util.getLemma();
+        String outputPath = util.getOutputPath();
+
         Scanner scanner = new Scanner(System.in);
         StanfordTokenizer tokenizer = new StanfordTokenizer();
 
