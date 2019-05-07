@@ -12,29 +12,13 @@ It is meant for use in both research and production settings. Main features incl
 - Easy training of new models using CLI
 - 1000+ sense predictions per second on a 2014 MacBook Pro
 
-## Setup/Installation
-
-To build ClearWSD, you will need [Java 8](http://www.oracle.com/technetwork/java/javase/overview/index.html) and [Apache Maven](https://maven.apache.org/).
-
-You will also need to set up [git-lfs](https://git-lfs.github.com/), which is used for storing the large pre-trained models. Without this, only pointers to the models will be cloned when you checkout the project, and you will see an error when the models are deserialized.
-
-On Mac/Linux, you can then build the project for CLI use:
-```bash
-git clone https://github.com/clearwsd/clearwsd.git
-cd clearwsd
-mvn package -DskipTests -P build-nlp4j-cli
-```
-Alternatively (or additionally), for use as an API, install the package in your local Maven repo (`~/.m2/repository`):
-```bash
-mvn install -DskipTests
-```
-
 ## API
 The easiest way to make use of ClearWSD in your project is through [Maven](https://maven.apache.org/), by simply adding corresponding
 ClearWSD dependencies to your project's `pom.xml`.
 
-ClearWSD is composed of several modules. To try out ClearWSD in your project with no modifications, it is typically sufficient to
-include just two of these, the first being `clearwsd-core`:
+Releases are distributed through [Maven Central](https://mvnrepository.com/repos/central).
+
+To try out ClearWSD in your project, you will need to include three modules, the first being `clearwsd-core`:
 ```xml
 <dependency>
   <groupId>io.github.clearwsd</groupId>
@@ -51,16 +35,7 @@ A wrapper for the [NLP4J](https://emorynlp.github.io/nlp4j/) dependency parser i
   <version>0.10.0</version>
 </dependency>
 ```
-For the [Stanford Parser](https://stanfordnlp.github.io/CoreNLP/) wrapper module (GPL licensed), you can instead add the following dependency:
-```xml
-<dependency>
-  <groupId>io.github.clearwsd</groupId>
-  <artifactId>clearwsd-stanford</artifactId>
-  <version>0.10.0</version>
-</dependency>
-```
-
-If you want to use pre-trained word sense disambiguation models, just add the following:
+Finally, to use pre-trained word sense disambiguation models (compatible with NLP4J), just add the following:
 ```xml
 <dependency>
   <groupId>io.github.clearwsd</groupId>
@@ -102,6 +77,21 @@ public class Test {
 ## Command Line Interface
 
 ClearWSD provides a command-line interface for training, evaluation, and application of word sense disambiguation models.
+
+To build ClearWSD, you will need [Java 8](http://www.oracle.com/technetwork/java/javase/overview/index.html) and [Apache Maven](https://maven.apache.org/).
+
+On OS X/Linux, you can then build the project for CLI use:
+```bash
+git clone https://github.com/clearwsd/clearwsd.git
+cd clearwsd
+mvn package -DskipTests -P build-nlp4j-cli
+```
+
+To use the [Stanford Parser](https://stanfordnlp.github.io/CoreNLP/) wrapper module (GPL licensed) instead, use `build-stanford-cli`:
+```bash
+mvn package -DskipTests -P build-stanford-cli
+```
+
 You can see a help message and available options with the following command (assuming you have already followed the CLI setup instructions):
 ```bash
 java -jar clearwsd-cli-*.jar --help
