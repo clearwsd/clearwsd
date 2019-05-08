@@ -1,0 +1,9 @@
+language: java
+jdk: oraclejdk8
+cache:
+  directories:
+  - .git/lfs
+git:
+  lfs_skip_smudge: true
+install:
+- git lfs pull
