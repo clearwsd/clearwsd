@@ -1,5 +1,6 @@
 # ClearWSD
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/io.github.clearwsd/clearwsd/badge.svg)](https://maven-badges.herokuapp.com/maven-central/io.github.clearwsd/clearwsd)
+[![Build Status](https://travis-ci.com/clearwsd/clearwsd.svg?branch=master)](https://travis-ci.com/clearwsd/clearwsd)
 
 ClearWSD is a word sense disambiguation tool for the JVM, with core modules available under an Apache 2.0 license.
 It provides simple APIs for integration with other libraries, as well as a command-line interface (CLI) for non-programmatic use.
@@ -79,7 +80,7 @@ public class Test {
 
 ClearWSD provides a command-line interface for training, evaluation, and application of word sense disambiguation models.
 
-To build ClearWSD, you will need [Java 8](http://www.oracle.com/technetwork/java/javase/overview/index.html) and [Apache Maven](https://maven.apache.org/).
+To build ClearWSD, you will need [Java 8](http://www.oracle.com/technetwork/java/javase/overview/index.html) or above and [Apache Maven](https://maven.apache.org/).
 
 On OS X/Linux, you can then build the project for CLI use:
 ```bash
