@@ -47,7 +47,7 @@ public class MultiClassifier<U, V> implements Classifier<U, V> {
     private Map<String, Classifier<U, V>> classifierMap;
 
     /**
-     * Instantiate a multi-model classifier with a function used to determine which sub-model to apply to a given istanceinstance.
+     * Instantiate a multi-model classifier with a function used to determine which sub-model to apply to a given instance.
      *
      * @param keyFunction         function mapping input instances onto keys/models
      * @param prototypeClassifier base classifier model
@@ -62,7 +62,7 @@ public class MultiClassifier<U, V> implements Classifier<U, V> {
     public V classify(U instance) {
         String key = keyFunction.apply(instance);
         if (classifierMap.containsKey(key)) {
-            classifierMap.get(key).classify(instance);
+            return classifierMap.get(key).classify(instance);
         }
         return null;
     }

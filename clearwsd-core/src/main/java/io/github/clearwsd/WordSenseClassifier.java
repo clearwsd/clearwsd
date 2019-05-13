@@ -22,6 +22,7 @@ import java.io.ObjectOutputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.file.Paths;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -72,9 +73,8 @@ public class WordSenseClassifier implements Classifier<NlpFocus<DepNode, DepTree
         Map<String, Double> scores = classifier.score(instance);
         return scores.entrySet().stream()
                 .filter(e -> options.contains(e.getKey()))
-                .sorted((e1, e2) -> Double.compare(e2.getValue(), e1.getValue()))
+                .max(Comparator.comparingDouble(Map.Entry::getValue))
                 .map(Map.Entry::getKey)
-                .findFirst() // get highest scoring sense for a given predicate
                 .orElse(senseInventory.defaultSense(lemma)); // or return the default sense for the predicate
     }
 

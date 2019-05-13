@@ -17,12 +17,14 @@
 package io.github.clearwsd.feature.context;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import io.github.clearwsd.type.NlpInstance;
 import io.github.clearwsd.type.NlpSequence;
@@ -43,6 +45,10 @@ public class Contexts {
 
     public static DepChildrenContextFactory excludingDeps(Set<String> exclusions) {
         return new DepChildrenContextFactory(exclusions, new HashSet<>());
+    }
+
+    public static DepChildrenContextFactory excludingDeps(String... exclusions) {
+        return new DepChildrenContextFactory(Arrays.stream(exclusions).collect(Collectors.toSet()), new HashSet<>());
     }
 
     public static DepChildrenContextFactory includingDeps(Set<String> inclusions) {
