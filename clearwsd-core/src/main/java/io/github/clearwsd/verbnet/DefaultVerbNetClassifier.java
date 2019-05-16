@@ -24,9 +24,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.function.Function;
+import java.util.function.Supplier;
 
 import io.github.clearwsd.classifier.Classifier;
 import io.github.clearwsd.classifier.Hyperparameter;
+import io.github.clearwsd.classifier.MultiClassifier;
 import io.github.clearwsd.classifier.PaClassifier;
 import io.github.clearwsd.classifier.SparseClassifier;
 import io.github.clearwsd.feature.pipeline.AnnotatingClassifier;
@@ -41,7 +43,6 @@ import lombok.extern.slf4j.Slf4j;
 import static io.github.clearwsd.verbnet.VerbNetFeatureUtils.defaultAnnotator;
 import static io.github.clearwsd.verbnet.VerbNetFeatureUtils.defaultFeatures;
 import static io.github.clearwsd.verbnet.VerbNetFeatureUtils.defaultResources;
-import static io.github.clearwsd.verbnet.VerbNetFeatureUtils.sharedFeatures;
 
 /**
  * Default VerbNet classifier.
@@ -64,11 +65,11 @@ public class DefaultVerbNetClassifier implements Classifier<NlpFocus<DepNode, De
     }
 
     private AnnotatingClassifier<NlpFocus<DepNode, DepTree>> initialize() {
-        LabelSharingMultiClassifier<NlpFocus<DepNode, DepTree>> multiClassifier
-                = new LabelSharingMultiClassifier<>((Serializable & Function<NlpFocus<DepNode, DepTree>, String>)
+        MultiClassifier<NlpFocus<DepNode, DepTree>, String> multiClassifier
+                = new MultiClassifier<>((Serializable & Function<NlpFocus<DepNode, DepTree>, String>)
                 (i) -> i.focus().feature(FeatureType.Predicate),
-                () -> new NlpClassifier<>(initializeClassifier(), defaultFeatures()),
-                () -> new NlpClassifier<>(initializeClassifier(), sharedFeatures()));
+                (Serializable & Supplier<Classifier<NlpFocus<DepNode, DepTree>, String>>)
+                        () -> new NlpClassifier<>(initializeClassifier(), defaultFeatures()));
         return new AnnotatingClassifier<>(multiClassifier, defaultAnnotator());
     }
 
