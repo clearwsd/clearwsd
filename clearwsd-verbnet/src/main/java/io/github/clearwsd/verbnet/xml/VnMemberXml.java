@@ -16,14 +16,12 @@
 
 package io.github.clearwsd.verbnet.xml;
 
-import io.github.clearwsd.verbnet.VnClass;
-import io.github.clearwsd.verbnet.VnMember;
-import io.github.clearwsd.verbnet.WnKey;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -31,6 +29,10 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+
+import io.github.clearwsd.verbnet.VnClass;
+import io.github.clearwsd.verbnet.VnMember;
+import io.github.clearwsd.verbnet.WnKey;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
@@ -84,9 +86,10 @@ public class VnMemberXml implements VnMember {
         @Override
         public List<String> unmarshal(String value) {
             return Arrays.stream(value.split("\\s+"))
-                .map(feature -> feature.replaceFirst("\\+", "").trim().toLowerCase())
-                .distinct()
-                .collect(Collectors.toList());
+                    .map(feature -> feature.replaceFirst("\\+", "").trim().toLowerCase())
+                    .filter(feature -> !feature.isEmpty())
+                    .distinct()
+                    .collect(Collectors.toList());
 
         }
 
@@ -101,8 +104,9 @@ public class VnMemberXml implements VnMember {
         @Override
         public List<String> unmarshal(String value) {
             return Arrays.stream(value.split("\\s+"))
-                .distinct()
-                .collect(Collectors.toList());
+                    .filter(feature -> !feature.isEmpty())
+                    .distinct()
+                    .collect(Collectors.toList());
 
         }
 
@@ -120,10 +124,10 @@ public class VnMemberXml implements VnMember {
                 return new ArrayList<>();
             }
             return Arrays.stream(value.split("\\s+"))
-                .map(WnKey::parseWordNetKey)
-                .filter(Optional::isPresent)
-                .map(Optional::get)
-                .collect(Collectors.toList());
+                    .map(WnKey::parseWordNetKey)
+                    .filter(Optional::isPresent)
+                    .map(Optional::get)
+                    .collect(Collectors.toList());
         }
 
         @Override
@@ -132,9 +136,9 @@ public class VnMemberXml implements VnMember {
                 return null;
             }
             return value.stream()
-                .map(key -> String.format("%s%%%s:%d:%d", key.lemma(), key.type().ordinal(), key.lexicalFileNumber(),
-                    key.lexicalId()))
-                .collect(Collectors.joining(" "));
+                    .map(key -> String.format("%s%%%s:%d:%d", key.lemma(), key.type().ordinal(), key.lexicalFileNumber(),
+                            key.lexicalId()))
+                    .collect(Collectors.joining(" "));
         }
     }
 
