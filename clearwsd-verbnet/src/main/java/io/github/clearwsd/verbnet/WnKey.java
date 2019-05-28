@@ -51,7 +51,7 @@ public class WnKey {
             return Optional.empty();
         }
         String lemma = matcher.group(1);
-        SynsetType type = SynsetType.values()[Math.max(Integer.parseInt(matcher.group(2)), SynsetType.OTHER.ordinal())];
+        SynsetType type = SynsetType.values()[Math.min(Integer.parseInt(matcher.group(2)), SynsetType.OTHER.ordinal())];
         return Optional.of(new WnKey(lemma, type, Integer.parseInt(matcher.group(3)), Integer.parseInt(matcher.group(4)),
             key.startsWith("?")));
     }
