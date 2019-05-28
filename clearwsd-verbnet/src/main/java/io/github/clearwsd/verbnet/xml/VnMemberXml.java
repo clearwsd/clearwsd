@@ -136,8 +136,7 @@ public class VnMemberXml implements VnMember {
                 return null;
             }
             return value.stream()
-                    .map(key -> String.format("%s%%%s:%d:%d", key.lemma(), key.type().ordinal(), key.lexicalFileNumber(),
-                            key.lexicalId()))
+                    .map(WnKey::toSenseKey)
                     .collect(Collectors.joining(" "));
         }
     }

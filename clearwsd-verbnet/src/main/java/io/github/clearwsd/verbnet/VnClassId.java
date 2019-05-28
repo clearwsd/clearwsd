@@ -18,6 +18,7 @@ package io.github.clearwsd.verbnet;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NonNull;
@@ -29,7 +30,7 @@ import lombok.experimental.Accessors;
 public class VnClassId implements Comparable<VnClassId> {
 
     public static final Pattern VN_ID_PATTERN = Pattern.compile(
-        "(?:(?<name>[a-zA-Z-_]+)-)?(?<fullId>(?<rootId>(?<number>\\d+)(?:\\.\\d+)*)(?<subcls>(?:-\\d+)*))");
+            "(?:(?<name>[a-zA-Z-_]+)-)?(?<fullId>(?<rootId>(?<number>\\d+)(?:\\.\\d+)*)(?<subcls>(?:-\\d+)*))");
 
     private final String classId;
     private final String name;
@@ -49,7 +50,7 @@ public class VnClassId implements Comparable<VnClassId> {
 
     @Override
     public String toString() {
-        return name == null ? rootId : name + "-" + rootId;
+        return name == null ? classId : name + "-" + classId;
     }
 
     public static VnClassId parse(@NonNull String id) {
@@ -62,6 +63,6 @@ public class VnClassId implements Comparable<VnClassId> {
         if (comparison != 0) {
             return comparison;
         }
-        return rootId.compareTo(other.rootId);
+        return classId.compareTo(other.classId);
     }
 }

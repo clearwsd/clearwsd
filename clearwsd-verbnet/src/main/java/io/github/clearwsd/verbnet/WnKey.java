@@ -19,6 +19,7 @@ package io.github.clearwsd.verbnet;
 import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -36,7 +37,8 @@ import lombok.experimental.Accessors;
 @AllArgsConstructor
 public class WnKey {
 
-    private static final Pattern WN_KEY_REGEX = Pattern.compile("\\??(\\p{ASCII}+)%(\\d):(\\d+):(\\d+)(:\\p{ASCII}+:(\\d\\d))?");
+    private static final Pattern WN_KEY_REGEX = Pattern.compile(
+            "\\??(\\p{ASCII}+)%(\\d):(\\d+):(\\d+)(:\\p{ASCII}+:(\\d\\d))?(?:::)?");
 
     private String lemma;
     private SynsetType type;
@@ -51,9 +53,13 @@ public class WnKey {
             return Optional.empty();
         }
         String lemma = matcher.group(1);
-        SynsetType type = SynsetType.values()[Math.min(Integer.parseInt(matcher.group(2)), SynsetType.OTHER.ordinal())];
+        SynsetType type = SynsetType.values()[Math.min(Integer.parseInt(matcher.group(2)) - 1, SynsetType.OTHER.ordinal())];
         return Optional.of(new WnKey(lemma, type, Integer.parseInt(matcher.group(3)), Integer.parseInt(matcher.group(4)),
-            key.startsWith("?")));
+                key.startsWith("?")));
+    }
+
+    public static String toSenseKey(@NonNull WnKey wnKey) {
+        return String.format("%s%%%s:%02d:%02d::", wnKey.lemma, wnKey.type.ordinal() + 1, wnKey.lexicalFileNumber, wnKey.lexicalId);
     }
 
     public enum SynsetType {
@@ -65,5 +71,9 @@ public class WnKey {
         OTHER
     }
 
+    @Override
+    public String toString() {
+        return toSenseKey(this);
+    }
 
 }
