@@ -139,8 +139,12 @@ public class DefaultVnIndex implements VnIndex {
             return Collections.emptySet();
         }
         try {
-            List<VnClass> verbNetClasses = getById(id).related();
-            if (null == verbNetClasses) {
+            VnClass byId = getById(id);
+            if (null == byId) {
+                return Collections.emptySet();
+            }
+            List<VnClass> verbNetClasses = byId.related();
+            if (null == verbNetClasses || verbNetClasses.isEmpty()) {
                 return Collections.emptySet();
             }
             Set<VnClass> matches = Sets.newHashSet(verbNetClasses);
