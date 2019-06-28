@@ -1,5 +1,11 @@
 package io.github.clearwsd.verbnet;
 
+import org.junit.BeforeClass;
+import org.junit.Test;
+
+import java.util.Arrays;
+import java.util.List;
+
 import io.github.clearwsd.verbnet.restrictions.VnRestrictions;
 import io.github.clearwsd.verbnet.semantics.VnPredicatePolarity;
 import io.github.clearwsd.verbnet.semantics.VnSemanticArgument;
@@ -7,10 +13,6 @@ import io.github.clearwsd.verbnet.semantics.VnSemanticPredicate;
 import io.github.clearwsd.verbnet.syntax.VnNounPhrase;
 import io.github.clearwsd.verbnet.syntax.VnSyntaxType;
 import io.github.clearwsd.verbnet.xml.VnClassXml;
-import java.util.Arrays;
-import java.util.List;
-import org.junit.BeforeClass;
-import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -33,7 +35,7 @@ public class VnIndexTest {
     @Test
     public void loadVerbNet() {
         VnIndex verbIndex = new DefaultVnIndex();
-        assertEquals(327, verbIndex.roots().size());
+        assertEquals(328, verbIndex.roots().size());
     }
 
     @Test
