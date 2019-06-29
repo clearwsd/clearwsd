@@ -35,6 +35,12 @@ import java.util.stream.Collectors;
 
 import io.github.clearwsd.utils.CountingSenseInventory;
 import io.github.clearwsd.utils.SenseInventory;
+import io.github.semlink.verbnet.DefaultVnIndex;
+import io.github.semlink.verbnet.VnClass;
+import io.github.semlink.verbnet.VnClassId;
+import io.github.semlink.verbnet.VnIndex;
+import io.github.semlink.verbnet.VnMember;
+import io.github.semlink.verbnet.WnKey;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 

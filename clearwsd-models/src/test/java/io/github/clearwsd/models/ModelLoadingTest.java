@@ -23,7 +23,7 @@ import org.junit.Test;
 import io.github.clearwsd.DefaultSensePredictor;
 import io.github.clearwsd.SensePredictor;
 import io.github.clearwsd.corpus.ontonotes.OntoNotesSense;
-import io.github.clearwsd.verbnet.VnClass;
+import io.github.semlink.verbnet.VnClass;
 
 import static junit.framework.TestCase.assertNotNull;
 

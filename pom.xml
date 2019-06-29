@@ -10,7 +10,7 @@
 
     <groupId>io.github.clearwsd</groupId>
     <artifactId>clearwsd</artifactId>
-    <version>0.10-SNAPSHOT</version>
+    <version>0.12.0</version>
     <packaging>pom</packaging>
 
     <name>ClearWSD</name>
@@ -76,7 +76,6 @@
         <module>clearwsd-models</module>
         <module>clearwsd-nlp4j</module>
         <module>clearwsd-stanford</module>
-        <module>clearwsd-verbnet</module>
     </modules>
 
     <dependencies>
@@ -141,11 +140,6 @@
             <dependency>
                 <groupId>io.github.clearwsd</groupId>
                 <artifactId>clearwsd-stanford</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>io.github.clearwsd</groupId>
-                <artifactId>clearwsd-verbnet</artifactId>
                 <version>${project.version}</version>
             </dependency>
         </dependencies>
