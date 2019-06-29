@@ -26,7 +26,7 @@ To try out ClearWSD in your project, you will need to include three modules, the
 <dependency>
   <groupId>io.github.clearwsd</groupId>
   <artifactId>clearwsd-core</artifactId>
-  <version>0.10.0</version>
+  <version>0.12.0</version>
 </dependency>
 ```
 and the second being a parser module, used for pre-processing and feature extraction.
@@ -35,7 +35,7 @@ A wrapper for the [NLP4J](https://emorynlp.github.io/nlp4j/) dependency parser i
 <dependency>
   <groupId>io.github.clearwsd</groupId>
   <artifactId>clearwsd-nlp4j</artifactId>
-  <version>0.10.0</version>
+  <version>0.12.0</version>
 </dependency>
 ```
 Finally, to use pre-trained word sense disambiguation models (compatible with NLP4J), just add the following:
@@ -43,7 +43,7 @@ Finally, to use pre-trained word sense disambiguation models (compatible with NL
 <dependency>
   <groupId>io.github.clearwsd</groupId>
   <artifactId>clearwsd-models</artifactId>
-  <version>0.10.0</version>
+  <version>0.12.0</version>
 </dependency>
 ```
 
