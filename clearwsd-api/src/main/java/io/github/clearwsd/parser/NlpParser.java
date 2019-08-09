@@ -16,9 +16,9 @@
 
 package io.github.clearwsd.parser;
 
-import java.util.List;
-
 import io.github.clearwsd.type.DepTree;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Syntactic dependency parser, used to produce {@link DepTree DepTrees} from raw text. Extends from {@link NlpTokenizer} to ensure
@@ -35,5 +35,17 @@ public interface NlpParser extends NlpTokenizer {
      * @return syntactic dependency tree
      */
     DepTree parse(List<String> tokens);
+
+    /**
+     * Parse a batch of tokenized sentences, producing a list of {@link DepTree}.
+     *
+     * @param sentences batch of tokenized sentences
+     * @return list of syntactic dependency trees
+     */
+    default List<DepTree> parseBatch(List<List<String>> sentences) {
+        return sentences.stream()
+            .map(this::parse)
+            .collect(Collectors.toList());
+    }
 
 }

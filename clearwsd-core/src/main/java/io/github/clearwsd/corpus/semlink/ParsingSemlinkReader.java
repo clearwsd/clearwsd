@@ -17,6 +17,7 @@
 package io.github.clearwsd.corpus.semlink;
 
 
+import io.github.clearwsd.corpus.semlink.VerbNetReader.VerbNetInstance;
 import io.github.clearwsd.utils.SenseInventory;
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -26,7 +27,9 @@ import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -82,56 +85,82 @@ public class ParsingSemlinkReader implements CorpusReader<NlpFocus<DepNode, DepT
 
     @Override
     public List<NlpFocus<DepNode, DepTree>> readInstances(InputStream inputStream, Set<String> filter) {
-        Map<String, DepTree> parseCache = new HashMap<>();
+        List<VerbNetInstance> instances = new ArrayList<>();
+
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream))) {
             VerbNetInstanceParser parser = new VerbNetInstanceParser();
-            List<NlpFocus<DepNode, DepTree>> results = new ArrayList<>();
-            int index = 0;
             String line;
             while ((line = reader.readLine()) != null) {
                 line = line.trim();
                 if (line.length() == 0) {
                     continue;
                 }
-                VerbNetReader.VerbNetInstance instance = parser.parse(line);
+                VerbNetInstance instance = parser.parse(line);
                 if (!filter.isEmpty() && !filter.contains(instance.lemma())) {
                     continue;
                 }
                 if (instance.label().equals(SenseInventory.DEFAULT_SENSE)) {
                     continue;
                 }
-
-                DepTree depTree;
-                if (cacheTrees) {
-                    depTree = parseCache.computeIfAbsent(instance.originalText(),
-                        k -> dependencyParser.parse(tokenizer.tokenize(instance.originalText())));
-                } else {
-                    depTree = dependencyParser.parse(tokenizer.tokenize(instance.originalText()));
-                }
-
-                DepNode focus = depTree.get(instance.token());
-                if (!instance.lemma().equalsIgnoreCase(focus.feature(Lemma))) {
-                    log.trace("Lemma mismatch ({} vs. {}) between annotation and parser output for instance: {}",
-                        instance.lemma(), focus.feature(Lemma), line);
-                }
-
-
-                focus.addFeature(Gold, instance.label());
-                focus.addFeature(Predicate, instance.lemma());
-
-                NlpFocus<DepNode, DepTree> focusInstance = new DefaultNlpFocus<>(index++, focus, depTree);
-                focusInstance.addFeature(Gold, instance.label());
-                focusInstance.addFeature(Metadata, line);
-                if (index % 1000 == 0) {
-                    log.debug("VerbNet parsing progress: {} instances", index);
-                }
-                results.add(focusInstance);
+                instances.add(instance);
             }
-            log.debug("Read {} instances with {}.", results.size(), this.getClass().getSimpleName());
-            return results;
         } catch (IOException e) {
             throw new RuntimeException("Error reading annotations.", e);
         }
+
+        Map<String, DepTree> parseCache = new HashMap<>();
+
+        if (cacheTrees) {
+            List<String> sentences = instances.stream()
+                .map(VerbNetInstance::originalText)
+                .distinct()
+                .sorted(Comparator.comparing(String::length).reversed())
+                .collect(Collectors.toList());
+
+            Iterator<String> iterator = sentences.iterator();
+            dependencyParser.parseBatch(sentences.stream()
+                .map(dependencyParser::tokenize)
+                .collect(Collectors.toList()))
+                .forEach(parse -> parseCache.put(iterator.next(), parse));
+        }
+
+        int index = 0;
+        List<NlpFocus<DepNode, DepTree>> results = new ArrayList<>();
+        for (VerbNetInstance instance: instances) {
+            NlpFocus<DepNode, DepTree> focusInstance = parseInstance(instance, parseCache, index);
+            if (++index % 1000 == 0) {
+                log.debug("VerbNet parsing progress: {} instances", index);
+            }
+            results.add(focusInstance);
+            log.debug("Read {} instances with {}.", results.size(), this.getClass().getSimpleName());
+        }
+
+        return results;
+    }
+
+    private NlpFocus<DepNode, DepTree> parseInstance(VerbNetInstance instance, Map<String, DepTree> parseCache, int index) {
+        DepTree depTree;
+        if (cacheTrees) {
+            depTree = parseCache.computeIfAbsent(instance.originalText(),
+                k -> dependencyParser.parse(tokenizer.tokenize(instance.originalText())));
+        } else {
+            depTree = dependencyParser.parse(tokenizer.tokenize(instance.originalText()));
+        }
+
+        DepNode focus = depTree.get(instance.token());
+        if (!instance.lemma().equalsIgnoreCase(focus.feature(Lemma))) {
+            log.trace("Lemma mismatch ({} vs. {}) between annotation and parser output for instance: {}",
+                instance.lemma(), focus.feature(Lemma), instance.originalText());
+        }
+
+
+        focus.addFeature(Gold, instance.label());
+        focus.addFeature(Predicate, instance.lemma());
+
+        NlpFocus<DepNode, DepTree> focusInstance = new DefaultNlpFocus<>(index, focus, depTree);
+        focusInstance.addFeature(Gold, instance.label());
+        focusInstance.addFeature(Metadata, instance.toString());
+        return focusInstance;
     }
 
     @Override
