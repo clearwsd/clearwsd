@@ -159,7 +159,7 @@ public class ParsingSemlinkReader implements CorpusReader<NlpFocus<DepNode, DepT
 
         NlpFocus<DepNode, DepTree> focusInstance = new DefaultNlpFocus<>(index, focus, depTree);
         focusInstance.addFeature(Gold, instance.label());
-        focusInstance.addFeature(Metadata, instance.toString());
+        focusInstance.addFeature(Metadata, VerbNetInstanceParser.toString(instance));
         return focusInstance;
     }
 
