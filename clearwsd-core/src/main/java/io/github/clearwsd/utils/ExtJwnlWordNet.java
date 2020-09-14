@@ -36,6 +36,7 @@ import java.util.stream.Collectors;
 
 import io.github.clearwsd.feature.util.PosUtils;
 import lombok.Getter;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -47,6 +48,11 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class ExtJwnlWordNet implements WordNetFacade<Word> {
 
+    /**
+     * Maximum number of sub-tokens considered when searching for WordNet entries using extJWNL.
+     */
+    @Setter
+    private int maxSubTokens = 5;
     @Getter
     private Dictionary dictionary;
 
@@ -146,6 +152,10 @@ public class ExtJwnlWordNet implements WordNetFacade<Word> {
     }
 
     private Optional<IndexWord> getIndexWord(String lemma, String pos) {
+        if (extjwnlTokenCount(lemma) > maxSubTokens) {
+            // avoid https://github.com/extjwnl/extjwnl/issues/5
+            return Optional.empty();
+        }
         IndexWord indexWord = null;
         try {
             POS wnPos = getPos(pos);
@@ -164,7 +174,7 @@ public class ExtJwnlWordNet implements WordNetFacade<Word> {
         try {
             result = word.getSenseKey();
         } catch (JWNLException e) {
-            log.warn("Error retrieving sense key for word", word, e);
+            log.warn("Error retrieving sense key for word {}", word, e);
         }
         return Optional.ofNullable(result);
     }
@@ -190,5 +200,23 @@ public class ExtJwnlWordNet implements WordNetFacade<Word> {
         }
     }
 
+    private static int extjwnlTokenCount(String word) {
+        word = word.toLowerCase();
+
+        int tokens = 0;
+        boolean inToken = false;
+        for (char character : word.toCharArray()) {
+            if ((character >= 'a' && character <= 'z') || character == '\'') {
+                inToken = true;
+            } else if (inToken) {
+                tokens++;
+                inToken = false;
+            }
+        }
+        if (inToken) {
+            tokens += 1;
+        }
+        return tokens;
+    }
 
 }
