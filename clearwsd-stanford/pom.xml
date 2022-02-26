@@ -24,7 +24,7 @@
     </licenses>
 
     <properties>
-        <stanford.version>3.8.0</stanford.version>
+        <stanford.version>4.4.0</stanford.version>
     </properties>
 
     <dependencies>
